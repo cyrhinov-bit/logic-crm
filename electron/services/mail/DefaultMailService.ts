@@ -54,10 +54,10 @@ async function copyFileToClipboard(filePath: string): Promise<boolean> {
 export class DefaultMailService {
   static async openDefault(input: ComposeMailInput): Promise<ComposeMailResult> {
     try {
-      // 1. Enregistre les pièces jointes dans Documents/ERP POS/Devis (fichier stable, requis pour le presse-papiers).
+      // 1. Enregistre les pièces jointes dans Documents/Logic CRM/Devis (fichier stable, requis pour le presse-papiers).
       const savedPaths: string[] = [];
       if (input.attachments?.length) {
-        const dir = path.join(app.getPath('documents'), 'ERP POS', 'Devis');
+        const dir = path.join(app.getPath('documents'), 'Logic CRM', 'Devis');
         await fs.mkdir(dir, { recursive: true });
         for (let i = 0; i < input.attachments.length; i++) {
           const att = input.attachments[i];

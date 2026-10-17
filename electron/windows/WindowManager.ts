@@ -63,7 +63,7 @@ export class WindowManager {
     const iconPath = this.getAppIconPath();
 
     this.mainWindow = new BrowserWindow({
-      title: 'Hinov Business Suite Desktop',
+      title: 'Logic CRM',
       x: state.x,
       y: state.y,
       width: state.width,

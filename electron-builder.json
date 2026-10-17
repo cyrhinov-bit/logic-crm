@@ -1,7 +1,7 @@
 {
-  "appId": "com.erp.pos",
-  "productName": "ERP POS Desktop",
-  "copyright": "Copyright © 2026 ERP POS",
+  "appId": "com.logic.crm",
+  "productName": "Logic CRM",
+  "copyright": "Copyright © 2026 Logic CRM",
   "directories": {
     "output": "release/",
     "buildResources": "build"
@@ -30,8 +30,8 @@
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
-    "shortcutName": "ERP POS",
-    "uninstallDisplayName": "ERP POS",
+    "shortcutName": "Logic CRM",
+    "uninstallDisplayName": "Logic CRM",
     "deleteAppDataOnUninstall": false
   },
   "mac": {

@@ -1,9 +1,9 @@
 {
-  "name": "app",
+  "name": "logic-crm",
   "private": true,
-  "version": "1.0.3",
-  "description": "ERP POS Desktop Application",
-  "author": "ERP POS Team",
+  "version": "1.0.0",
+  "description": "Logic CRM Desktop Application",
+  "author": "Logic CRM Team",
   "type": "module",
   "main": "dist-electron/main/main.js",
   "scripts": {
@@ -12,11 +12,12 @@
     "start": "vite preview --host 0.0.0.0 --port ${PORT:-4173}",
     "lint": "oxlint",
     "preview": "vite preview",
+    "clean:electron": "node -e \"import('fs').then(fs => fs.rmSync('dist-electron', { recursive: true, force: true }))\"",
     "electron:prepare": "node -e \"import('fs').then(fs => { if(!fs.existsSync('dist-electron')) fs.mkdirSync('dist-electron'); fs.writeFileSync('dist-electron/package.json', JSON.stringify({type:'commonjs'})); })\"",
     "electron:dev": "npm run electron:prepare && concurrently \"cross-env ELECTRON=true npm run dev\" \"tsc -p tsconfig.electron.json -w\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
-    "electron:start": "npm run electron:prepare && tsc -p tsconfig.electron.json && electron .",
-    "electron:build": "npm run electron:prepare && cross-env ELECTRON=true CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && tsc -p tsconfig.electron.json && electron-builder --win",
-    "electron:publish": "npm run electron:prepare && cross-env ELECTRON=true CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && tsc -p tsconfig.electron.json && electron-builder --win --publish always",
+    "electron:start": "npm run clean:electron && npm run electron:prepare && tsc -p tsconfig.electron.json && electron .",
+    "electron:build": "npm run clean:electron && npm run electron:prepare && cross-env ELECTRON=true CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && tsc -p tsconfig.electron.json && electron-builder --win",
+    "electron:publish": "npm run clean:electron && npm run electron:prepare && cross-env ELECTRON=true CSC_IDENTITY_AUTO_DISCOVERY=false npm run build && tsc -p tsconfig.electron.json && electron-builder --win --publish always",
     "release": "powershell -ExecutionPolicy Bypass -File scripts/release.ps1"
   },
   "dependencies": {

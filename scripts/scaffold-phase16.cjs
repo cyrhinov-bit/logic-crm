@@ -10,9 +10,9 @@ function write(filePath, content) {
 // 1. Electron Builder Config
 write('electron-builder.json',
   "{\n" +
-  "  \"appId\": \"com.erp.pos\",\n" +
-  "  \"productName\": \"ERP POS Desktop\",\n" +
-  "  \"copyright\": \"Copyright © 2026 ERP POS\",\n" +
+  "  \"appId\": \"com.logic.crm\",\n" +
+  "  \"productName\": \"Logic CRM\",\n" +
+  "  \"copyright\": \"Copyright © 2026 Logic CRM\",\n" +
   "  \"directories\": {\n" +
   "    \"output\": \"release/\",\n" +
   "    \"buildResources\": \"build\"\n" +
@@ -30,8 +30,8 @@ write('electron-builder.json',
   "    \"allowToChangeInstallationDirectory\": true,\n" +
   "    \"createDesktopShortcut\": true,\n" +
   "    \"createStartMenuShortcut\": true,\n" +
-  "    \"shortcutName\": \"ERP POS\",\n" +
-  "    \"uninstallDisplayName\": \"ERP POS\",\n" +
+  "    \"shortcutName\": \"Logic CRM\",\n" +
+  "    \"uninstallDisplayName\": \"Logic CRM\",\n" +
   "    \"deleteAppDataOnUninstall\": false\n" +
   "  },\n" +
   "  \"mac\": {\n" +

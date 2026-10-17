@@ -25,7 +25,7 @@ if (!gotTheLock) {
 
   // Définir l'AppUserModelID pour afficher l'icône personnalisée dans la barre des tâches Windows
   if (process.platform === 'win32') {
-    app.setAppUserModelId('com.erp.pos');
+    app.setAppUserModelId('com.logic.crm');
   }
 
   // Éviter les collisions et erreurs de verrouillage de cache disque Chromium sur Windows (Accès refusé / Gpu Cache Creation failed)

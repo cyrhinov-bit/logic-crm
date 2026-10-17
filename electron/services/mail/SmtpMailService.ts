@@ -148,8 +148,8 @@ export class SmtpMailService {
   static async sendTest(to: string): Promise<ComposeMailResult> {
     return SmtpMailService.send({
       to,
-      subject: 'Test de configuration — ERP POS',
-      body: "Ceci est un e-mail de test envoyé depuis l'application ERP POS. Si vous le recevez, la configuration SMTP fonctionne.",
+      subject: 'Test de configuration - Logic CRM',
+      body: "Ceci est un e-mail de test envoyé depuis l'application Logic CRM. Si vous le recevez, la configuration SMTP fonctionne.",
     });
   }
 
