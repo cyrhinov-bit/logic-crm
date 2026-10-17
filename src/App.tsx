@@ -17,7 +17,6 @@ import { CommercialClients } from './pages/CommercialClients';
 import { Documents } from './pages/Documents';
 import { Utilisateurs } from './pages/Utilisateurs';
 import { Parametres } from './pages/Parametres';
-import { GeminiSettings } from './pages/GeminiSettings';
 import { Login } from './pages/Login';
 import { PublicCatalog } from './pages/public/PublicCatalog';
 import TestDashboard from './pages/TestDashboard';

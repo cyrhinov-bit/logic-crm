@@ -162,7 +162,6 @@ export interface User {
   posSupplyEnabled?: boolean;
   posInventoryEnabled?: boolean;
   posStockEnabled?: boolean;
-  geminiApiKey?: string;
   // CRM Modules Responsables Permissions
   crmPrestationsEnabled?: boolean;
   crmCaisseEnabled?: boolean;
@@ -1157,7 +1156,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
               posInventoryEnabled: resolveBool(p.pos_inventory_enabled, cachedUser?.posInventoryEnabled, false),
               posStockEnabled: resolveBool(p.pos_stock_enabled, cachedUser?.posStockEnabled, false),
               posRole: p.pos_role || cachedUser?.posRole || null,
-              geminiApiKey: p.gemini_api_key || cachedUser?.geminiApiKey || undefined,
               crmPrestationsEnabled: resolveBool(p.crm_prestations_enabled, cachedUser?.crmPrestationsEnabled, crmDefault),
               crmCaisseEnabled: resolveBool(p.crm_caisse_enabled, cachedUser?.crmCaisseEnabled, crmDefault),
               crmMaintenanceEnabled: resolveBool(p.crm_maintenance_enabled, cachedUser?.crmMaintenanceEnabled, crmDefault),

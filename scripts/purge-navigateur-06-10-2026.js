@@ -62,7 +62,7 @@
   await clearStores();
 
   // 3. localStorage parasite (paniers / tickets / brouillons) — jamais l'auth
-  const keep = new Set(['auth_last_user', 'app_theme_primary', 'gemini_api_key']);
+  const keep = new Set(['auth_last_user', 'app_theme_primary']);
   const purgeRe = /(pos|cart|suspend|ticket|quote_draft|hinov_public_cart|receipt)/i;
   const removed = [];
   try {
@@ -70,7 +70,7 @@
     for (let i = 0; i < localStorage.length; i++) all.push(localStorage.key(i));
     for (const k of all) {
       if (!k || keep.has(k)) continue;
-      if (k.startsWith('user_theme_primary_') || k.startsWith('gemini_')) continue;
+      if (k.startsWith('user_theme_primary_')) continue;
       if (purgeRe.test(k)) { localStorage.removeItem(k); removed.push(k); }
     }
     log('localStorage purgé :', removed.length ? removed.join(', ') : '(rien à purger)');
