@@ -1,6 +1,6 @@
 :root {
   /* Material Design Colors from DESIGN.md */
-  --color-primary: #3C7DAF;
+  --color-primary: #1879C8;
   --color-secondary: #D38526;
   --color-background: #e9e9e9;
   --color-surface: #ffffff;
@@ -31,7 +31,7 @@
   --radius-lg: 12px;
 
   /* Teintes sémantiques (fonds d'icônes, badges) */
-  --color-primary-tint: rgba(60, 125, 175, 0.12);
+  --color-primary-tint: rgba(24, 121, 200, 0.12);
   --color-success-tint: rgba(76, 175, 80, 0.12);
   --color-warning-tint: rgba(255, 152, 0, 0.12);
   --color-error-tint: rgba(244, 67, 54, 0.12);
@@ -42,7 +42,7 @@
   --color-surface-alt: #f7f7f7;
 
   /* Couleurs fortes (texte sur teinte) */
-  --color-primary-strong: #1F4363;
+  --color-primary-strong: #125B96;
   --color-success-strong: #166534;
   --color-warning-strong: #c2410c;
   --color-error-strong: #991b1b;
@@ -253,7 +253,7 @@ a:hover {
 /* Total/footer rows */
 .data-table tfoot tr,
 .data-table tr.total-row {
-  background: rgba(60, 125, 175, 0.08) !important;
+  background: rgba(24, 121, 200, 0.08) !important;
 }
 .data-table tfoot td,
 .data-table tr.total-row td {

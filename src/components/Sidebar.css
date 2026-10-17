@@ -10,12 +10,12 @@
 
 .user-profile {
   padding: 18px 16px;
-  background: linear-gradient(135deg, var(--color-primary, #0D9488) 0%, #0f766e 100%);
+  background: linear-gradient(135deg, var(--color-primary, #1879C8) 0%, #125B96 100%);
   color: white;
   display: flex;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 4px 12px rgba(24, 121, 200, 0.2);
 }
 
 .avatar {
@@ -141,8 +141,8 @@
 
 /* Onglet Actif */
 .nav-item.active .nav-link {
-  background-color: rgba(13, 148, 136, 0.09);
-  color: var(--color-primary, #0D9488);
+  background-color: rgba(24, 121, 200, 0.09);
+  color: var(--color-primary, #1879C8);
   font-weight: 700;
 }
 
@@ -153,7 +153,7 @@
   top: 15%;
   bottom: 15%;
   width: 3.5px;
-  background-color: var(--color-primary, #0D9488);
+  background-color: var(--color-primary, #1879C8);
   border-radius: 0 4px 4px 0;
 }
 

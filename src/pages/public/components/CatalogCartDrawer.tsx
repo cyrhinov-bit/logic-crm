@@ -26,7 +26,7 @@ export function CatalogCartDrawer({
   companyName = 'Hinov Group',
   primaryColor
 }: CatalogCartDrawerProps) {
-  const brandColor = primaryColor || 'var(--catalog-primary, #0F766E)';
+  const brandColor = primaryColor || 'var(--catalog-primary, #125B96)';
   const [customer, setCustomer] = useState<CustomerOrderInfo>(() => {
     const saved = localStorage.getItem('hinov_customer_info');
     if (saved) {
@@ -119,7 +119,7 @@ export function CatalogCartDrawer({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ backgroundColor: 'var(--catalog-primary-light, #CCFBF1)', padding: '8px', borderRadius: '8px', color: brandColor }}>
+            <div style={{ backgroundColor: 'var(--catalog-primary-light, #D6E9F8)', padding: '8px', borderRadius: '8px', color: brandColor }}>
               <ShoppingBag size={20} />
             </div>
             <div>
@@ -312,7 +312,7 @@ export function CatalogCartDrawer({
           ) : (
             /* FORMULAIRE DE COORDONNÉES CLIENT */
             <form id="checkout-form" onSubmit={handleCheckoutSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{ backgroundColor: '#F0FDFA', border: '1px solid #CCFBF1', borderRadius: '10px', padding: '12px 14px', fontSize: '13px', color: '#0F766E', display: 'flex', gap: '8px' }}>
+              <div style={{ backgroundColor: '#EDF4FB', border: '1px solid #D6E9F8', borderRadius: '10px', padding: '12px 14px', fontSize: '13px', color: '#125B96', display: 'flex', gap: '8px' }}>
                 <Send size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
                 <span>Renseignez vos coordonnées ci-dessous pour générer votre commande WhatsApp.</span>
               </div>

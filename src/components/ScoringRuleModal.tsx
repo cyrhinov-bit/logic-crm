@@ -74,7 +74,7 @@ export function ScoringRuleModal({ isOpen, onClose, serviceId }: ScoringRuleModa
       <div className="rule-modal-container">
         <div className="rule-modal-header">
           <div className="flex items-center gap-2">
-            <Sliders size={20} color="#0D9488" />
+            <Sliders size={20} color="#1879C8" />
             <h3>Pondérations du Score Commercial</h3>
           </div>
           <button 

@@ -127,7 +127,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
           <button className="icon-button menu-toggle" onClick={onToggleMenu} title="Menu de navigation">
             <Menu />
           </button>
-          <span className="brand-name">HINOV BUSINESS SUITE</span>
+          <span className="brand-name">LOGIC CRM</span>
 
           {currentUser?.role === 'SuperAdmin' && (
             <button

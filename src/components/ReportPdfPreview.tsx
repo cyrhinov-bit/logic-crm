@@ -104,7 +104,7 @@ export function ReportPdfPreview({ preview, onClose }: ReportPdfPreviewProps) {
                   type="button"
                   className="btn btn-primary"
                   onClick={() => preview.onSendByMail?.()}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#0D9488', borderColor: '#0D9488' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#1879C8', borderColor: '#1879C8' }}
                   title="Envoyer ce devis par e-mail (ouvre votre application de messagerie)"
                 >
                   <Mail size={15} /> Envoyer par mail

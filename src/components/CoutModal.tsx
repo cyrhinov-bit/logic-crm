@@ -162,7 +162,7 @@ export const CoutModal: React.FC<CoutModalProps> = ({
                   onClick={() => setCostType('DIRECT')}
                 >
                   <div className="cout-type-title" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Briefcase size={15} color={costType === 'DIRECT' ? '#0D9488' : '#64748B'} />
+                    <Briefcase size={15} color={costType === 'DIRECT' ? '#1879C8' : '#64748B'} />
                     Coût Direct
                   </div>
                   <div className="cout-type-desc">
@@ -356,7 +356,7 @@ export const CoutModal: React.FC<CoutModalProps> = ({
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#0F172A', marginBottom: '4px' }}>
                   Total TTC (FCFA)
                 </label>
-                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0D9488', padding: '5px 0' }}>
+                <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1879C8', padding: '5px 0' }}>
                   {amountTtc.toLocaleString('fr-FR')} F
                 </div>
               </div>

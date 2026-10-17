@@ -71,7 +71,7 @@
 }
 
 .payment-summary-item.paid .value {
-  color: #0D9488;
+  color: #1879C8;
 }
 
 .payment-type-toggle {
@@ -94,7 +94,7 @@
 }
 
 .payment-type-btn.active-encaissement {
-  background: #0D9488;
+  background: #1879C8;
   color: #ffffff;
 }
 

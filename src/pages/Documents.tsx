@@ -8,7 +8,7 @@ import { DocumentEditorModal } from '../components/DocumentEditorModal';
 import './Documents.css';
 
 const FOLDER_COLORS = [
-  { name: 'Sarcelle (Défaut)', hex: '#0D9488' },
+  { name: 'Bleu Logic (Défaut)', hex: '#1879C8' },
   { name: 'Bleu Océan', hex: '#2563EB' },
   { name: 'Indigo', hex: '#6366F1' },
   { name: 'Violet Royal', hex: '#7C3AED' },
@@ -43,12 +43,12 @@ export function Documents() {
   // Modals
   const [showFolderModal, setShowFolderModal] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
-  const [newFolderColor, setNewFolderColor] = useState('#0D9488');
+  const [newFolderColor, setNewFolderColor] = useState('#1879C8');
   const [newFolderIsShared, setNewFolderIsShared] = useState(false);
 
   const [editingFolder, setEditingFolder] = useState<CrmFolder | null>(null);
   const [editFolderName, setEditFolderName] = useState('');
-  const [editFolderColor, setEditFolderColor] = useState('#0D9488');
+  const [editFolderColor, setEditFolderColor] = useState('#1879C8');
 
   // Rich Upload Modal
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -142,7 +142,7 @@ export function Documents() {
     );
     setShowFolderModal(false);
     setNewFolderName('');
-    setNewFolderColor('#0D9488');
+    setNewFolderColor('#1879C8');
     setNewFolderIsShared(false);
   };
 
@@ -151,7 +151,7 @@ export function Documents() {
     e.stopPropagation();
     setEditingFolder(folder);
     setEditFolderName(folder.name);
-    setEditFolderColor(folder.color || '#0D9488');
+    setEditFolderColor(folder.color || '#1879C8');
   };
 
   const handleSaveEditFolder = async (e: React.FormEvent) => {
@@ -349,7 +349,7 @@ export function Documents() {
               {/* Folders */}
               {currentLevelFolders.map(folder => {
                 const subItemsCount = crmFolders.filter(f => f.parentId === folder.id).length + crmDocuments.filter(d => d.folderId === folder.id).length;
-                const folderColor = folder.color || '#0D9488';
+                const folderColor = folder.color || '#1879C8';
 
                 return (
                   <tr key={folder.id} style={{ cursor: 'pointer' }} onClick={() => setCurrentFolderId(folder.id)}>
@@ -442,7 +442,7 @@ export function Documents() {
                   <tr key={doc.id}>
                     <td data-label="Nom">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {isPdf && <FileText size={18} color="#0D9488" />}
+                        {isPdf && <FileText size={18} color="#1879C8" />}
                         {isImage && <ImageIcon size={18} color="#3B82F6" />}
                         {(isDocx || isDoc) && <FileText size={18} color="#2563EB" />}
                         {isExcel && <TableIcon size={18} color="#16A34A" />}
@@ -465,7 +465,7 @@ export function Documents() {
                             </span>
                           )}
                           {isEditable && (
-                            <span style={{ fontSize: '0.7rem', color: '#0D9488', fontWeight: 500 }}>
+                            <span style={{ fontSize: '0.7rem', color: '#1879C8', fontWeight: 500 }}>
                               • Modifiable en ligne
                             </span>
                           )}
@@ -682,7 +682,7 @@ export function Documents() {
           <div className="commission-modal-container" onClick={e => e.stopPropagation()} style={{ maxWidth: '540px' }}>
             <div className="commission-modal-header">
               <div className="commission-modal-title">
-                <Upload size={20} color="#0D9488" />
+                <Upload size={20} color="#1879C8" />
                 <span>Enregistrer le document</span>
               </div>
             </div>

@@ -1,11 +1,11 @@
 /* ==========================================================================
-   DESIGN APPLICATION NATIVE DU CATALOGUE PUBLIC HINOV GROUP
+   DESIGN APPLICATION NATIVE DU CATALOGUE PUBLIC LOGIC CRM
    ========================================================================== */
 
 :root {
-  --catalog-primary: #0F766E;
-  --catalog-primary-dark: #115E59;
-  --catalog-primary-light: #CCFBF1;
+  --catalog-primary: #1879C8;
+  --catalog-primary-dark: #125B96;
+  --catalog-primary-light: #D6E9F8;
   --catalog-accent: #25D366; /* WhatsApp Green */
   --catalog-bg: #F8FAFC;
   --catalog-card-bg: #FFFFFF;
@@ -193,7 +193,7 @@
    2. BANNIÈRE PROMO COMPACTE
    ========================================================================== */
 .native-promo-strip {
-  background: linear-gradient(90deg, #0F766E 0%, #115E59 100%);
+  background: linear-gradient(90deg, #1879C8 0%, #125B96 100%);
   color: white;
   padding: 8px 14px;
   display: flex;
@@ -584,7 +584,7 @@
 }
 
 .native-bottom-nav-item.install-cta {
-  color: #0F766E;
+  color: #125B96;
   font-weight: 700;
 }
 

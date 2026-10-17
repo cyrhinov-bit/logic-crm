@@ -88,9 +88,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: #f0fdfa;
-  border-bottom: 1px solid #ccfbf1;
-  color: #0f766e;
+  background: #EDF4FB;
+  border-bottom: 1px solid #D6E9F8;
+  color: #125B96;
   gap: 10px;
   flex-wrap: wrap;
 }
@@ -299,8 +299,8 @@
 
 .doc-word-btn.active {
   background: #e0f2f1;
-  color: #0d9488;
-  border-color: #0d9488;
+  color: #1879C8;
+  border-color: #1879C8;
 }
 
 .doc-word-select {
@@ -345,8 +345,8 @@
 }
 
 .doc-word-container[contenteditable="true"]:focus {
-  border-color: rgba(13, 148, 136, 0.3);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+  border-color: rgba(24, 121, 200, 0.3);
+  box-shadow: 0 0 0 3px rgba(24, 121, 200, 0.15);
 }
 
 .doc-word-container h1,
@@ -451,10 +451,10 @@
 }
 
 .doc-csv-input:focus {
-  border-color: #0d9488;
+  border-color: #1879C8;
   background: #ffffff;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+  box-shadow: 0 0 0 2px rgba(24, 121, 200, 0.2);
 }
 
 .doc-preview-fallback {
@@ -501,9 +501,9 @@
 }
 
 .btn-tab-toggle.active {
-  background: #0d9488;
+  background: #1879C8;
   color: #ffffff;
-  border-color: #0d9488;
+  border-color: #1879C8;
 }
 
 /* ─── Mobile Optimizations for Document Preview Modal ─────────────────────── */

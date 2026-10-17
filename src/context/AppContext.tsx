@@ -428,7 +428,7 @@ export interface CrmFolder {
   name: string;
   ownerId: string;
   parentId?: string;
-  color?: string; // Hex color code e.g. '#0D9488', '#2563EB', '#7C3AED'
+  color?: string; // Hex color code e.g. '#1879C8', '#2563EB', '#7C3AED'
   isShared?: boolean;
   createdAt: string;
 }
@@ -1206,7 +1206,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             name: f.name,
             ownerId: f.owner_id || f.ownerId,
             parentId: f.parent_id || f.parentId || undefined,
-            color: f.color || '#0D9488',
+            color: f.color || '#1879C8',
             isShared: f.is_shared !== undefined ? !!f.is_shared : !!f.isShared,
             createdAt: f.created_at || f.createdAt
           }));
@@ -4567,7 +4567,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     name: string,
     ownerId: string,
     parentId?: string,
-    color: string = '#0D9488',
+    color: string = '#1879C8',
     isShared: boolean = false
   ): Promise<CrmFolder> => {
     const newFolder: CrmFolder = {
@@ -4575,7 +4575,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       name,
       ownerId,
       parentId,
-      color: color || '#0D9488',
+      color: color || '#1879C8',
       isShared,
       createdAt: new Date().toISOString()
     };

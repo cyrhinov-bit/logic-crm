@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
-import logo from '../assets/logoh.png';
+import logo from '../assets/logic.png';
 import illustration from '../assets/login_illustration_new.jpg';
 import { InstallButton } from '../components/InstallButton';
 
@@ -52,7 +52,7 @@ export function Login() {
     return (
       <div className="login-container">
         <div className="login-header">
-          <h2 style={{ color: 'var(--color-primary)' }}>HINOV BUSINESS SUITE</h2>
+          <h2 style={{ color: 'var(--color-primary)' }}>LOGIC CRM</h2>
         </div>
       </div>
     );
@@ -63,8 +63,8 @@ export function Login() {
       <div className="login-illustration">
         <img src={illustration} alt="Gestion des devis" />
         <div className="illustration-overlay">
-          <h2>Hinov Business Suite</h2>
-          <p>La solution complète de gestion : ERP, CRM, et Caisse Connectée.</p>
+          <h2>Logic CRM</h2>
+          <p>La solution complète de gestion : CRM, Devis, Facturation et Rapports.</p>
         </div>
       </div>
       
@@ -72,9 +72,9 @@ export function Login() {
         <div className="login-card">
           <div className="login-header">
             <div className="login-logo">
-              <img src={logo} alt="Hinov" />
+              <img src={logo} alt="Logic CRM" />
             </div>
-            <h2 className="animated-title">Hinov Business Suite</h2>
+            <h2 className="animated-title">Logic CRM</h2>
             <p>Connectez-vous à votre espace</p>
           </div>
 

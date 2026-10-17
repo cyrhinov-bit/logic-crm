@@ -28,7 +28,7 @@ export function PrimeAuditModal({ isOpen, onClose, prime }: PrimeAuditModalProps
       <div className="audit-modal-container">
         <div className="audit-modal-header">
           <div className="flex items-center gap-2">
-            <ShieldCheck size={20} color="#0D9488" />
+            <ShieldCheck size={20} color="#1879C8" />
             <div>
               <h3>Journal d'Audit Immuable — {prime.reference}</h3>
               <p style={{ fontSize: '0.78rem', color: '#64748B', margin: '2px 0 0 0' }}>

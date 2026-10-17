@@ -2100,7 +2100,7 @@ export const processSyncQueue = async () => {
             name: folder.name,
             owner_id: isUuid(folder.ownerId) ? folder.ownerId : null,
             parent_id: isUuid(folder.parentId) ? folder.parentId : null,
-            color: folder.color || '#0D9488',
+            color: folder.color || '#1879C8',
             is_shared: !!folder.isShared
           }], { onConflict: 'id' });
           if (error && isForeignKeyError(error)) {
@@ -2110,7 +2110,7 @@ export const processSyncQueue = async () => {
               name: folder.name,
               owner_id: null,
               parent_id: null,
-              color: folder.color || '#0D9488',
+              color: folder.color || '#1879C8',
               is_shared: !!folder.isShared
             }], { onConflict: 'id' });
             error = fallback.error;

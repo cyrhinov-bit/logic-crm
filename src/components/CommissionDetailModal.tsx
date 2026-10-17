@@ -53,7 +53,7 @@ export function CommissionDetailModal({ commission, onClose }: CommissionDetailM
       <div className="commission-modal-container" onClick={e => e.stopPropagation()}>
         <div className="commission-modal-header">
           <div className="commission-modal-title">
-            <TrendingUp size={20} color="#0D9488" />
+            <TrendingUp size={20} color="#1879C8" />
             <span>Détail du Calcul de la Commission</span>
           </div>
           <button className="btn-icon" onClick={onClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
@@ -114,7 +114,7 @@ export function CommissionDetailModal({ commission, onClose }: CommissionDetailM
 
             <div style={{ marginBottom: '12px' }}>
               <div style={{ height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ height: '100%', background: '#0D9488', width: `${collectionRate}%`, borderRadius: '4px' }} />
+                <div style={{ height: '100%', background: '#1879C8', width: `${collectionRate}%`, borderRadius: '4px' }} />
               </div>
             </div>
 
@@ -128,7 +128,7 @@ export function CommissionDetailModal({ commission, onClose }: CommissionDetailM
             </div>
             <div className="commission-row-item">
               <span style={{ color: '#64748B' }}>Montant de Commission Éligible / Déblocable</span>
-              <span style={{ fontWeight: 700, color: '#0D9488' }}>{formatMoney(eligibleAmount)}</span>
+              <span style={{ fontWeight: 700, color: '#1879C8' }}>{formatMoney(eligibleAmount)}</span>
             </div>
             <div className="commission-row-item">
               <span style={{ color: '#64748B' }}>Montant Déjà Payé au Commercial</span>

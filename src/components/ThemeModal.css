@@ -88,9 +88,9 @@
 }
 
 .theme-cat-pill.active {
-  background: var(--color-primary, #0d9488);
+  background: var(--color-primary, #1879C8);
   color: #ffffff;
-  border-color: var(--color-primary, #0d9488);
+  border-color: var(--color-primary, #1879C8);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
@@ -121,9 +121,9 @@
 }
 
 .theme-swatch-item.selected {
-  border-color: var(--color-primary, #0d9488);
-  background: var(--color-primary-tint, rgba(13, 148, 136, 0.08));
-  box-shadow: 0 0 0 1.5px var(--color-primary, #0d9488);
+  border-color: var(--color-primary, #1879C8);
+  background: var(--color-primary-tint, rgba(24, 121, 200, 0.08));
+  box-shadow: 0 0 0 1.5px var(--color-primary, #1879C8);
 }
 
 .theme-circle {

@@ -318,7 +318,7 @@ export function CrmPrestations() {
       case 'EN_COURS_EXECUTION':
         return <span className="badge-status" style={{ background: 'rgba(124, 58, 237, 0.12)', color: '#7C3AED' }}>En cours</span>;
       case 'LIVREE':
-        return <span className="badge-status" style={{ background: 'rgba(13, 148, 136, 0.12)', color: '#0D9488' }}>Livrée</span>;
+        return <span className="badge-status" style={{ background: 'rgba(24, 121, 200, 0.12)', color: '#1879C8' }}>Livrée</span>;
       case 'PAYEE':
         return <span className="badge-status" style={{ background: 'rgba(16, 185, 129, 0.12)', color: '#10B981', fontWeight: 600 }}>Payée / Encaissée</span>;
       case 'CLOTUREE':
@@ -487,7 +487,7 @@ export function CrmPrestations() {
                   <td data-label="C. Responsable" style={{ textAlign: 'right', color: p.commission_resp_service ? '#7C3AED' : 'var(--color-text-muted)' }}>
                     {p.commission_resp_service ? `${p.commission_resp_service.toLocaleString('fr-FR')}` : '-'}
                   </td>
-                  <td data-label="C. Agent" style={{ textAlign: 'right', color: p.commission_agent ? '#0D9488' : 'var(--color-text-muted)' }}>
+                  <td data-label="C. Agent" style={{ textAlign: 'right', color: p.commission_agent ? '#1879C8' : 'var(--color-text-muted)' }}>
                     {p.commission_agent ? `${p.commission_agent.toLocaleString('fr-FR')}` : '-'}
                   </td>
                   <td data-label="Bénéfice Net" style={{ textAlign: 'right', color: '#10B981', fontWeight: 700 }}>

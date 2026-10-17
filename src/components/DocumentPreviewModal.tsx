@@ -110,7 +110,7 @@ function renderSimpleMarkdown(md: string): string {
 
   // Code blocks & inline code
   html = html.replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>');
-  html = html.replace(/`([^`]+)`/gim, '<code style="background:#f1f5f9;padding:2px 5px;border-radius:4px;color:#0d9488;">$1</code>');
+  html = html.replace(/`([^`]+)`/gim, '<code style="background:#f1f5f9;padding:2px 5px;border-radius:4px;color:#1879C8;">$1</code>');
 
   // Lists
   html = html.replace(/^\s*-\s+(.*$)/gim, '<li>$1</li>');
@@ -421,7 +421,7 @@ ${currentHtml}
         {/* Header */}
         <div className="doc-preview-header">
           <div className="doc-preview-title">
-            {isPdf && <FileText size={18} color="#0D9488" />}
+            {isPdf && <FileText size={18} color="#1879C8" />}
             {isImage && <ImageIcon size={18} color="#3B82F6" />}
             {(isDocx || isDoc) && <FileText size={18} color="#2563EB" />}
             {isExcel && <TableIcon size={18} color="#16A34A" />}
@@ -527,7 +527,7 @@ ${currentHtml}
                   {isMobile && (
                     <div className="doc-mobile-pdf-banner">
                       <div className="doc-mobile-pdf-banner-info">
-                        <FileText size={18} color="#0D9488" />
+                        <FileText size={18} color="#1879C8" />
                         <span>Visualisation PDF optimisée pour mobile</span>
                       </div>
                       <button
@@ -547,7 +547,7 @@ ${currentHtml}
                   >
                     <iframe src={blobUrl} title={doc.name} className="doc-preview-iframe">
                       <div className="doc-preview-fallback">
-                        <FileText size={52} color="#0D9488" />
+                        <FileText size={52} color="#1879C8" />
                         <p>Votre navigateur mobile ne peut pas afficher directement ce fichier PDF intégré.</p>
                         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
                           <button className="btn btn-primary" onClick={() => window.open(blobUrl, '_blank')}>

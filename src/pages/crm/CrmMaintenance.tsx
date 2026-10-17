@@ -302,7 +302,7 @@ export function CrmMaintenance() {
       case 'EN_COURS':
         return <span className="badge-status" style={{ background: 'rgba(124, 58, 237, 0.12)', color: '#7C3AED' }}>En cours</span>;
       case 'TERMINE_A_FACTURER':
-        return <span className="badge-status" style={{ background: 'rgba(13, 148, 136, 0.12)', color: '#0D9488' }}>Terminé (À Facturer)</span>;
+        return <span className="badge-status" style={{ background: 'rgba(24, 121, 200, 0.12)', color: '#1879C8' }}>Terminé (À Facturer)</span>;
       case 'CLOTURE':
         return <span className="badge-status bg-success">Clôturé</span>;
       case 'ANNULE':
@@ -310,7 +310,7 @@ export function CrmMaintenance() {
       case 'EN_ATTENTE':
         return <span className="badge-status" style={{ background: 'rgba(217, 119, 6, 0.12)', color: '#D97706' }}>En attente (legacy)</span>;
       case 'TERMINEE':
-        return <span className="badge-status" style={{ background: 'rgba(13, 148, 136, 0.12)', color: '#0D9488' }}>Terminée (legacy)</span>;
+        return <span className="badge-status" style={{ background: 'rgba(24, 121, 200, 0.12)', color: '#1879C8' }}>Terminée (legacy)</span>;
       case 'ANNULEE':
         return <span className="badge-status bg-error">Annulée (legacy)</span>;
       default:

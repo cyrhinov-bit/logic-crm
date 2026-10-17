@@ -102,7 +102,7 @@ export function DocumentEditorModal({ document: doc, onClose, onSaved }: Documen
         {/* Header */}
         <div className="doc-preview-header">
           <div className="doc-preview-title">
-            <FileText size={20} color="#0D9488" />
+            <FileText size={20} color="#1879C8" />
             <span>Propriétés du document</span>
           </div>
           <button className="btn-icon" onClick={onClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
@@ -208,7 +208,7 @@ export function DocumentEditorModal({ document: doc, onClose, onSaved }: Documen
           {/* Remplacement du fichier */}
           <div style={{ borderTop: '1px solid var(--color-border, #E2E8F0)', paddingTop: '16px' }}>
             <label className="form-label" style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <RefreshCw size={15} color="#0D9488" />
+              <RefreshCw size={15} color="#1879C8" />
               <span>Remplacer le fichier (Nouvelle version)</span>
             </label>
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted, #64748B)', margin: '0 0 10px' }}>
@@ -223,9 +223,9 @@ export function DocumentEditorModal({ document: doc, onClose, onSaved }: Documen
             />
 
             {replacementFile ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(13, 148, 136, 0.08)', border: '1px solid #0D9488', borderRadius: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'rgba(24, 121, 200, 0.08)', border: '1px solid #1879C8', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
-                  <Check size={18} color="#0D9488" />
+                  <Check size={18} color="#1879C8" />
                   <span style={{ fontSize: '0.85rem', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     Nouveau fichier sélectionné : <strong>{replacementFile.name}</strong> ({(replacementFile.size / 1024).toFixed(1)} KB)
                   </span>

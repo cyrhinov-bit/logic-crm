@@ -525,7 +525,7 @@ export function Devis() {
                           <Edit2 size={16} />
                         </button>
                       )}
-                      <button className="icon-button" style={{ color: '#0D9488' }} onClick={() => handlePreview(q)} title="Aperçu PDF direct">
+                      <button className="icon-button" style={{ color: '#1879C8' }} onClick={() => handlePreview(q)} title="Aperçu PDF direct">
                         <Eye size={16} />
                       </button>
                       <button className="icon-button" style={{ color: 'var(--color-primary)' }} onClick={async () => {
@@ -536,7 +536,7 @@ export function Devis() {
                       }} title="Télécharger PDF">
                         <Download size={16} />
                       </button>
-                      <button className="icon-button" style={{ color: '#0D9488' }} onClick={() => handleSendByMail(q)} title="Envoyer par e-mail (ouvre votre messagerie, PDF copié)">
+                      <button className="icon-button" style={{ color: '#1879C8' }} onClick={() => handleSendByMail(q)} title="Envoyer par e-mail (ouvre votre messagerie, PDF copié)">
                         <Mail size={16} />
                       </button>
                       <button className="icon-button" style={{ color: 'var(--color-error)' }} onClick={() => handleDelete(q)} title="Supprimer le devis">

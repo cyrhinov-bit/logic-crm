@@ -106,7 +106,7 @@ export function PwaInstallPrompt({ variant = 'button', className = '' }: PwaInst
     if (variant === 'nav-item') {
       return (
         <div className="native-bottom-nav-item active">
-          <CheckCircle2 size={20} color="var(--catalog-primary, #0D9488)" />
+          <CheckCircle2 size={20} color="var(--catalog-primary, #1879C8)" />
           <span>Installé</span>
         </div>
       );
@@ -149,7 +149,7 @@ export function PwaInstallPrompt({ variant = 'button', className = '' }: PwaInst
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            backgroundColor: 'var(--catalog-primary, #0D9488)',
+            backgroundColor: 'var(--catalog-primary, #1879C8)',
             color: 'white',
             border: 'none',
             padding: '7px 14px',
@@ -157,7 +157,7 @@ export function PwaInstallPrompt({ variant = 'button', className = '' }: PwaInst
             fontWeight: 600,
             fontSize: '12px',
             cursor: 'pointer',
-            boxShadow: '0 2px 6px rgba(13, 148, 136, 0.25)',
+            boxShadow: '0 2px 6px rgba(24, 121, 200, 0.25)',
             whiteSpace: 'nowrap'
           }}
         >
@@ -199,7 +199,7 @@ export function PwaInstallPrompt({ variant = 'button', className = '' }: PwaInst
               <X size={16} color="#475569" />
             </button>
 
-            <div style={{ width: '56px', height: '56px', backgroundColor: 'var(--catalog-primary-light, #CCFBF1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px auto 16px auto', color: 'var(--catalog-primary, #0D9488)' }}>
+            <div style={{ width: '56px', height: '56px', backgroundColor: 'var(--catalog-primary-light, #D6E9F8)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px auto 16px auto', color: 'var(--catalog-primary, #1879C8)' }}>
               <Smartphone size={32} />
             </div>
 
@@ -243,7 +243,7 @@ export function PwaInstallPrompt({ variant = 'button', className = '' }: PwaInst
               onClick={() => setShowIosGuide(false)}
               style={{
                 width: '100%',
-                backgroundColor: 'var(--catalog-primary, #0D9488)',
+                backgroundColor: 'var(--catalog-primary, #1879C8)',
                 color: 'white',
                 border: 'none',
                 padding: '12px',
@@ -292,7 +292,7 @@ export function PwaInstallPrompt({ variant = 'button', className = '' }: PwaInst
               <X size={16} color="#475569" />
             </button>
 
-            <div style={{ width: '56px', height: '56px', backgroundColor: 'var(--catalog-primary-light, #CCFBF1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px auto 16px auto', color: 'var(--catalog-primary, #0D9488)' }}>
+            <div style={{ width: '56px', height: '56px', backgroundColor: 'var(--catalog-primary-light, #D6E9F8)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px auto 16px auto', color: 'var(--catalog-primary, #1879C8)' }}>
               <Laptop size={32} />
             </div>
 
@@ -319,7 +319,7 @@ export function PwaInstallPrompt({ variant = 'button', className = '' }: PwaInst
               onClick={() => setShowDesktopGuide(false)}
               style={{
                 width: '100%',
-                backgroundColor: 'var(--catalog-primary, #0D9488)',
+                backgroundColor: 'var(--catalog-primary, #1879C8)',
                 color: 'white',
                 border: 'none',
                 padding: '12px',

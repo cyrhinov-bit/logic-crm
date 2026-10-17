@@ -85,7 +85,7 @@ export function ensureTasksArray(raw: any): V2Task[] {
  */
 export const DAY_COLORS: Record<string, { r: number; g: number; b: number }> = {
   lundi: { r: 29, g: 78, b: 216 },      // Bleu Royal (#1D4ED8)
-  mardi: { r: 13, g: 148, b: 136 },    // Sarcelle / Teal (#0D9488)
+  mardi: { r: 13, g: 148, b: 136 },    // Sarcelle / Teal (#1879C8)
   mercredi: { r: 126, g: 34, b: 206 }, // Pourpre / Violet (#7E22CE)
   jeudi: { r: 194, g: 65, b: 12 },     // Ambre / Bronze (#C2410C)
   vendredi: { r: 3, g: 105, b: 161 },  // Cyan Océan (#0369A1)
@@ -198,7 +198,7 @@ export function buildV2WeeklyReportPdf(
   if (!logoDrawn) {
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(13, 148, 136); // Teal #0D9488
+    doc.setTextColor(24, 121, 200); // Teal #1879C8
     doc.text(cleanPdfText(settings?.companyName || 'HINOV GROUP'), 18, 20);
     doc.setFontSize(8.5);
     doc.setFont('helvetica', 'normal');
@@ -238,7 +238,7 @@ export function buildV2WeeklyReportPdf(
     const initials = authorName.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || '?';
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(13, 148, 136);
+    doc.setTextColor(24, 121, 200);
     doc.text(cleanPdfText(initials), cx, cy + 3, { align: 'center' });
   }
 
@@ -294,7 +294,7 @@ export function buildV2WeeklyReportPdf(
     doc.setTextColor(5, 150, 105); // Vert
     doc.text("VALIDE PAR LA DIRECTION", statusBadgeX, y + 12.5, { align: 'right' });
   } else if (report.status === 'Soumis') {
-    doc.setTextColor(13, 148, 136); // Teal
+    doc.setTextColor(24, 121, 200); // Teal
     doc.text("SOUMIS A LA DIRECTION", statusBadgeX, y + 12.5, { align: 'right' });
   } else {
     doc.setTextColor(217, 119, 6); // Ambre
@@ -306,7 +306,7 @@ export function buildV2WeeklyReportPdf(
   // ================= HELPERS DE SECTIONS =================
   const drawSectionHeading = (num: number, title: string) => {
     checkNewPage(22);
-    doc.setFillColor(13, 148, 136); // Teal
+    doc.setFillColor(24, 121, 200); // Teal
     doc.rect(18, y - 5, 3.5, 11, 'F');
 
     doc.setFontSize(12);
@@ -344,15 +344,15 @@ export function buildV2WeeklyReportPdf(
       checkNewPage(16);
 
       // Puce vectorielle colorée
-      doc.setFillColor(13, 148, 136);
+      doc.setFillColor(24, 121, 200);
       doc.circle(22, y - 1, 1.3, 'F');
 
       if (item.title) {
-        // 1. TITRE / MODULE DU POINT : En couleur Teal (#0D9488), Gras et Souligné
+        // 1. TITRE / MODULE DU POINT : En couleur Teal (#1879C8), Gras et Souligné
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10.5);
-        doc.setTextColor(13, 148, 136); // Teal
-        doc.setDrawColor(13, 148, 136);
+        doc.setTextColor(24, 121, 200); // Teal
+        doc.setDrawColor(24, 121, 200);
         doc.setLineWidth(0.4);
 
         const cleanTitle = cleanPdfText(item.title.startsWith('[') ? item.title : `[${item.title}]`);

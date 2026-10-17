@@ -213,7 +213,7 @@ export function TeamReportsView() {
           <div className="commission-modal-container" onClick={e => e.stopPropagation()} style={{ maxWidth: '800px' }}>
             <div className="commission-modal-header">
               <div className="commission-modal-title">
-                <Calendar size={20} color="#0D9488" />
+                <Calendar size={20} color="#1879C8" />
                 <span>Rapport Hebdomadaire — {getAuthor(selectedReport.authorId)?.name}</span>
               </div>
               <button className="btn-icon" onClick={() => setSelectedReport(null)} style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>

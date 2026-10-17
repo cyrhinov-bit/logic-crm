@@ -160,7 +160,7 @@ export function ObjectifModal({
       <div className="obj-modal-container">
         <div className="obj-modal-header">
           <div className="flex items-center gap-2">
-            <Target size={20} color="#0D9488" />
+            <Target size={20} color="#1879C8" />
             <h3>{objectifToEdit ? "Modifier l'Objectif Commercial" : 'Définir un Objectif Commercial'}</h3>
           </div>
           <button 

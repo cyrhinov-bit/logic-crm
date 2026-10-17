@@ -843,7 +843,7 @@ function SupFacturesInner() {
                             <button className="icon-button" style={{ color: '#059669' }} title="Encaisser / payer" onClick={() => openPayments(inv)}><Wallet size={16} /></button>
                             <button className="icon-button" style={{ color: 'var(--color-primary)' }} title="Modifier" onClick={() => openEditInvoice(inv)}><Edit2 size={16} /></button>
                             {inv.attachmentData && (
-                              <button className="icon-button" style={{ color: '#0D9488' }} title="Télécharger la pièce" onClick={() => downloadAttachment(inv)}><Download size={16} /></button>
+                              <button className="icon-button" style={{ color: '#1879C8' }} title="Télécharger la pièce" onClick={() => downloadAttachment(inv)}><Download size={16} /></button>
                             )}
                             <button className="icon-button" style={{ color: 'var(--color-error)' }} title="Supprimer" onClick={() => handleDeleteInvoice(inv)}><Trash2 size={16} /></button>
                           </div>

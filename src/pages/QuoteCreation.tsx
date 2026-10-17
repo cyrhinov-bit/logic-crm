@@ -852,7 +852,7 @@ export function QuoteCreation() {
           <button className="btn btn-primary" onClick={() => handleSave(false)}>
             <Save size={16} style={{ marginRight: '8px' }} /> Enregistrer le devis
           </button>
-          <button className="btn btn-primary" onClick={() => handleSave(true)} style={{ marginLeft: '8px', background: '#0D9488', borderColor: '#0D9488' }}>
+          <button className="btn btn-primary" onClick={() => handleSave(true)} style={{ marginLeft: '8px', background: '#1879C8', borderColor: '#1879C8' }}>
             <FileText size={16} style={{ marginRight: '8px' }} /> Enregistrer & Prévisualiser PDF
           </button>
           <button

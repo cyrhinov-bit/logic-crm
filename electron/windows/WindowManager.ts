@@ -12,11 +12,11 @@ export class WindowManager {
       path.join(app.getAppPath(), 'build/icons/icon.ico'),
       path.join(app.getAppPath(), 'electron/assets/icon.png'),
       path.join(app.getAppPath(), 'public/pwa-512x512.png'),
-      path.join(app.getAppPath(), 'public/logoh.png'),
+      path.join(app.getAppPath(), 'public/logic.png'),
       path.join(app.getAppPath(), 'dist/pwa-512x512.png'),
       path.join(process.cwd(), 'build/icons/icon.ico'),
       path.join(process.cwd(), 'public/pwa-512x512.png'),
-      path.join(process.cwd(), 'public/logoh.png')
+      path.join(process.cwd(), 'public/logic.png')
     ];
     for (const c of candidates) {
       if (fs.existsSync(c)) return c;

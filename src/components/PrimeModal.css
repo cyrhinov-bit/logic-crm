@@ -89,8 +89,8 @@
 .prime-form-group input:focus,
 .prime-form-group select:focus,
 .prime-form-group textarea:focus {
-  border-color: #0D9488;
-  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.15);
+  border-color: #1879C8;
+  box-shadow: 0 0 0 2px rgba(24, 121, 200, 0.15);
 }
 
 .prime-modal-footer {

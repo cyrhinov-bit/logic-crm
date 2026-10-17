@@ -1082,12 +1082,12 @@ export function Factures() {
         </div>
 
         {/* 6. Total Payé */}
-        <div className="card" style={{ padding: '14px', borderLeft: '4px solid #0D9488' }}>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#0D9488', textTransform: 'uppercase', marginBottom: '2px' }}>Total Payé</div>
-          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0D9488' }}>
+        <div className="card" style={{ padding: '14px', borderLeft: '4px solid #1879C8' }}>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#1879C8', textTransform: 'uppercase', marginBottom: '2px' }}>Total Payé</div>
+          <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1879C8' }}>
             {monthlyTotals.totalPaid.toLocaleString('fr-FR')} <span style={{ fontSize: '0.75rem', fontWeight: 400 }}>F</span>
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#0D9488', marginTop: '2px' }}>
+          <div style={{ fontSize: '0.75rem', color: '#1879C8', marginTop: '2px' }}>
             Recouvré : {monthlyTotals.recoveryRate}%
           </div>
         </div>
@@ -1121,9 +1121,9 @@ export function Factures() {
                 <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Facturé année</div>
                 <div style={{ fontSize: '1.1rem', fontWeight: 800 }}>{annualTotals.totalToPay.toLocaleString('fr-FR')} F</div>
               </div>
-              <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(13, 148, 136, 0.08)' }}>
-                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#0D9488', textTransform: 'uppercase' }}>Encaissé ({annualTotals.recoveryRate}%)</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0D9488' }}>{annualTotals.totalPaid.toLocaleString('fr-FR')} F</div>
+              <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(24, 121, 200, 0.08)' }}>
+                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#1879C8', textTransform: 'uppercase' }}>Encaissé ({annualTotals.recoveryRate}%)</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1879C8' }}>{annualTotals.totalPaid.toLocaleString('fr-FR')} F</div>
               </div>
               <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(225, 29, 72, 0.06)' }}>
                 <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#E11D48', textTransform: 'uppercase' }}>Reste à recouvrer</div>
@@ -1146,7 +1146,7 @@ export function Factures() {
                 <div style={{ fontSize: '1.1rem', fontWeight: 800 }}>{Math.round(annualTotals.avg).toLocaleString('fr-FR')} F</div>
               </div>
             </div>
-            <MonthlyBars data={annualTotals.series} legend1="Facturé" legend2="Encaissé" color1="#0284C7" color2="#0D9488" />
+            <MonthlyBars data={annualTotals.series} legend1="Facturé" legend2="Encaissé" color1="#7C3AED" color2="#1879C8" />
           </div>
         )}
       </div>
@@ -1226,7 +1226,7 @@ export function Factures() {
         <div className="table-container" style={{ margin: 0, border: 'none', overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%', scrollbarWidth: 'thin' }}>
           <table style={{ width: '100%', minWidth: '1450px', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
-              <tr style={{ background: 'linear-gradient(180deg, #1F4363 0%, #152E46 100%)', color: '#FFFFFF', borderBottom: '2px solid #152E46' }}>
+              <tr style={{ background: 'linear-gradient(180deg, #125B96 0%, #152E46 100%)', color: '#FFFFFF', borderBottom: '2px solid #152E46' }}>
                 <th style={{ minWidth: '150px', padding: '12px 10px', color: '#F8FAFC', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>CLIENT</th>
                 <th style={{ minWidth: '110px', padding: '12px 10px', color: '#F8FAFC', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>COMMERCIAL</th>
                 <th style={{ minWidth: '95px', padding: '12px 8px', color: '#E0F2FE', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>DATE LIVR.</th>
@@ -1238,7 +1238,7 @@ export function Factures() {
                 <th style={{ minWidth: '115px', padding: '12px 10px', textAlign: 'right', color: '#6EE7B7', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>MARGE BRUTE</th>
                 <th style={{ minWidth: '100px', padding: '12px 10px', textAlign: 'right', color: '#DDD6FE', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>PRIME 10%</th>
                 <th style={{ minWidth: '120px', padding: '12px 10px', textAlign: 'right', color: '#93C5FD', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>MARGE HINOV</th>
-                <th style={{ minWidth: '110px', padding: '12px 10px', textAlign: 'right', color: '#5EEAD4', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>TOTAL PAYÉ</th>
+                <th style={{ minWidth: '110px', padding: '12px 10px', textAlign: 'right', color: '#8FC4EA', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>TOTAL PAYÉ</th>
                 <th style={{ minWidth: '120px', padding: '12px 10px', textAlign: 'right', color: '#FDA4AF', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase', borderRight: '1px solid rgba(255,255,255,0.1)' }}>RESTE À PAYER</th>
                 <th style={{ minWidth: '100px', padding: '12px 8px', textAlign: 'center', color: '#F8FAFC', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.5px', textTransform: 'uppercase' }}>ACTIONS</th>
               </tr>
@@ -1339,7 +1339,7 @@ export function Factures() {
                       </td>
 
                       {/* 12. Total Payé */}
-                      <td style={{ padding: '10px', textAlign: 'right', fontWeight: 700, color: '#0D9488', fontFamily: 'monospace', borderRight: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '10px', textAlign: 'right', fontWeight: 700, color: '#1879C8', fontFamily: 'monospace', borderRight: '1px solid #F1F5F9' }}>
                         {paid.toLocaleString('fr-FR')} F
                       </td>
 
@@ -1369,7 +1369,7 @@ export function Factures() {
                             <button
                               onClick={() => handleOpenPaymentModal(inv)}
                               className="btn btn-secondary"
-                              style={{ padding: '5px 7px', color: '#0D9488', borderRadius: '6px' }}
+                              style={{ padding: '5px 7px', color: '#1879C8', borderRadius: '6px' }}
                               title="Encaisser un règlement"
                             >
                               <CreditCard size={13} />
@@ -1411,7 +1411,7 @@ export function Factures() {
 
             {/* ─── LIGNE DE TOTAL DU MOIS (FOOTER PERMANENT CONFORME EXCEL) ─── */}
             <tfoot>
-              <tr style={{ background: 'linear-gradient(180deg, #1F4363 0%, #152E46 100%)', color: '#FFFFFF', fontWeight: 800, fontSize: '0.85rem', borderTop: '2px solid #152E46' }}>
+              <tr style={{ background: 'linear-gradient(180deg, #125B96 0%, #152E46 100%)', color: '#FFFFFF', fontWeight: 800, fontSize: '0.85rem', borderTop: '2px solid #152E46' }}>
                 <td colSpan={6} style={{ padding: '14px 12px', color: '#93C5FD', textTransform: 'uppercase', letterSpacing: '0.5px', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
                   TOTAL DU MOIS ({selectedMonthName.toUpperCase()} {selectedYear})
                 </td>
@@ -1430,7 +1430,7 @@ export function Factures() {
                 <td style={{ textAlign: 'right', padding: '14px 10px', color: '#93C5FD', background: 'rgba(59, 130, 246, 0.18)', fontFamily: 'monospace', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
                   {monthlyTotals.totalHinovMargin.toLocaleString('fr-FR')} F
                 </td>
-                <td style={{ textAlign: 'right', padding: '14px 10px', color: '#5EEAD4', fontFamily: 'monospace', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+                <td style={{ textAlign: 'right', padding: '14px 10px', color: '#8FC4EA', fontFamily: 'monospace', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
                   {monthlyTotals.totalPaid.toLocaleString('fr-FR')} F
                 </td>
                 <td style={{ textAlign: 'right', padding: '14px 10px', color: '#FDA4AF', fontFamily: 'monospace', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
@@ -1873,7 +1873,7 @@ export function Factures() {
 
                   {/* 4. Total Payé */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', color: '#0D9488' }}>
+                    <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px', color: '#1879C8' }}>
                       Total Déjà Payé (FCFA)
                     </label>
                     <input
@@ -1883,7 +1883,7 @@ export function Factures() {
                       onChange={handleFormattedNumberChange(setFormAmountPaid)}
                       placeholder="Ex: 300 000"
                       className="table-input"
-                      style={{ width: '100%', padding: '8px 10px', fontWeight: 700, color: '#0D9488', fontSize: '1.05rem' }}
+                      style={{ width: '100%', padding: '8px 10px', fontWeight: 700, color: '#1879C8', fontSize: '1.05rem' }}
                     />
                   </div>
                 </div>
@@ -1944,7 +1944,7 @@ export function Factures() {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '1px solid var(--color-border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CreditCard size={18} color="#0D9488" />
+                <CreditCard size={18} color="#1879C8" />
                 <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700 }}>
                   Encaisser un règlement
                 </h3>
@@ -1971,7 +1971,7 @@ export function Factures() {
 
               {/* ── Historique daté des encaissements de cette facture ── */}
               <div>
-                <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px', color: '#0D9488' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px', color: '#1879C8' }}>
                   Encaissements enregistrés ({invoicePayments.filter(p => p.invoiceId === selectedInvoice.id).length})
                 </div>
                 {invoicePayments
@@ -2030,7 +2030,7 @@ export function Factures() {
                   onChange={handleFormattedNumberChange(setPayAmount)}
                   placeholder="Ex: 300 000"
                   className="table-input"
-                  style={{ width: '100%', padding: '8px 10px', fontWeight: 700, fontSize: '1.05rem', color: '#0D9488' }}
+                  style={{ width: '100%', padding: '8px 10px', fontWeight: 700, fontSize: '1.05rem', color: '#1879C8' }}
                 />
               </div>
 
@@ -2090,7 +2090,7 @@ export function Factures() {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  style={{ background: '#0D9488', borderColor: '#0D9488', fontWeight: 700 }}
+                  style={{ background: '#1879C8', borderColor: '#1879C8', fontWeight: 700 }}
                 >
                   Valider le règlement
                 </button>

@@ -22,7 +22,7 @@
   "win": {
     "target": ["nsis", "portable", "zip"],
     "icon": "build/icons/icon.ico",
-    "signAndEditExecutable": false,
+    "signAndEditExecutable": true,
     "verifyUpdateCodeSignature": false
   },
   "nsis": {

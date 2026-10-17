@@ -1,4 +1,4 @@
-export const DEFAULT_THEME_COLOR = '#0D9488'; // Sarcelle Hinov
+export const DEFAULT_THEME_COLOR = '#1879C8'; // Bleu Logic
 
 export interface ThemePreset {
   name: string;
@@ -9,7 +9,7 @@ export interface ThemePreset {
 
 export const THEME_PRESETS: ThemePreset[] = [
   // 1. Bleus & Cyans (Confiance, Sécurité, Digital)
-  { name: 'Sarcelle Hinov (Défaut)', hex: '#0D9488', mood: 'Moderne & Professionnel', category: 'Bleus & Cyans' },
+  { name: 'Bleu Logic (Défaut)', hex: '#1879C8', mood: 'Moderne & Professionnel', category: 'Bleus & Cyans' },
   { name: 'Bleu Océan', hex: '#2563EB', mood: 'Corporate & Technologique', category: 'Bleus & Cyans' },
   { name: 'Bleu Nuit Classique', hex: '#3C7DAF', mood: 'Sobre & Institutionnel', category: 'Bleus & Cyans' },
   { name: 'Bleu Cobalt', hex: '#1D4ED8', mood: 'Autorité & Clarté', category: 'Bleus & Cyans' },

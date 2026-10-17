@@ -288,7 +288,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; s
             justifyContent: 'center', 
             gap: '8px', 
             padding: '10px',
-            backgroundColor: 'var(--color-primary, #0D9488)',
+            backgroundColor: 'var(--color-primary, #1879C8)',
             border: 'none',
             borderRadius: '8px',
             color: 'white',

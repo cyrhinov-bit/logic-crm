@@ -237,11 +237,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {/* Avertissement Immuabilité */}
             <div style={{
-              background: '#F0FDFA', border: '1px solid #CCFBF1', borderRadius: '8px',
+              background: '#EDF4FB', border: '1px solid #D6E9F8', borderRadius: '8px',
               padding: '0.65rem 0.85rem', display: 'flex', gap: '8px', alignItems: 'center'
             }}>
-              <ShieldCheck size={18} color="#0D9488" style={{ flexShrink: 0 }} />
-              <p style={{ fontSize: '0.75rem', color: '#0F766E', margin: 0, lineHeight: 1.4 }}>
+              <ShieldCheck size={18} color="#1879C8" style={{ flexShrink: 0 }} />
+              <p style={{ fontSize: '0.75rem', color: '#125B96', margin: 0, lineHeight: 1.4 }}>
                 <strong>Registre comptable immuable :</strong> Cet enregistrement sera définitivement verrouillé pour la traçabilité financière et auditable.
               </p>
             </div>

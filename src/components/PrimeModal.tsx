@@ -98,7 +98,7 @@ export function PrimeModal({
       <div className="prime-modal-container">
         <div className="prime-modal-header">
           <div className="flex items-center gap-2">
-            <Award size={20} color="#0D9488" />
+            <Award size={20} color="#1879C8" />
             <h3>Proposer / Attribuer une Prime</h3>
           </div>
           <button 
@@ -123,11 +123,11 @@ export function PrimeModal({
             )}
 
             <div style={{
-              background: '#F0FDFA', border: '1px solid #CCFBF1', borderRadius: '8px',
+              background: '#EDF4FB', border: '1px solid #D6E9F8', borderRadius: '8px',
               padding: '0.75rem 1rem', display: 'flex', gap: '8px', alignItems: 'center'
             }}>
-              <ShieldAlert size={18} color="#0D9488" style={{ flexShrink: 0 }} />
-              <p style={{ fontSize: '0.75rem', color: '#0F766E', margin: 0, lineHeight: 1.4 }}>
+              <ShieldAlert size={18} color="#1879C8" style={{ flexShrink: 0 }} />
+              <p style={{ fontSize: '0.75rem', color: '#125B96', margin: 0, lineHeight: 1.4 }}>
                 <strong>Circuit de validation & Traçabilité :</strong> La prime sera créée avec le statut <code>PROPOSÉE</code> et soumise à l'approbation de la Direction. Toutes les actions seront enregistrées dans le journal d'audit immuable.
               </p>
             </div>

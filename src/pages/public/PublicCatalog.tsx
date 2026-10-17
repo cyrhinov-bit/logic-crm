@@ -242,7 +242,7 @@ export function PublicCatalog() {
       <header className="native-appbar">
         <div className="native-appbar-inner">
           <div className="native-appbar-left">
-            <img src="logoh.png" alt="Logo" className="native-appbar-logo" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
+            <img src="logic.png" alt="Logo" className="native-appbar-logo" onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} />
             <div className="native-appbar-titles">
               <h1 className="native-appbar-brand">{companyName}</h1>
               <div className="native-appbar-sub">
@@ -381,7 +381,7 @@ export function PublicCatalog() {
                 alignItems: 'center',
                 gap: '8px',
                 padding: '10px 18px',
-                backgroundColor: 'var(--catalog-primary, #0D9488)',
+                backgroundColor: 'var(--catalog-primary, #1879C8)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '12px',
@@ -513,7 +513,7 @@ export function PublicCatalog() {
                 )}
               </div>
 
-              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--catalog-primary, #0D9488)', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--catalog-primary, #1879C8)', textTransform: 'uppercase' }}>
                 {activeCategories.find(c => c.id === selectedProduct.categoryId)?.name || selectedProduct.family || 'Article'}
               </span>
               <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', margin: '4px 0 8px 0', lineHeight: '1.3' }}>
@@ -539,7 +539,7 @@ export function PublicCatalog() {
             <div className="native-sheet-footer">
               <div>
                 <span style={{ fontSize: '11px', color: '#94A3B8', display: 'block' }}>Prix unitaire</span>
-                <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--catalog-primary, #0D9488)' }}>
+                <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--catalog-primary, #1879C8)' }}>
                   {formatFCFA(selectedProduct.sellingPrice)}
                 </div>
               </div>
