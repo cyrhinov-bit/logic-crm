@@ -8,7 +8,7 @@ export function buildAppConfig(target: PlatformTarget) {
       : 'https://api.hinov.local';
 
   return {
-    appName: 'Logic CRM',
+    appName: 'IC Logic CRM',
     target,
     apiBaseUrl,
   };

@@ -27,9 +27,9 @@ export default defineConfig({
       },
       includeAssets: ['logic.png', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
-        name: 'Logic CRM',
-        short_name: 'Logic CRM',
-        description: 'Logic CRM — Gestion commerciale, CRM et catalogue officiel',
+        name: 'IC Logic CRM',
+        short_name: 'IC Logic CRM',
+        description: 'IC Logic CRM — Gestion commerciale et CRM',
         theme_color: '#1879C8',
         background_color: '#ffffff',
         display: 'standalone',

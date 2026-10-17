@@ -11,8 +11,8 @@ function write(filePath, content) {
 write('electron-builder.json',
   "{\n" +
   "  \"appId\": \"com.logic.crm\",\n" +
-  "  \"productName\": \"Logic CRM\",\n" +
-  "  \"copyright\": \"Copyright © 2026 Logic CRM\",\n" +
+  "  \"productName\": \"IC Logic CRM\",\n" +
+  "  \"copyright\": \"Copyright © 2026 IC Logic CRM\",\n" +
   "  \"directories\": {\n" +
   "    \"output\": \"release/\",\n" +
   "    \"buildResources\": \"build\"\n" +
@@ -30,8 +30,8 @@ write('electron-builder.json',
   "    \"allowToChangeInstallationDirectory\": true,\n" +
   "    \"createDesktopShortcut\": true,\n" +
   "    \"createStartMenuShortcut\": true,\n" +
-  "    \"shortcutName\": \"Logic CRM\",\n" +
-  "    \"uninstallDisplayName\": \"Logic CRM\",\n" +
+  "    \"shortcutName\": \"IC Logic CRM\",\n" +
+  "    \"uninstallDisplayName\": \"IC Logic CRM\",\n" +
   "    \"deleteAppDataOnUninstall\": false\n" +
   "  },\n" +
   "  \"mac\": {\n" +

@@ -2,8 +2,8 @@
   "name": "logic-crm",
   "private": true,
   "version": "1.0.0",
-  "description": "Logic CRM Desktop Application",
-  "author": "Logic CRM Team",
+  "description": "IC Logic CRM Desktop Application",
+  "author": "IC Logic CRM Team",
   "type": "module",
   "main": "dist-electron/main/main.js",
   "scripts": {

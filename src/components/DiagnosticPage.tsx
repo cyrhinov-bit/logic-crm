@@ -49,7 +49,7 @@ export default function DiagnosticPage() {
   const testNotification = async () => {
     try {
       setErrorMsg(null);
-      await platform.notifications.showNotification('Logic CRM', 'Notification de test depuis la page de diagnostic !');
+      await platform.notifications.showNotification('IC Logic CRM', 'Notification de test depuis la page de diagnostic !');
       addLog('Notification native envoyée.');
     } catch (e) { catchError(e); }
   };
@@ -57,7 +57,7 @@ export default function DiagnosticPage() {
   const testClipboard = async () => {
     try {
       setErrorMsg(null);
-      await platform.clipboard.writeText('Texte copié depuis Logic CRM !');
+      await platform.clipboard.writeText('Texte copié depuis IC Logic CRM !');
       const text = await platform.clipboard.readText();
       setClipboardText(text);
       addLog('Presse-papiers modifié et lu.');

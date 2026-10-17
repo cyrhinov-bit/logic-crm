@@ -52,7 +52,7 @@ export function Login() {
     return (
       <div className="login-container">
         <div className="login-header">
-          <h2 style={{ color: 'var(--color-primary)' }}>LOGIC CRM</h2>
+          <h2 style={{ color: 'var(--color-primary)' }}>IC LOGIC CRM</h2>
         </div>
       </div>
     );
@@ -63,7 +63,7 @@ export function Login() {
       <div className="login-illustration">
         <img src={illustration} alt="Gestion des devis" />
         <div className="illustration-overlay">
-          <h2>Logic CRM</h2>
+          <h2>IC Logic CRM</h2>
           <p>La solution complète de gestion : CRM, Devis, Facturation et Rapports.</p>
         </div>
       </div>
@@ -72,9 +72,9 @@ export function Login() {
         <div className="login-card">
           <div className="login-header">
             <div className="login-logo">
-              <img src={logo} alt="Logic CRM" />
+              <img src={logo} alt="IC Logic CRM" />
             </div>
-            <h2 className="animated-title">Logic CRM</h2>
+            <h2 className="animated-title">IC Logic CRM</h2>
             <p>Connectez-vous à votre espace</p>
           </div>
 

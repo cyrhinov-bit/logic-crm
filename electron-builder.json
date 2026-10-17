@@ -1,7 +1,7 @@
 {
   "appId": "com.logic.crm",
-  "productName": "Logic CRM",
-  "copyright": "Copyright © 2026 Logic CRM",
+  "productName": "IC Logic CRM",
+  "copyright": "Copyright © 2026 IC Logic CRM",
   "directories": {
     "output": "release/",
     "buildResources": "build"
@@ -30,8 +30,8 @@
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
-    "shortcutName": "Logic CRM",
-    "uninstallDisplayName": "Logic CRM",
+    "shortcutName": "IC Logic CRM",
+    "uninstallDisplayName": "IC Logic CRM",
     "deleteAppDataOnUninstall": false
   },
   "mac": {

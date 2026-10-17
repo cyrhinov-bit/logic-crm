@@ -63,7 +63,7 @@ export class WindowManager {
     const iconPath = this.getAppIconPath();
 
     this.mainWindow = new BrowserWindow({
-      title: 'Logic CRM',
+      title: 'IC Logic CRM',
       x: state.x,
       y: state.y,
       width: state.width,

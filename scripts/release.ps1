@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Prepare et publie une nouvelle version de l'application Electron "Logic CRM".
+    Prepare et publie une nouvelle version de l'application Electron "IC Logic CRM".
 
 .DESCRIPTION
     Enchaine les etapes de release en une seule commande :
@@ -110,7 +110,7 @@ if (-not $who -or -not $who.login) { Die 'GH_TOKEN invalide, expire ou sans droi
 Ok "Token valide (compte : $($who.login))"
 
 # L'application ne doit pas etre ouverte (sinon verrou de fichiers -> EPERM a l'empaquetage).
-$running = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -like 'Logic CRM*' })
+$running = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -like 'IC Logic CRM*' })
 if ($running.Count -gt 0) {
     Warn "L'application semble ouverte ($($running[0].ProcessName)). Ferme-la pour eviter une erreur EPERM."
     Confirm-Or-Abort 'Continuer quand meme ?'
