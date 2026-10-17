@@ -28,7 +28,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; s
   const location = useLocation();
   const navigate = useNavigate();
   const { currentUser: authUser, logout } = useAuth();
-  const { posWorkspace, services, users, notifications } = useAppContext();
+  const { services, users, notifications } = useAppContext();
   const currentUser = users.find(u => u.id === authUser?.id) || authUser;
   const [clickedPath, setClickedPath] = useState<string | null>(null);
   const [syncErrorsCount, setSyncErrorsCount] = useState<number>(0);

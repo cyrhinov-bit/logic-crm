@@ -122,31 +122,4 @@ export function setUserThemeColor(userId: string, hexColor: string): void {
   applyTheme(validHex);
 }
 
-/**
- * Récupère la couleur du thème définie par le Directeur pour le catalogue public
- */
-export function getDirectorThemeColor(posSettings?: any, users?: any[]): string {
-  // 1. Depuis les paramètres POS synchronisés en base de données
-  if (posSettings?.themeColor && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(posSettings.themeColor)) {
-    return posSettings.themeColor;
-  }
 
-  // 2. Depuis le profil du Directeur s'il a une préférence enregistrée
-  if (users && users.length > 0) {
-    const director = users.find(u => u.role === 'Directeur' || u.role === 'SuperAdmin');
-    if (director?.id) {
-      const dirColor = localStorage.getItem(`user_theme_primary_${director.id}`);
-      if (dirColor && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(dirColor)) {
-        return dirColor;
-      }
-    }
-  }
-
-  // 3. Depuis le localStorage global
-  const globalColor = localStorage.getItem('app_theme_primary');
-  if (globalColor && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(globalColor)) {
-    return globalColor;
-  }
-
-  return DEFAULT_THEME_COLOR;
-}

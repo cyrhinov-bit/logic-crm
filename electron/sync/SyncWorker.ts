@@ -11,7 +11,7 @@ import { supabaseRest } from '../services/sync/supabaseRestClient.js';
  * renderer : seules les opérations explicitement enfilées ici sont traitées
  * (aucun risque de double écriture avec la synchro du renderer).
  */
-const SUPPORTED_KINDS = ['PING', 'POS_SALE', 'TABLE_UPSERT', 'TABLE_DELETE'] as const;
+const SUPPORTED_KINDS = ['PING', 'TABLE_UPSERT', 'TABLE_DELETE'] as const;
 
 function assertOpShape(op: MainSyncOp): void {
   if (!op || typeof op !== 'object') throw new Error('Opération invalide.');
@@ -28,21 +28,6 @@ async function executeOp(op: MainSyncOp): Promise<string> {
       // Preuve de connectivité sans écriture.
       const res = await supabaseRest.ping();
       return `pong (${res.latencyMs} ms)`;
-    }
-    case 'POS_SALE': {
-      // Vente POS via la RPC durcie (atomique + idempotente côté serveur).
-      const { transaction, lines, payments } = p;
-      if (!transaction?.id || !transaction?.transaction_number || !Array.isArray(lines) || lines.length === 0) {
-        throw new Error('POS_SALE incomplète : transaction + lignes requises.');
-      }
-      await supabaseRest.rpc('process_pos_transaction', {
-        p_transaction: transaction,
-        p_lines: lines,
-        p_payments: Array.isArray(payments) ? payments : [],
-        p_stock_entry: null,
-        p_stock_entry_lines: null,
-      });
-      return `vente ${transaction.transaction_number} synchronisée`;
     }
     case 'TABLE_UPSERT': {
       const { table, rows, onConflict } = p;

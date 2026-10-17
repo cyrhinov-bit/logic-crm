@@ -65,23 +65,6 @@ export const electronBridge: PlatformBridge = {
     getSetting: async (key) => electron.getSetting(key),
     setSetting: async (key, value) => electron.setSetting(key, value),
   },
-  printer: {
-    getPrinters: async () => electron.getPrinters(),
-    printTestPage: async (name) => electron.printTestPage(name),
-    getQueue: async () => electron.getPrinterQueue(),
-  },
-  hardware: {
-    getDevices: async () => electron.getDevices(),
-    discover: async () => electron.discoverHardware(),
-  },
-  scanner: {
-    start: async () => electron.startScanner(),
-    stop: async () => electron.stopScanner(),
-    getConfig: async () => electron.getScannerConfig(),
-    setConfig: async (c) => electron.setScannerConfig(c),
-    getHistory: async () => electron.getScannerHistory(),
-    onScan: (cb) => electron.onScan(cb),
-  },
   backup: {
     createBackup: async () => electron.createBackup(),
     restoreBackup: async (path) => electron.restoreBackup(path),
@@ -114,16 +97,6 @@ export const electronBridge: PlatformBridge = {
     getMetrics: async () => electron.getPerformanceMetrics(),
     clearCache: async () => electron.clearPerformanceCache(),
     runBenchmark: async () => electron.runPerformanceBenchmark()
-  },
-  pos: {
-    openSale: async (userId) => electron.openSale(userId),
-    closeSale: async () => electron.closeSale(),
-    getSession: async () => electron.getPosSession(),
-    pay: async (amount, method) => electron.paySale(amount, method),
-    openDrawer: async () => electron.openCashDrawer(),
-    printReceipt: async (data) => electron.printPosReceipt(data),
-    displayMessage: async (l1, l2) => electron.displayCustomerMessage(l1, l2),
-    onEvent: (cb) => electron.onPosEvent(cb)
   },
   sync: {
     enqueue: async (op) => electron.enqueueSync(op),

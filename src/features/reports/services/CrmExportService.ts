@@ -1,20 +1,11 @@
 import * as XLSX from 'xlsx';
 import type {
-  PosProduct, PosTransaction, PosPayment, PosReturn, PosStockMovement,
-  PosCashSession, PosSupplier, ClientFournisseur, AgentCommercial,
+  ClientFournisseur, AgentCommercial,
   PrestationCommande, MouvementCaisse, CommissionPrestation, CatalogueArticle,
   InterventionMaintenance, TechnicienMaintenance, Invoice, Client, Quote, Sale,
 } from '../../../context/AppContext';
 
 export type ExportKey =
-  | 'pos_produits'
-  | 'pos_transactions'
-  | 'pos_lignes_vente'
-  | 'pos_paiements'
-  | 'pos_retours'
-  | 'pos_mouvements_stock'
-  | 'pos_sessions_caisse'
-  | 'pos_fournisseurs'
   | 'crm_tiers'
   | 'crm_commerciaux'
   | 'crm_prestations'
@@ -28,14 +19,7 @@ export type ExportKey =
   | 'crm_devis'
   | 'crm_ventes';
 
-export interface PosCrmExportData {
-  posProducts: PosProduct[];
-  posTransactions: PosTransaction[];
-  posPayments: PosPayment[];
-  posReturns: PosReturn[];
-  posStockMovements: PosStockMovement[];
-  posCashSessions: PosCashSession[];
-  posSuppliers: PosSupplier[];
+export interface CrmExportData {
   crmTiers: ClientFournisseur[];
   crmCommerciaux: AgentCommercial[];
   crmPrestations: PrestationCommande[];
@@ -48,30 +32,21 @@ export interface PosCrmExportData {
   clients: Client[];
   quotes: Quote[];
   sales: Sale[];
-  productNameById?: Map<string, string>;
 }
 
-export const EXPORT_LABELS: Record<ExportKey, { label: string; group: 'POS' | 'CRM'; sheet: string }> = {
-  pos_produits: { label: 'Produits (catalogue POS)', group: 'POS', sheet: 'POS_Produits' },
-  pos_transactions: { label: 'Transactions (entêtes)', group: 'POS', sheet: 'POS_Transactions' },
-  pos_lignes_vente: { label: 'Lignes de vente (détail)', group: 'POS', sheet: 'POS_Lignes_Vente' },
-  pos_paiements: { label: 'Paiements POS', group: 'POS', sheet: 'POS_Paiements' },
-  pos_retours: { label: 'Retours POS', group: 'POS', sheet: 'POS_Retours' },
-  pos_mouvements_stock: { label: 'Mouvements de stock', group: 'POS', sheet: 'POS_Mouvements_Stock' },
-  pos_sessions_caisse: { label: 'Sessions de caisse', group: 'POS', sheet: 'POS_Sessions_Caisse' },
-  pos_fournisseurs: { label: 'Fournisseurs POS', group: 'POS', sheet: 'POS_Fournisseurs' },
-  crm_tiers: { label: 'Tiers & apporteurs', group: 'CRM', sheet: 'CRM_Tiers' },
-  crm_commerciaux: { label: 'Commerciaux', group: 'CRM', sheet: 'CRM_Commerciaux' },
-  crm_prestations: { label: 'Prestations / Commandes', group: 'CRM', sheet: 'CRM_Prestations' },
-  crm_caisse: { label: 'Caisse & dépenses (CRM)', group: 'CRM', sheet: 'CRM_Caisse' },
-  crm_commissions: { label: 'Commissions', group: 'CRM', sheet: 'CRM_Commissions' },
-  crm_catalogue: { label: 'Catalogue articles métier', group: 'CRM', sheet: 'CRM_Catalogue' },
-  crm_maintenance: { label: 'Interventions maintenance', group: 'CRM', sheet: 'CRM_Maintenance' },
-  crm_techniciens: { label: 'Techniciens', group: 'CRM', sheet: 'CRM_Techniciens' },
-  crm_factures: { label: 'Factures clients', group: 'CRM', sheet: 'CRM_Factures' },
-  crm_clients: { label: 'Clients (CRM classique)', group: 'CRM', sheet: 'CRM_Clients' },
-  crm_devis: { label: 'Devis', group: 'CRM', sheet: 'CRM_Devis' },
-  crm_ventes: { label: 'Ventes', group: 'CRM', sheet: 'CRM_Ventes' },
+export const EXPORT_LABELS: Record<ExportKey, { label: string; sheet: string }> = {
+  crm_tiers: { label: 'Tiers & apporteurs', sheet: 'CRM_Tiers' },
+  crm_commerciaux: { label: 'Commerciaux', sheet: 'CRM_Commerciaux' },
+  crm_prestations: { label: 'Prestations / Commandes', sheet: 'CRM_Prestations' },
+  crm_caisse: { label: 'Caisse & dépenses', sheet: 'CRM_Caisse' },
+  crm_commissions: { label: 'Commissions', sheet: 'CRM_Commissions' },
+  crm_catalogue: { label: 'Catalogue articles métier', sheet: 'CRM_Catalogue' },
+  crm_maintenance: { label: 'Interventions maintenance', sheet: 'CRM_Maintenance' },
+  crm_techniciens: { label: 'Techniciens', sheet: 'CRM_Techniciens' },
+  crm_factures: { label: 'Factures clients', sheet: 'CRM_Factures' },
+  crm_clients: { label: 'Clients', sheet: 'CRM_Clients' },
+  crm_devis: { label: 'Devis', sheet: 'CRM_Devis' },
+  crm_ventes: { label: 'Ventes', sheet: 'CRM_Ventes' },
 };
 
 export const ALL_EXPORT_KEYS = Object.keys(EXPORT_LABELS) as ExportKey[];
@@ -98,63 +73,10 @@ function addSheet(wb: XLSX.WorkBook, sheetName: string, headers: string[], rows:
   XLSX.utils.book_append_sheet(wb, ws, sheetName.substring(0, 31));
 }
 
-export function buildPosCrmWorkbook(data: PosCrmExportData, keys: ExportKey[]): XLSX.WorkBook {
+export function buildCrmWorkbook(data: CrmExportData, keys: ExportKey[]): XLSX.WorkBook {
   const wb = XLSX.utils.book_new();
-  const nameById = data.productNameById
-    ?? new Map((data.posProducts || []).map(p => [p.id, (p.name || p.reference) as string]));
   const set = new Set(keys);
 
-  if (set.has('pos_produits')) {
-    addSheet(wb, EXPORT_LABELS.pos_produits.sheet,
-      ['Référence', 'Désignation', 'Code-barres', 'ISBN', 'Famille', 'Catégorie', 'Marque', 'Fournisseur', 'Prix achat', 'Prix vente', 'Stock', 'Stock min', 'Actif'],
-      (data.posProducts || []).map(p => [fmt(p.reference), fmt(p.name), fmt(p.barcode), fmt(p.isbn), fmt(p.family), fmt(p.categoryId), fmt(p.brandId), fmt(p.supplierId), p.purchasePrice ?? 0, p.sellingPrice ?? 0, p.quantity ?? 0, p.minStock ?? 0, p.isActive === false ? 'Non' : 'Oui']));
-  }
-  if (set.has('pos_transactions')) {
-    addSheet(wb, EXPORT_LABELS.pos_transactions.sheet,
-      ['N° Transaction', 'Date', 'Statut', 'Caissier', 'Session', 'Sous-total', 'Remise', 'TVA', 'Total', 'Montant reçu', 'Monnaie rendue', 'Nb lignes'],
-      (data.posTransactions || []).map(t => [fmt(t.transactionNumber), fmtDate(t.date), fmt(t.status), fmt(t.cashierId), fmt(t.sessionId), t.subtotal ?? 0, t.discountAmount ?? 0, t.vat ?? 0, t.total ?? 0, t.receivedAmount ?? 0, t.changeAmount ?? 0, t.lines?.length ?? 0]));
-  }
-  if (set.has('pos_lignes_vente')) {
-    const rows: (string | number)[][] = [];
-    (data.posTransactions || []).forEach(t => {
-      (t.lines || []).forEach(l => {
-        rows.push([fmt(t.transactionNumber), fmtDate(t.date), fmt(t.status), fmt(l.description), nameById.get(l.productId || '') || fmt(l.productId), l.quantity ?? 0, l.unitPrice ?? 0, l.discountPercent ?? 0, l.discountAmount ?? 0, l.total ?? 0, l.costPrice ?? 0]);
-      });
-    });
-    addSheet(wb, EXPORT_LABELS.pos_lignes_vente.sheet,
-      ['N° Transaction', 'Date', 'Statut', 'Désignation', 'Produit', 'Qté', 'PU', 'Remise %', 'Remise montant', 'Total ligne', 'Coût unitaire'], rows);
-  }
-  if (set.has('pos_paiements')) {
-    const fromTx: (string | number)[][] = [];
-    (data.posTransactions || []).forEach(t => {
-      (t.payments || []).forEach(p => {
-        fromTx.push([fmt(t.transactionNumber), fmtDate(t.date), fmt(p.method), p.amount ?? 0, fmt(p.reference)]);
-      });
-    });
-    const standalone = (data.posPayments || []).map(p => [fmt(p.transactionId), '', fmt(p.method), p.amount ?? 0, fmt(p.reference)]);
-    addSheet(wb, EXPORT_LABELS.pos_paiements.sheet,
-      ['N° Transaction', 'Date', 'Moyen', 'Montant', 'Référence'], [...fromTx, ...standalone]);
-  }
-  if (set.has('pos_retours')) {
-    addSheet(wb, EXPORT_LABELS.pos_retours.sheet,
-      ['N° Retour', 'Date', 'Transaction origine', 'Type', 'Statut', 'Total remboursé', 'Total échange', 'Reste à payer', 'Méthode', 'Motif lignes'],
-      (data.posReturns || []).map(r => [fmt(r.returnNumber), fmtDate(r.date), fmt(r.transactionId), fmt(r.type), fmt(r.status), r.totalRefund ?? 0, r.totalExchange ?? 0, r.amountToPay ?? 0, fmt(r.refundMethod), (r.lines || []).map(l => `${l.description} x${l.quantity} (${l.reason})`).join(' | ')]));
-  }
-  if (set.has('pos_mouvements_stock')) {
-    addSheet(wb, EXPORT_LABELS.pos_mouvements_stock.sheet,
-      ['Date', 'Produit', 'Type', 'Quantité', 'Référence', 'Créé par', 'Notes'],
-      (data.posStockMovements || []).map(m => [fmtDate(m.date), nameById.get(m.productId) || fmt(m.productId), fmt(m.type), m.quantity ?? 0, fmt(m.reference), fmt(m.createdBy), fmt(m.notes)]));
-  }
-  if (set.has('pos_sessions_caisse')) {
-    addSheet(wb, EXPORT_LABELS.pos_sessions_caisse.sheet,
-      ['Ouverte le', 'Fermée le', 'Caissier', 'Fond initial', 'Montant final', 'Montant attendu', 'Écart', 'Statut'],
-      (data.posCashSessions || []).map(s => [fmtDate(s.openedAt), fmtDate(s.closedAt), fmt(s.cashierId), s.initialFund ?? 0, s.finalAmount ?? 0, s.expectedAmount ?? 0, s.difference ?? 0, fmt(s.status)]));
-  }
-  if (set.has('pos_fournisseurs')) {
-    addSheet(wb, EXPORT_LABELS.pos_fournisseurs.sheet,
-      ['Nom', 'Contact', 'Téléphone', 'Email', 'Adresse'],
-      (data.posSuppliers || []).map(s => [fmt(s.name), fmt(s.contact), fmt(s.phone), fmt(s.email), fmt(s.address)]));
-  }
   if (set.has('crm_tiers')) {
     addSheet(wb, EXPORT_LABELS.crm_tiers.sheet,
       ['Type', 'Nom', 'Téléphone', 'Email', 'Adresse', 'Ville', 'Créé par', 'Créé le'],
@@ -228,11 +150,11 @@ export function buildPosCrmWorkbook(data: PosCrmExportData, keys: ExportKey[]): 
   return wb;
 }
 
-export function exportPosCrmExcel(data: PosCrmExportData, keys: ExportKey[]): string {
-  const wb = buildPosCrmWorkbook(data, keys);
+export function exportCrmExcel(data: CrmExportData, keys: ExportKey[]): string {
+  const wb = buildCrmWorkbook(data, keys);
   const date = new Date().toISOString().split('T')[0];
   const scope = keys.length === ALL_EXPORT_KEYS.length ? 'complet' : `${keys.length}-modules`;
-  const fileName = `export-POS-CRM-${scope}-${date}.xlsx`;
+  const fileName = `export-CRM-${scope}-${date}.xlsx`;
   XLSX.writeFile(wb, fileName);
   return fileName;
 }

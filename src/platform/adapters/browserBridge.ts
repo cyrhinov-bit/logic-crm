@@ -1,6 +1,5 @@
 import { DesktopOnlyFeatureError } from '../errors';
 import type { MailComposeOptions, MailComposeResult, PlatformBridge } from '../types';
-import { requestWebPrint } from '../../lib/webPrintBus';
 
 export const browserBridge: PlatformBridge = {
   isDesktop: false,
@@ -108,36 +107,6 @@ export const browserBridge: PlatformBridge = {
       localStorage.setItem(`erp_settings_${key}`, JSON.stringify(value));
     },
   },
-  printer: {
-    getPrinters: async () => [
-      { name: 'Web-Simulated-Printer-1', displayName: 'Imprimante Web (Simulation)', status: 0, isDefault: true }
-    ],
-    printTestPage: async (name) => { console.log(`[Web] Impression de test sur ${name}`); return 'success'; },
-    getQueue: async () => [],
-  },
-  hardware: {
-    getDevices: async () => [
-      { id: 'web-1', type: 'scanner', name: 'Simulated Scanner', status: 'connected', path: '/dev/null', capabilities: [], driverLoaded: true }
-    ],
-    discover: async () => { console.log('[Web] Recherche de périphériques...'); return []; }
-  },
-  scanner: {
-    start: async () => { 
-      console.log('[Web] Scanner simulé démarré.');
-    },
-    stop: async () => { 
-      console.log('[Web] Scanner simulé arrêté.');
-    },
-    getConfig: async () => ({
-      prefix: '',
-      suffix: 'Enter',
-      mode: 'keyboard_wedge'
-    }),
-    setConfig: async (c) => { console.log('[Web] Scanner config', c); },
-    getHistory: async () => [],
-    onScan: (_cb) => {
-    }
-  },
   backup: {
     createBackup: async () => { 
       // Simulation pour le test UI Web
@@ -225,16 +194,6 @@ export const browserBridge: PlatformBridge = {
       await new Promise(r => setTimeout(r, 600));
       return { durationMs: 600, score: 950 };
     }
-  },
-  pos: {
-    openSale: async (userId) => { console.log(`[Web] Vente ouverte pour ${userId}`); return { id: 'sim-1', userId, status: 'OPEN' }; },
-    closeSale: async () => { console.log('[Web] Vente fermée'); return { status: 'CLOSED' }; },
-    getSession: async () => null,
-    pay: async (amount, method) => { console.log(`[Web] Paiement de ${amount} via ${method}`); return { success: true }; },
-    openDrawer: async () => { console.log('[Web] Tiroir-caisse ouvert (simulation)'); return true; },
-    printReceipt: async (data) => requestWebPrint(data),
-    displayMessage: async (l1, l2) => { console.log(`[Web] LCD: [${l1}] [${l2}]`); return true; },
-    onEvent: (_cb) => { console.log('[Web] Enregistrement callback onPosEvent'); }
   },
   sync: {
     enqueue: async (op) => { console.log('[Web] Ajout requête queue', op); },

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Palette, Check, RotateCcw, X, Sparkles } from 'lucide-react';
 import { THEME_PRESETS, THEME_CATEGORIES, DEFAULT_THEME_COLOR, getUserThemeColor, setUserThemeColor, applyTheme } from '../lib/theme';
 import { useAuth } from '../context/AuthContext';
-import { useAppContext } from '../context/AppContext';
 import './ThemeModal.css';
 
 interface ThemeModalProps {
@@ -12,7 +11,6 @@ interface ThemeModalProps {
 
 export function ThemeModal({ isOpen, onClose }: ThemeModalProps) {
   const { currentUser } = useAuth();
-  const { posSettings, updatePosSettings } = useAppContext();
   const initialColor = getUserThemeColor(currentUser?.id);
   const [selectedColor, setSelectedColor] = useState<string>(initialColor);
   const [activeCategory, setActiveCategory] = useState<string>('Tous');
@@ -37,14 +35,11 @@ export function ThemeModal({ isOpen, onClose }: ThemeModalProps) {
     applyTheme(hex); // Aperçu en direct immédiat
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (currentUser?.id) {
       setUserThemeColor(currentUser.id, selectedColor);
       if (currentUser.role === 'Directeur' || currentUser.role === 'SuperAdmin') {
         localStorage.setItem('director_theme_color', selectedColor);
-        if (updatePosSettings) {
-          await updatePosSettings({ ...posSettings, themeColor: selectedColor });
-        }
       }
     }
     onClose();

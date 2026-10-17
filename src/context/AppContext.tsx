@@ -3,12 +3,9 @@ import type { ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 import { db, ensureDbHealth } from '../lib/db';
-import { queueSyncAction, processSyncQueue, reconcileLocalPosDataWithCloud, reconcileAllOfflineDataWithCloud, resolveProductUuid, isRetiredServicePayload, getProductRemap, setProductRemap, applyProductRemapToAction } from '../lib/sync';
+import { queueSyncAction, processSyncQueue, reconcileAllOfflineDataWithCloud, isRetiredServicePayload } from '../lib/sync';
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
-import { isProductComplete } from '../features/products/services/ProductService';
-import type { ProductPersistence } from '../features/products/data/repositories/ProductRepository';
-import { productService } from '../features/products/services/ProductService';
 import { toLocalDayKey } from '../lib/dates';
 import { platform } from '../platform';
 
@@ -97,9 +94,6 @@ const tablesWithoutCreatedAt = new Set<string>([
   'classements',
   'prospect_activities',
   'prospect_follow_ups',
-  'pos_cash_sessions',
-  'pos_payments',
-  'pos_stock_movements',
 ]);
 
 // Remet en file les objets dont les enfants ont été protégés, pour que le
@@ -156,11 +150,6 @@ export interface User {
   lastLogin?: string;
   active?: boolean;
   photo?: string;
-  posReturnsEnabled?: boolean;
-  posCatalogueEnabled?: boolean;
-  posSupplyEnabled?: boolean;
-  posInventoryEnabled?: boolean;
-  posStockEnabled?: boolean;
   // CRM Modules Responsables Permissions
   crmPrestationsEnabled?: boolean;
   crmCaisseEnabled?: boolean;
@@ -393,33 +382,6 @@ export interface V2WeeklyReport {
   createdAt?: string;
   updatedAt?: string;
 }
-// POS Interfaces
-export interface PosCategory { id: string; name: string; family: 'Livre' | 'Fourniture' | 'Service'; }
-export interface PosBrand { id: string; name: string; }
-export interface PosSupplier { id: string; name: string; contact?: string; phone?: string; email?: string; address?: string; }
-export interface PosProduct { id: string; reference: string; barcode?: string; isbn?: string; name: string; family?: 'Livre' | 'Fourniture' | 'Service'; categoryId?: string; brandId?: string; supplierId?: string; purchasePrice: number; sellingPrice: number; quantity: number; minStock: number; imageUrl?: string; description?: string; status?: 'Active' | 'Inactive'; isActive: boolean; unit?: string; createdAt?: string; updatedAt?: string; }
-export interface PosStockEntryLine { id: string; productId: string; quantity: number; purchasePrice: number; total: number; }
-export interface PosStockEntry { id: string; reference: string; supplierId?: string; date: string; totalAmount: number; status: 'Brouillon' | 'Validé' | 'Annulé'; notes?: string; createdBy?: string; lines: PosStockEntryLine[]; }
-export interface PosInventoryLine { id: string; productId: string; expectedQty: number; countedQty: number; difference: number; }
-export interface PosInventory { id: string; reference: string; date: string; status: 'En cours' | 'Terminé' | 'Annulé'; notes?: string; createdBy?: string; lines: PosInventoryLine[]; }
-export interface PosCashSession { id: string; cashierId?: string; openedAt: string; closedAt?: string; initialFund: number; finalAmount?: number; expectedAmount?: number; difference?: number; status: 'Ouverte' | 'Fermée'; }
-export interface PosTransactionLine { id: string; productId?: string; description: string; quantity: number; unitPrice: number; discountPercent: number; discountAmount: number; total: number; costPrice?: number; }
-export interface PosTransaction { id: string; transactionNumber: string; cashierId?: string; sessionId?: string; date: string; subtotal: number; vat: number; discountAmount: number; total: number; receivedAmount?: number; changeAmount?: number; status: 'Validée' | 'Annulée' | 'Retournée'; lines: PosTransactionLine[]; payments: PosPayment[]; }
-export interface PosPayment { id: string; transactionId?: string; method: 'Espèces' | 'Mobile Money' | 'Mixte'; amount: number; reference?: string; }
-export interface PosDiscount { id: string; name: string; type: 'Pourcentage' | 'Montant'; value: number; maxPercent?: number; maxAmount?: number; active: boolean; }
-export interface PosReturnLine { id: string; productId?: string; description: string; quantity: number; unitPrice: number; total: number; reason: string; }
-export interface ExchangeLine { id: string; productId: string; description: string; quantity: number; unitPrice: number; total: number; }
-export interface PosReturn { id: string; returnNumber: string; transactionId?: string; sessionId?: string; date: string; type: 'Retour simple' | 'Retour avec échange'; totalRefund: number; totalExchange: number; amountToPay: number; refundMethod?: 'Espèces' | 'Mobile Money'; complementTransactionId?: string; status: 'En attente' | 'Traité' | 'Annulé'; lines: PosReturnLine[]; exchangeLines?: ExchangeLine[]; notes?: string; createdBy?: string; }
-export interface PosCartItem { id: string; productId: string; name: string; reference: string; unitPrice: number; quantity: number; discountType: 'none' | 'percent' | 'amount'; discountPercent: number; discountAmount: number; total: number; }
-  export interface SuspendedCart { id: string; reference?: string; date: string; cart: PosCartItem[]; discountType?: 'none' | 'percent' | 'amount'; discountValue?: number; }
-
-// Product Module Interfaces
-export interface PosStockMovement { id: string; productId: string; type: 'Vente' | 'Retour' | 'Approvisionnement' | 'Inventaire' | 'Ajustement Manuel'; quantity: number; reference?: string; date: string; createdBy?: string; notes?: string; }
-export interface ProductCompletion { id: string; productId: string; missingField: 'family' | 'category' | 'brand' | 'supplier' | 'image' | 'description' | 'minStock'; currentValue: string; suggestedValue: string; createdAt: string; }
-export interface ImportSession { id: string; filename: string; status: 'pending' | 'in_progress' | 'completed' | 'failed'; totalRows: number; processedRows: number; successfulCreations: number; successfulUpdates: number; ignoredRows: number; errors: ImportError[]; createdAt: string; completedAt?: string; }
-export interface ImportError { row: number; field: string; value: string; error: string; severity: 'error' | 'warning'; sessionId?: string; }
-export interface ImportReport { session: ImportSession; productsCreated: number; productsUpdated: number; productsIgnored: number; brandsCreated: number; suppliersCreated: number; totalErrors: number; totalWarnings: number; importDurationMs: number; }
-export interface ProductCompletionFilters { noFamily: boolean; noCategory: boolean; noBrand: boolean; noSupplier: boolean; noImage: boolean; noBarcode: boolean; noIsbn: boolean; minStockExceeded: boolean; }
 
 // CRM Documents
 export interface CrmFolder {
@@ -458,34 +420,10 @@ export interface AppNotification {
   created_at: string;
 }
 
-export interface PosSettings { 
-  libraryName: string; 
-  address: string; 
-  phone: string; 
-  email: string; 
-  currency: string; 
-  ticketMessage: string; 
-  printerType: string;
-  whatsappOrderPhone?: string;
-  catalogBannerText?: string;
-  themeColor?: string;
-}
-export interface PosWorkspace { active: boolean; }
-
 interface AppState {
   users: User[]; clients: Client[]; quotes: Quote[]; sales: Sale[]; facturePaiements: FacturePaiement[]; couts: Cout[]; commissions: Commission[]; installments: Installment[];
   scoringRules: ScoringRule[]; objectifs: Objectif[]; classements: Classement[]; primes: Prime[]; primeAuditLogs: PrimeAuditLog[];
   prospects: Prospect[]; prospectActivities: ProspectActivity[]; prospectFollowUps: ProspectFollowUp[]; categories: Category[]; settings: AppSettings; services: Service[]; prestations: Prestation[]; loading: boolean; activityReports: ActivityReport[]; weeklyReports: WeeklyReport[]; crmDocuments: CrmDocument[]; crmFolders: CrmFolder[]; v2DailyReports: V2DailyReport[]; v2WeeklyReports: V2WeeklyReport[]; notifications: AppNotification[];
-  // POS
-  posCategories: PosCategory[]; posBrands: PosBrand[]; posSuppliers: PosSupplier[]; posProducts: PosProduct[];
-  posStockEntries: PosStockEntry[]; posInventories: PosInventory[]; posCashSessions: PosCashSession[];
-  posStockMovements: PosStockMovement[];
-  posTransactions: PosTransaction[]; posPayments: PosPayment[];   posDiscounts: PosDiscount[]; posSettings: PosSettings;
-  posReturns: PosReturn[]; addPosReturn: (ret: PosReturn) => Promise<void>; updatePosReturn: (id: string, data: Partial<PosReturn>) => Promise<void>; cancelPosReturn: (id: string) => Promise<boolean>;
-  suspendedCarts: SuspendedCart[]; addSuspendedCart: (cart: SuspendedCart) => void; removeSuspendedCart: (id: string) => void;
-  // Product Module
-  productCompletions: ProductCompletion[]; importSessions: ImportSession[];
-  posWorkspace: PosWorkspace; setPosWorkspace: (w: PosWorkspace) => void;
   addClient: (client: Client) => Promise<void>;
   updateClient: (id: string, client: Client) => Promise<void>;
   deleteClient: (id: string) => Promise<void>;
@@ -559,58 +497,7 @@ interface AppState {
   addService: (service: Service) => Promise<void>;
   updateService: (id: string, service: Partial<Service>) => Promise<void>;
   deleteService: (id: string) => Promise<void>;
-  // POS CRUD
-  addPosCategory: (cat: PosCategory) => Promise<void>;
-  updatePosCategory: (id: string, data: Partial<PosCategory>) => Promise<void>;
-  deletePosCategory: (id: string) => Promise<boolean>;
-  addPosBrand: (brand: PosBrand) => Promise<void>;
-  updatePosBrand: (id: string, data: Partial<PosBrand>) => Promise<void>;
-  deletePosBrand: (id: string) => Promise<boolean>;
-  addPosSupplier: (supplier: PosSupplier) => Promise<void>;
-  updatePosSupplier: (id: string, data: Partial<PosSupplier>) => Promise<void>;
-  deletePosSupplier: (id: string) => Promise<boolean>;
-  addPosProduct: (product: PosProduct) => Promise<void>;
-  updatePosProduct: (id: string, data: Partial<PosProduct>) => Promise<void>;
-  deletePosProduct: (id: string) => Promise<boolean>;
-  mergePosProducts: (loserId: string, keeperId: string) => Promise<{ movedLines: number; message: string }>;
-  repairLocalCatalog: () => Promise<{ remapped: number; dropped: number; rewrittenActions: number; message: string }>;
-  // Catalogue central (mêmes produits que le POS)
-  findProductByBarcode: (barcode: string) => PosProduct | undefined;
-  findProductByReference: (reference: string) => PosProduct | undefined;
-  searchProducts: (query: string) => PosProduct[];
-  getIncompleteProducts: () => PosProduct[];
-  updateProductBarcode: (id: string, barcode: string | null) => Promise<void>;
-  updateProductImage: (id: string, imageUrl: string | null) => Promise<void>;
-  importProducts: (products: PosProduct[], duplicates?: 'ignore' | 'update' | 'create') => Promise<{ created: number; updated: number; duplicates: number }>;
-  addPosStockEntry: (entry: PosStockEntry) => Promise<void>;
-  updatePosStockEntry: (id: string, data: Partial<PosStockEntry>) => Promise<void>;
-  deletePosStockEntry: (id: string) => Promise<void>;
-  addPosStockMovement: (movement: Omit<PosStockMovement, 'id' | 'date'>) => Promise<void>;
-  addPosInventory: (inventory: PosInventory) => Promise<void>;
-  updatePosInventory: (id: string, data: Partial<PosInventory>) => Promise<void>;
-  deletePosInventory: (id: string) => Promise<void>;
-  addPosCashSession: (session: PosCashSession) => Promise<void>;
-  updatePosCashSession: (id: string, data: Partial<PosCashSession>) => Promise<void>;
-  addPosTransaction: (tx: PosTransaction) => Promise<void>;
-  updatePosTransaction: (id: string, data: Partial<PosTransaction>) => Promise<void>;
-  voidPosTransaction: (id: string) => Promise<boolean>;
-  clearPosSalesHistory: () => Promise<void>;
-  deletePosMovementsByDateRange: (startDate: string, endDate: string) => Promise<void>;
-  addPosDiscount: (discount: PosDiscount) => Promise<void>;
-  updatePosDiscount: (id: string, data: Partial<PosDiscount>) => Promise<void>;
-  deletePosDiscount: (id: string) => Promise<void>;
-  updatePosSettings: (settings: PosSettings) => Promise<void>;
-  // Product Module CRUD
-  addProductCompletion: (completion: ProductCompletion) => Promise<void>;
-  updateProductCompletion: (id: string, data: Partial<ProductCompletion>) => Promise<void>;
-  deleteProductCompletion: (id: string) => Promise<void>;
-  addImportSession: (session: ImportSession) => Promise<void>;
-  updateImportSession: (id: string, data: Partial<ImportSession>) => Promise<void>;
-  deleteImportSession: (id: string) => Promise<void>;
-  addImportError: (error: ImportError) => Promise<void>;
-  completeProduct: (productId: string, updates: Partial<PosProduct>) => Promise<void>;
   refreshData: (isBackground?: boolean) => Promise<void>;
-  reconcilePosData: (opts?: { force?: boolean }) => Promise<any>;
   // CRM Modules Responsables
   crmTiers: ClientFournisseur[];
   crmCommerciaux: AgentCommercial[];
@@ -746,25 +633,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [prestations, setPrestations] = useState<Prestation[]>([]);
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
-  // POS state
-  const [posCategories, setPosCategories] = useState<PosCategory[]>([]);
-  const [posBrands, setPosBrands] = useState<PosBrand[]>([]);
-  const [posSuppliers, setPosSuppliers] = useState<PosSupplier[]>([]);
-  const [posProducts, setPosProducts] = useState<PosProduct[]>([]);
-  const [posStockEntries, setPosStockEntries] = useState<PosStockEntry[]>([]);
-  const [posStockMovements, setPosStockMovements] = useState<PosStockMovement[]>([]);
-  const [posInventories, setPosInventories] = useState<PosInventory[]>([]);
-  const [posCashSessions, setPosCashSessions] = useState<PosCashSession[]>([]);
-  const [posTransactions, setPosTransactions] = useState<PosTransaction[]>([]);
-  const [posPayments, setPosPayments] = useState<PosPayment[]>([]);
-  const [posDiscounts, setPosDiscounts] = useState<PosDiscount[]>([]);
-  const [posReturns, setPosReturns] = useState<PosReturn[]>([]);
-  const [suspendedCarts, setSuspendedCarts] = useState<SuspendedCart[]>([]);
-  const [productCompletions, setProductCompletions] = useState<ProductCompletion[]>([]);
-  const [importSessions, setImportSessions] = useState<ImportSession[]>([]);
-  const [posSettings, setPosSettingsState] = useState<PosSettings>({ libraryName: 'Ma Librairie', address: '', phone: '', email: '', currency: 'FCFA', ticketMessage: 'Merci pour votre achat !', printerType: 'Thermique 80mm' });
-  const [posWorkspace, setPosWorkspace] = useState<PosWorkspace>({ active: false });
-
   // CRM Modules Responsables
   const [crmTiers, setCrmTiers] = useState<ClientFournisseur[]>([]);
   const [crmCommerciaux, setCrmCommerciaux] = useState<AgentCommercial[]>([]);
@@ -808,10 +676,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         cachedProspectActivities, cachedProspectFollowUps, cachedActivityReports, cachedWeeklyReports,
         cachedV2DailyReports, cachedV2WeeklyReports, cachedCrmDocuments, cachedCrmFolders,
         cachedNotifications, cachedCategories, cachedServices, cachedPrestations, cachedSettings,
-        cachedPosCategories, cachedPosBrands, cachedPosSuppliers, cachedPosProducts,
-        cachedPosStockEntries, cachedPosStockMovements, cachedPosInventories, cachedPosCashSessions,
-        cachedPosTransactions, cachedPosPayments, cachedPosDiscounts, cachedPosSettings,
-        cachedPosReturns, cachedProductCompletions, cachedImportSessions,
         cachedCrmTiers, cachedCrmCommerciaux, cachedCrmPrestations, cachedCrmCaisse,
         cachedCrmCommissions, cachedCrmArticles, cachedCrmStockMouvements, cachedCrmMaintenance, cachedCrmTechniciens,
         cachedInvoices, cachedInvoicePayments
@@ -843,21 +707,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         safeGet<Service[]>(db.services),
         safeGet<Prestation[]>(db.prestations),
         safeGet<AppSettings>(db.settings),
-        safeGet<PosCategory[]>(db.posCategories),
-        safeGet<PosBrand[]>(db.posBrands),
-        safeGet<PosSupplier[]>(db.posSuppliers),
-        safeGet<PosProduct[]>(db.posProducts),
-        safeGet<PosStockEntry[]>(db.posStockEntries),
-        safeGet<PosStockMovement[]>(db.posStockMovements),
-        safeGet<PosInventory[]>(db.posInventories),
-        safeGet<PosCashSession[]>(db.posCashSessions),
-        safeGet<PosTransaction[]>(db.posTransactions),
-        safeGet<PosPayment[]>(db.posPayments),
-        safeGet<PosDiscount[]>(db.posDiscounts),
-        safeGet<PosSettings>(db.posSettings),
-        safeGet<PosReturn[]>(db.posReturns),
-        safeGet<ProductCompletion[]>(db.productCompletions),
-        safeGet<ImportSession[]>(db.importSessions),
         safeGet<ClientFournisseur[]>(db.crmTiers),
         safeGet<AgentCommercial[]>(db.crmCommerciaux),
         safeGet<PrestationCommande[]>(db.crmPrestations),
@@ -900,32 +749,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (cachedServices) setServices(cachedServices);
       if (cachedPrestations) setPrestations(cachedPrestations);
       if (cachedSettings) setSettings(cachedSettings);
-      let categoriesToSet = (cachedPosCategories || []).filter(c => (c as any).family !== 'Service');
-      if (categoriesToSet.length === 0) {
-        categoriesToSet = [
-          { id: uuidv4(), name: 'Livres', family: 'Livre' as const },
-          { id: uuidv4(), name: 'Fournitures scolaires', family: 'Fourniture' as const },
-          { id: uuidv4(), name: 'Divers', family: 'Fourniture' as const }
-        ];
-      }
-      setPosCategories(categoriesToSet);
-      if (!cachedPosCategories || cachedPosCategories.length === 0) {
-        await db.posCategories.setItem('data', categoriesToSet);
-      }
-
-      if (cachedPosBrands) setPosBrands(cachedPosBrands);
-      if (cachedPosSuppliers) setPosSuppliers(cachedPosSuppliers);
-      if (cachedPosStockEntries) setPosStockEntries(cachedPosStockEntries);
-      if (cachedPosStockMovements) setPosStockMovements(cachedPosStockMovements);
-      if (cachedPosInventories) setPosInventories(cachedPosInventories);
-      if (cachedPosCashSessions) setPosCashSessions(cachedPosCashSessions);
-      if (cachedPosTransactions) setPosTransactions(cachedPosTransactions);
-      if (cachedPosPayments) setPosPayments(cachedPosPayments);
-      if (cachedPosDiscounts) setPosDiscounts(cachedPosDiscounts);
-      if (cachedPosSettings) setPosSettingsState(cachedPosSettings);
-      if (cachedPosReturns) setPosReturns(cachedPosReturns);
-      if (cachedProductCompletions) setProductCompletions(cachedProductCompletions);
-      if (cachedImportSessions) setImportSessions(cachedImportSessions);
       if (cachedCrmTiers) setCrmTiers(cachedCrmTiers);
       if (cachedCrmCommerciaux) setCrmCommerciaux(cachedCrmCommerciaux);
       if (cachedCrmPrestations) setCrmPrestations(cachedCrmPrestations);
@@ -936,20 +759,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (cachedCrmMaintenance) setCrmMaintenance(cachedCrmMaintenance);
       if (cachedCrmTechniciens) setCrmTechniciens(cachedCrmTechniciens);
 
-      const rawCachedProducts = (cachedPosProducts || []).filter((p: any) => {
-        return p.family !== 'Service' && !p.reference?.startsWith('SRV-') && p.id !== '00000000-0000-0000-0000-000000000000';
-      });
-      const cachedProducts = rawCachedProducts.map((p: any) => ({
-        ...p,
-        id: resolveProductUuid(p.id, p.reference)
-      }));
-
-      setPosProducts(cachedProducts);
       setLoading(false);
-
-      if (rawCachedProducts.length !== (cachedPosProducts || []).length) {
-        db.posProducts.setItem('data', cachedProducts).catch(() => {});
-      }
 
       // 2. Nettoyage proactif immédiat des reliquats de services retirés dans la file et les erreurs
       try {
@@ -1071,22 +881,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           () => currentUser ? safeFetchAll('weekly_reports') : Promise.resolve(null),
           () => currentUser ? safeFetchAll('v2_daily_reports') : Promise.resolve(null),
           () => currentUser ? safeFetchAll('v2_weekly_reports') : Promise.resolve(null),
-          () => safeFetchAll('pos_categories'),
-          () => safeFetchAll('pos_brands'),
-          () => safeFetchAll('pos_suppliers'),
-          () => safeFetchAll('pos_products'),
-          () => safeFetchAll('pos_stock_entries', '*, pos_stock_entry_lines(*)'),
-          () => safeFetchAll('pos_stock_movements'),
-          () => safeFetchAll('pos_inventories', '*, pos_inventory_lines(*)'),
-          () => safeFetchAll('pos_cash_sessions'),
-          () => safeFetchAll('pos_transactions', '*, pos_transaction_lines(*), pos_payments(*)'),
-          () => safeFetchAll('pos_payments'),
-          () => safeFetchAll('pos_discounts'),
-          () => safeFetch(() => supabase.from('pos_settings').select('*').limit(1).maybeSingle()),
           () => currentUser ? safeFetchAll('crm_documents') : Promise.resolve(null),
           () => currentUser ? safeFetchAll('crm_folders') : Promise.resolve(null),
           () => currentUser ? safeFetchAll('notifications') : Promise.resolve(null),
-          () => safeFetchAll('pos_returns', '*, pos_return_lines(*)'),
           () => currentUser ? safeFetchAll('clients_fournisseurs') : Promise.resolve(null),
           () => currentUser ? safeFetchAll('agents_commerciaux') : Promise.resolve(null),
           () => currentUser ? safeFetchAll('prestations_commandes') : Promise.resolve(null),
@@ -1115,11 +912,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           prospectFollowUpsData, categoriesData,
           activityReportsData, weeklyReportsData,
           v2DailyReportsData, v2WeeklyReportsData,
-          posCategoriesData, posBrandsData, posSuppliersData,
-          posProductsData, posStockEntriesData, posStockMovementsData, posInventoriesData,
-          posCashSessionsData, posTransactionsData, posPaymentsData,
-          posDiscountsData, posSettingsData, crmDocumentsData, crmFoldersData, notificationsData,
-          posReturnsData,
+          crmDocumentsData, crmFoldersData, notificationsData,
           crmTiersData, crmCommerciauxData, crmPrestationsData, crmCaisseData,
           crmCommissionsData, crmArticlesData, crmStockMouvementsData, crmMaintenanceData, crmTechniciensData,
           invoicesData, invoiceItemsData, invoicePaymentsData
@@ -1149,11 +942,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
               lastLogin: p.last_login,
               active: p.active !== false,
               photo: p.photo || undefined,
-              posReturnsEnabled: resolveBool(p.pos_returns_enabled, cachedUser?.posReturnsEnabled, false),
-              posCatalogueEnabled: resolveBool(p.pos_catalogue_enabled, cachedUser?.posCatalogueEnabled, false),
-              posSupplyEnabled: resolveBool(p.pos_supply_enabled, cachedUser?.posSupplyEnabled, false),
-              posInventoryEnabled: resolveBool(p.pos_inventory_enabled, cachedUser?.posInventoryEnabled, false),
-              posStockEnabled: resolveBool(p.pos_stock_enabled, cachedUser?.posStockEnabled, false),
               crmPrestationsEnabled: resolveBool(p.crm_prestations_enabled, cachedUser?.crmPrestationsEnabled, crmDefault),
               crmCaisseEnabled: resolveBool(p.crm_caisse_enabled, cachedUser?.crmCaisseEnabled, crmDefault),
               crmMaintenanceEnabled: resolveBool(p.crm_maintenance_enabled, cachedUser?.crmMaintenanceEnabled, crmDefault),
@@ -1582,184 +1370,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           const merged = mergeData(cachedV2WeeklyReports, parsed);
           setV2WeeklyReports(merged); await db.v2WeeklyReports.setItem('data', merged);
         }
-        if (posCategoriesData && posCategoriesData.length > 0) {
-          const parsed = posCategoriesData.map((c: any) => ({ id: c.id, name: c.name, family: c.family }));
-          const merged = mergeData(cachedPosCategories, parsed);
-          setPosCategories(merged); await safeSet(db.posCategories, merged);
-        }
-        if (posBrandsData && posBrandsData.length > 0) {
-          const parsed = posBrandsData.map((b: any) => ({ id: b.id, name: b.name }));
-          const merged = mergeData(cachedPosBrands, parsed);
-          setPosBrands(merged); await safeSet(db.posBrands, merged);
-        }
-        if (posSuppliersData && posSuppliersData.length > 0) {
-          const parsed = posSuppliersData.map((s: any) => ({ id: s.id, name: s.name, contact: s.contact, phone: s.phone, email: s.email, address: s.address }));
-          const merged = mergeData(cachedPosSuppliers, parsed);
-          setPosSuppliers(merged); await safeSet(db.posSuppliers, merged);
-        }
-        if (posProductsData && posProductsData.length > 0) {
-          const parsed = posProductsData
-            .filter((p: any) => p.family !== 'Service' && !p.reference?.startsWith('SRV-') && p.id !== '00000000-0000-0000-0000-000000000000')
-            .map((p: any) => {
-              // Valeurs serveur respectées telles quelles : aucun prix fabriqué, aucun seuil imposé
-              // (0 explicite conservé ; 10 par défaut uniquement si NULL/non défini)
-              return {
-                id: resolveProductUuid(p.id, p.reference), reference: p.reference, barcode: p.barcode, isbn: p.isbn, name: p.name,
-                family: p.family, categoryId: p.category_id, brandId: p.brand_id, supplierId: p.supplier_id,
-                purchasePrice: p.purchase_price ?? 0, sellingPrice: p.selling_price ?? 0, quantity: p.quantity ?? 0,
-                minStock: (p.min_stock !== null && p.min_stock !== undefined) ? p.min_stock : 10, imageUrl: p.image_url, description: p.description,
-                status: p.status || 'Active', isActive: p.is_active !== false, unit: p.unit, createdAt: p.created_at, updatedAt: p.updated_at
-              };
-            });
-          const cleanCached = (cachedPosProducts || []).filter((p: any) => p.family !== 'Service' && !p.reference?.startsWith('SRV-'));
-          const merged = mergeData(cleanCached, parsed);
-          setPosProducts(merged);
-          await safeSet(db.posProducts, merged);
-        }
-        if (posStockEntriesData && posStockEntriesData.length > 0) {
-          const parsed = posStockEntriesData
-            .filter((e: any) => e.notes !== 'VENTE' && !e.reference?.startsWith('VENTE-'))
-            .map((e: any) => ({
-              id: e.id, reference: e.reference, supplierId: e.supplier_id, date: e.date,
-              totalAmount: e.total_amount, status: e.status, notes: e.notes, createdBy: e.created_by,
-              lines: (e.pos_stock_entry_lines || []).map((l: any) => ({
-                id: l.id, productId: l.product_id, quantity: l.quantity, purchasePrice: l.purchase_price, total: l.total
-              }))
-            }));
-          const filteredCached = (cachedPosStockEntries || []).filter(e => e.notes !== 'VENTE' && !e.reference?.startsWith('VENTE-'));
-          const kept = mergeKeepChildren(filteredCached, parsed, ['lines']);
-          const merged = kept.merged;
-          setPosStockEntries(merged); await db.posStockEntries.setItem('data', merged);
-          await healQueueMissingChildren(new Map(filteredCached.map(e => [e.id, e])), kept.healedIds, 'INSERT_POS_STOCK_ENTRY');
-        }
-        if (posStockMovementsData && posStockMovementsData.length > 0) {
-          const parsed = posStockMovementsData.map((m: any) => ({
-            id: m.id, productId: m.product_id, type: m.type, quantity: m.quantity,
-            reference: m.reference, date: m.date, createdBy: m.created_by, notes: m.notes
-          }));
-          const merged = mergeData(cachedPosStockMovements, parsed);
-          setPosStockMovements(merged); await db.posStockMovements.setItem('data', merged);
-        }
-        if (posInventoriesData && posInventoriesData.length > 0) {
-          const parsed = posInventoriesData.map((i: any) => ({
-            id: i.id, reference: i.reference, date: i.date, status: i.status, notes: i.notes, createdBy: i.created_by,
-            lines: (i.pos_inventory_lines || []).map((l: any) => ({
-              id: l.id, productId: l.product_id, expectedQty: l.expected_qty, countedQty: l.counted_qty, difference: l.difference
-            }))
-          }));
-          const keptInv = mergeKeepChildren(cachedPosInventories, parsed, ['lines']);
-          const merged = keptInv.merged;
-          setPosInventories(merged); await db.posInventories.setItem('data', merged);
-          await healQueueMissingChildren(new Map((cachedPosInventories || []).map(i => [i.id, i])), keptInv.healedIds, 'INSERT_POS_INVENTORY');
-        }
-        if (posCashSessionsData && posCashSessionsData.length > 0) {
-          const parsed = posCashSessionsData.map((s: any) => ({
-            id: s.id, cashierId: s.cashier_id, openedAt: s.opened_at, closedAt: s.closed_at,
-            initialFund: s.initial_fund, finalAmount: s.final_amount, expectedAmount: s.expected_amount,
-            difference: s.difference, status: s.status
-          }));
-          const latestLocalSessions = (await safeGet<PosCashSession[]>(db.posCashSessions)) || cachedPosCashSessions;
-          const merged = mergeData(latestLocalSessions, parsed);
-          setPosCashSessions(merged); await safeSet(db.posCashSessions, merged);
-        }
-        if (posTransactionsData && posTransactionsData.length > 0) {
-          const parsed = posTransactionsData.map((t: any) => ({
-            id: t.id, transactionNumber: t.transaction_number, cashierId: t.cashier_id,
-            sessionId: t.session_id, date: t.date, subtotal: t.subtotal, vat: t.vat ?? 0,
-            discountAmount: t.discount_amount, total: t.total, status: t.status,
-            lines: (t.pos_transaction_lines || []).map((l: any) => ({
-              id: l.id, productId: l.product_id, description: l.description, quantity: l.quantity,
-              unitPrice: l.unit_price, discountPercent: l.discount_percent, discountAmount: l.discount_amount, total: l.total,
-              costPrice: l.cost_price !== null && l.cost_price !== undefined ? Number(l.cost_price) : undefined
-            })),
-            payments: (t.pos_payments || []).map((p: any) => ({
-              id: p.id, transactionId: p.transaction_id, method: p.method, amount: p.amount, reference: p.reference
-            }))
-          }));
-          const latestLocalTxs = (await safeGet<PosTransaction[]>(db.posTransactions)) || cachedPosTransactions;
-          const baseMerged = mergeData(latestLocalTxs, parsed);
-          // Garde B7 : une vente valide a toujours ≥1 ligne et ≥1 paiement (panier vide bloqué
-          // dans PosTerminal). Si le serveur renvoie une vente sans lignes (échec partiel de
-          // synchro), ne jamais écraser le local : garder lignes/paiements locaux et remettre
-          // la vente en file pour auto-réparation (le chemin résilient détachera si besoin).
-          const localById = new Map((latestLocalTxs || []).map(t => [t.id, t]));
-          const merged = baseMerged.map(t => {
-            const local = localById.get(t.id);
-            if (!local) return t;
-            const keepLines = (!t.lines || t.lines.length === 0) && (local.lines?.length || 0) > 0;
-            const keepPays = (!t.payments || t.payments.length === 0) && (local.payments?.length || 0) > 0;
-            if (!keepLines && !keepPays) return t;
-            return { ...t, lines: keepLines ? local.lines : t.lines, payments: keepPays ? local.payments : t.payments };
-          });
-          setPosTransactions(merged); await safeSet(db.posTransactions, merged);
-          await healQueueMissingChildren(
-            localById,
-            merged.filter(t => {
-              const local = localById.get(t.id);
-              return !!(local && (local.lines?.length || 0) > 0 && (!parsed.find((p: any) => p.id === t.id)?.lines?.length));
-            }).map(t => t.id),
-            'INSERT_POS_TRANSACTION'
-          );
-        }
-        if (posPaymentsData && posPaymentsData.length > 0) {
-          const parsed = posPaymentsData.map((p: any) => ({ id: p.id, transactionId: p.transaction_id, method: p.method, amount: p.amount, reference: p.reference }));
-          const latestLocalPayments = (await safeGet<PosPayment[]>(db.posPayments)) || cachedPosPayments;
-          const merged = mergeData(latestLocalPayments, parsed);
-          setPosPayments(merged); await safeSet(db.posPayments, merged);
-        }
-        if (posDiscountsData && posDiscountsData.length > 0) {
-          const parsed = posDiscountsData.map((d: any) => ({ id: d.id, name: d.name, type: d.type, value: d.value, maxPercent: d.max_percent, maxAmount: d.max_amount, active: d.active }));
-          const latestLocalDiscounts = (await safeGet<PosDiscount[]>(db.posDiscounts)) || cachedPosDiscounts;
-          const merged = mergeData(latestLocalDiscounts, parsed);
-          setPosDiscounts(merged); await safeSet(db.posDiscounts, merged);
-        }
-        if (posSettingsData) {
-          const parsed: PosSettings = { libraryName: posSettingsData.library_name, address: posSettingsData.address, phone: posSettingsData.phone, email: posSettingsData.email, currency: posSettingsData.currency, ticketMessage: posSettingsData.ticket_message, printerType: posSettingsData.printer_type, whatsappOrderPhone: posSettingsData.whatsapp_order_phone || undefined, catalogBannerText: posSettingsData.catalog_banner_text || undefined, themeColor: posSettingsData.theme_color || undefined };
-          setPosSettingsState(parsed); await db.posSettings.setItem('data', parsed);
-        }
-        
-        if (posReturnsData && posReturnsData.length > 0) {
-          const parsed: PosReturn[] = posReturnsData.map((r: any) => ({
-            id: r.id,
-            returnNumber: r.return_number,
-            transactionId: r.transaction_id || undefined,
-            sessionId: r.session_id || undefined,
-            date: r.date,
-            type: r.type,
-            totalRefund: r.total_refund,
-            totalExchange: r.total_exchange || 0,
-            amountToPay: r.amount_to_pay || 0,
-            refundMethod: r.refund_method || 'Espèces',
-            complementTransactionId: r.complement_transaction_id || undefined,
-            status: r.status,
-            notes: r.notes || '',
-            createdBy: r.created_by || undefined,
-            lines: (r.pos_return_lines || []).filter((l: any) => l.reason !== 'Échange').map((l: any) => ({
-              id: l.id,
-              productId: l.product_id || undefined,
-              description: l.description,
-              quantity: l.quantity,
-              unitPrice: l.unit_price,
-              total: l.total,
-              reason: l.reason || ''
-            })),
-            // Les lignes d'échange partagent la table (reason='Échange') : les reventiler, sinon perdues au refresh
-            exchangeLines: (r.pos_return_lines || []).filter((l: any) => l.reason === 'Échange').map((l: any) => ({
-              id: l.id,
-              productId: l.product_id || undefined,
-              description: l.description,
-              quantity: l.quantity,
-              unitPrice: l.unit_price,
-              total: l.total
-            }))
-          }));
-          const latestLocalReturns = (await safeGet<PosReturn[]>(db.posReturns)) || cachedPosReturns;
-          const keptRet = mergeKeepChildren(latestLocalReturns, parsed, ['lines', 'exchangeLines']);
-          const merged = keptRet.merged;
-          setPosReturns(merged); await safeSet(db.posReturns, merged);
-          await healQueueMissingChildren(new Map((latestLocalReturns || []).map(r => [r.id, r])), keptRet.healedIds, 'INSERT_POS_RETURN');
-        }
-
         if (crmTiersData && crmTiersData.length > 0) {
           const parsed: ClientFournisseur[] = crmTiersData.map((t: any) => ({
             id: t.id,
@@ -2090,14 +1700,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }, 1200);
     };
 
-    const channel = supabase.channel('pos-realtime-sync')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_transactions' }, debouncedRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_cash_sessions' }, debouncedRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_payments' }, debouncedRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_returns' }, debouncedRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_products' }, debouncedRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_stock_entries' }, debouncedRefresh)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pos_stock_movements' }, debouncedRefresh)
+    const channel = supabase.channel('crm-realtime-sync')
       .on('postgres_changes', { event: '*', schema: 'public' }, debouncedRefresh)
       .subscribe();
 
@@ -3330,935 +2933,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     await queueSyncAction('DELETE_SERVICE', { id });
   };
 
-  // === POS CRUD ===
-  const addPosCategory = async (cat: PosCategory) => {
-    const newCat = { ...cat, id: cat.id || uuidv4() };
-    setPosCategories(prev => {
-      const next = [...prev, newCat];
-      void db.posCategories.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_CATEGORY', newCat);
-  };
-  const updatePosCategory = async (id: string, data: Partial<PosCategory>) => {
-    setPosCategories(prev => {
-      const next = prev.map(c => c.id === id ? { ...c, ...data } : c);
-      void db.posCategories.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_POS_CATEGORY', { id, ...data });
-  };
-  const deletePosCategory = async (id: string): Promise<boolean> => {
-    // Intégrité : catégorie utilisée par des produits = suppression interdite
-    if (posProducts.some(p => p.categoryId === id)) return false;
-    setPosCategories(prev => {
-      const next = prev.filter(c => c.id !== id);
-      void db.posCategories.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_POS_CATEGORY', { id });
-    return true;
-  };
-
-  const addPosBrand = async (brand: PosBrand) => {
-    const newBrand = { ...brand, id: brand.id || uuidv4() };
-    setPosBrands(prev => {
-      const next = [...prev, newBrand];
-      void db.posBrands.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_BRAND', newBrand);
-  };
-  const updatePosBrand = async (id: string, data: Partial<PosBrand>) => {
-    setPosBrands(prev => {
-      const next = prev.map(b => b.id === id ? { ...b, ...data } : b);
-      void db.posBrands.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_POS_BRAND', { id, ...data });
-  };
-  const deletePosBrand = async (id: string): Promise<boolean> => {
-    if (posProducts.some(p => p.brandId === id)) return false;
-    setPosBrands(prev => {
-      const next = prev.filter(b => b.id !== id);
-      void db.posBrands.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_POS_BRAND', { id });
-    return true;
-  };
-
-  const addPosSupplier = async (supplier: PosSupplier) => {
-    const newSupplier = { ...supplier, id: supplier.id || uuidv4() };
-    setPosSuppliers(prev => {
-      const next = [...prev, newSupplier];
-      void db.posSuppliers.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_SUPPLIER', newSupplier);
-  };
-  const updatePosSupplier = async (id: string, data: Partial<PosSupplier>) => {
-    setPosSuppliers(prev => {
-      const next = prev.map(s => s.id === id ? { ...s, ...data } : s);
-      void db.posSuppliers.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_POS_SUPPLIER', { id, ...data });
-  };
-  const deletePosSupplier = async (id: string): Promise<boolean> => {
-    if (posProducts.some(p => p.supplierId === id) || posStockEntries.some(e => e.supplierId === id)) return false;
-    setPosSuppliers(prev => {
-      const next = prev.filter(s => s.id !== id);
-      void db.posSuppliers.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_POS_SUPPLIER', { id });
-    return true;
-  };
-
-  const addPosProduct = async (product: PosProduct) => {
-    const safeProduct = { ...product };
-    if (safeProduct.quantity !== undefined) {
-      safeProduct.quantity = Math.max(0, safeProduct.quantity);
-    }
-    const newProduct = { ...safeProduct, id: safeProduct.id || uuidv4() };
-    setPosProducts(prev => {
-      const next = [...prev, newProduct];
-      void db.posProducts.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_PRODUCT', newProduct);
-  };
-  const updatePosProduct = async (id: string, data: Partial<PosProduct>) => {
-    if (data.quantity !== undefined) {
-      data.quantity = Math.max(0, data.quantity);
-    }
-    const oldProduct = posProducts.find(p => p.id === id);
-    if (oldProduct && data.quantity !== undefined && data.quantity !== oldProduct.quantity && oldProduct.family !== 'Service') {
-      try {
-        await addPosStockMovement({
-          productId: id,
-          type: 'Ajustement Manuel',
-          quantity: data.quantity - oldProduct.quantity,
-          createdBy: currentUser?.name,
-          notes: 'Modification manuelle'
-        });
-      } catch (err) {
-        console.warn('Ajustement de stock ignoré pour ce produit :', err);
-      }
-    }
-    setPosProducts(prev => {
-      const next = prev.map(p => p.id === id ? { ...p, ...data } : p);
-      void db.posProducts.setItem('data', next);
-      return next;
-    });
-    const mergedProd = oldProduct ? { ...oldProduct, ...data, id } : { id, ...data };
-    await queueSyncAction('UPDATE_POS_PRODUCT', mergedProd);
-  };
-  // Fusion de doublons catalogue : tout l'historique du perdant (lignes de vente,
-  // entrées, inventaires, retours, mouvements, complétions) est repointé vers le
-  // gardien, les stocks sont cumulés, puis le perdant est supprimé (vide d'historique).
-  // En ligne uniquement (écritures directes serveur + refresh).
-  const mergePosProducts = async (loserId: string, keeperId: string): Promise<{ movedLines: number; message: string }> => {
-    if (!loserId || !keeperId || loserId === keeperId) {
-      throw new Error('Sélection invalide.');
-    }
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      throw new Error('Connexion requise pour fusionner.');
-    }
-    const loser = posProducts.find(p => p.id === loserId);
-    const keeper = posProducts.find(p => p.id === keeperId);
-    if (!loser || !keeper) {
-      throw new Error('Produit introuvable.');
-    }
-    const { supabase: sb } = await import('../lib/supabase');
-    let movedLines = 0;
-    const repoints: { table: string }[] = [
-      { table: 'pos_transaction_lines' },
-      { table: 'pos_stock_entry_lines' },
-      { table: 'pos_inventory_lines' },
-      { table: 'pos_return_lines' },
-      { table: 'pos_stock_movements' },
-      { table: 'product_completions' },
-    ];
-    for (const { table } of repoints) {
-      const { error, count } = await sb
-        .from(table)
-        .update({ product_id: keeperId }, { count: 'exact' } as any)
-        .eq('product_id', loserId);
-      if (error) {
-        throw new Error(`Repointage ${table} impossible : ${error.message}`);
-      }
-      movedLines += count || 0;
-    }
-    // Cumul des stocks sur le gardien
-    const newQty = Math.max(0, Number(keeper.quantity || 0) + Number(loser.quantity || 0));
-    const { error: qtyErr } = await sb.from('pos_products').update({ quantity: newQty }).eq('id', keeperId);
-    if (qtyErr) {
-      throw new Error(`Cumul du stock impossible : ${qtyErr.message}`);
-    }
-    // Suppression de la coquille (sans historique désormais)
-    const { error: delErr } = await sb.from('pos_products').delete().eq('id', loserId);
-    if (delErr) {
-      throw new Error(`Suppression du doublon impossible : ${delErr.message}`);
-    }
-    setPosProducts(prev => {
-      const next = prev.filter(p => p.id !== loserId).map(p => (p.id === keeperId ? { ...p, quantity: newQty } : p));
-      void db.posProducts.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_POS_PRODUCT', { id: keeperId, quantity: newQty });
-    await refreshData();
-    return {
-      movedLines,
-      message: `« ${loser.name} » fusionné dans « ${keeper.name} » : ${movedLines} ligne(s) repointée(s), stock cumulé à ${newQty}.`,
-    };
-  };
-  // Réparation du catalogue fantôme local : les doublons locaux (même référence
-  // ou même code-barres qu'un produit serveur, UUID différent) sont remappés vers
-  // le gardien serveur partout (données locales + file d'attente), puis retirés.
-  // En ligne uniquement. Les ventes à 0 ligne historiques restent à reconstituer.
-  const repairLocalCatalog = async (): Promise<{ remapped: number; dropped: number; rewrittenActions: number; message: string }> => {
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      throw new Error('Connexion requise pour réparer le catalogue.');
-    }
-    const { supabase: sb } = await import('../lib/supabase');
-    const { data: serverProducts, error } = await sb.from('pos_products').select('id, reference, barcode');
-    if (error || !serverProducts) {
-      throw new Error('Catalogue serveur injoignable : ' + (error?.message || 'réseau'));
-    }
-    const norm = (s?: string | null) => (s || '').trim().toLowerCase();
-    const byRef = new Map<string, string>();
-    const byBarcode = new Map<string, string>();
-    for (const p of serverProducts as any[]) {
-      const r = norm(p.reference);
-      if (r && !byRef.has(r)) byRef.set(r, p.id);
-      const b = norm(p.barcode);
-      if (b && !byBarcode.has(b)) byBarcode.set(b, p.id);
-    }
-    const local: PosProduct[] = (await safeGet<PosProduct[]>(db.posProducts)) || posProducts;
-    const remap: Record<string, string> = {};
-    for (const p of local) {
-      const r = norm((p as any).reference);
-      const keeperByRef = r ? byRef.get(r) : undefined;
-      if (keeperByRef && keeperByRef !== p.id) {
-        remap[p.id] = keeperByRef;
-        continue;
-      }
-      const b = norm((p as any).barcode);
-      const keeperByBc = b ? byBarcode.get(b) : undefined;
-      if (keeperByBc && keeperByBc !== p.id) {
-        remap[p.id] = keeperByBc;
-      }
-    }
-    const shadowIds = new Set(Object.keys(remap));
-    if (shadowIds.size === 0) {
-      return { remapped: 0, dropped: 0, rewrittenActions: 0, message: 'Aucun doublon local détecté.' };
-    }
-    // Persister la table AVANT de réécrire (les passe suivantes s'en servent).
-    setProductRemap({ ...getProductRemap(), ...remap });
-
-    const rewriteLines = (lines: any[]) =>
-      (lines || []).map((l: any) => {
-        const pid = l?.productId ?? l?.product_id;
-        if (typeof pid === 'string' && remap[pid]) {
-          const out = { ...l };
-          if ('productId' in out) out.productId = remap[pid];
-          if ('product_id' in out) out.product_id = remap[pid];
-          return out;
-        }
-        return l;
-      });
-
-    // 1. Données locales
-    const nextTxs = (await safeGet<PosTransaction[]>(db.posTransactions)) || posTransactions;
-    const fixedTxs = nextTxs.map(t => ({ ...t, lines: rewriteLines(t.lines || []) }));
-    setPosTransactions(fixedTxs);
-    await safeSet(db.posTransactions, fixedTxs);
-
-    const nextEntries = (await safeGet<PosStockEntry[]>(db.posStockEntries)) || posStockEntries;
-    const fixedEntries = nextEntries.map(e => ({ ...e, lines: rewriteLines((e as any).lines || []) }));
-    setPosStockEntries(fixedEntries);
-    await safeSet(db.posStockEntries, fixedEntries);
-
-    const nextInvs = (await safeGet<PosInventory[]>(db.posInventories)) || posInventories;
-    const fixedInvs = nextInvs.map(i => ({ ...i, lines: rewriteLines((i as any).lines || []) }));
-    setPosInventories(fixedInvs);
-    await safeSet(db.posInventories, fixedInvs);
-
-    const nextReturns = (await safeGet<PosReturn[]>(db.posReturns)) || posReturns;
-    const fixedReturns = nextReturns.map(r => ({
-      ...r,
-      lines: rewriteLines(r.lines || []),
-      exchangeLines: rewriteLines((r as any).exchangeLines || []),
-    }));
-    setPosReturns(fixedReturns);
-    await safeSet(db.posReturns, fixedReturns);
-
-    const nextMovs = (await safeGet<PosStockMovement[]>(db.posStockMovements)) || posStockMovements;
-    const fixedMovs = nextMovs.map(m => (m.productId && remap[m.productId] ? { ...m, productId: remap[m.productId] } : m));
-    setPosStockMovements(fixedMovs);
-    await safeSet(db.posStockMovements, fixedMovs);
-
-    const nextProducts = local.filter(p => !shadowIds.has(p.id));
-    setPosProducts(nextProducts);
-    await safeSet(db.posProducts, nextProducts);
-
-    // 2. File d'attente : réécriture vers les gardiens, abandon des upserts fantômes
-    let rewrittenActions = 0;
-    let droppedActions = 0;
-    try {
-      const queue = (await db.syncQueue.getItem<any[]>('queue').catch(() => null)) || [];
-      const nextQueue: any[] = [];
-      for (const a of queue) {
-        if (!a?.type) continue;
-        const r = applyProductRemapToAction(a.type, a.payload);
-        if (r.drop) {
-          droppedActions++;
-          continue;
-        }
-        if (r.payload !== a.payload) rewrittenActions++;
-        nextQueue.push({ ...a, payload: r.payload });
-      }
-      await db.syncQueue.setItem('queue', nextQueue);
-    } catch { /* file conservée telle quelle en cas d'échec */ }
-
-    await refreshData();
-    return {
-      remapped: shadowIds.size,
-      dropped: droppedActions,
-      rewrittenActions,
-      message: `${shadowIds.size} doublon(s) remappé(s) vers le serveur, ${rewrittenActions} action(s) réécrite(s), ${droppedActions} action(s) fantôme(s) abandonnée(s).`,
-    };
-  };
-  const deletePosProduct = async (id: string): Promise<boolean> => {
-    // Intégrité (B6) : produit avec historique (ventes, mouvements, entrées, inventaires, retours)
-    // = suppression interdite (le serveur le refuserait par FK de toute façon).
-    // F6 : le contrôle local ne voit pas l'historique des autres postes pas encore
-    // synchronisé → vérification serveur avant suppression définitive.
-    const usedLocally =
-      posTransactions.some(t => (t.lines || []).some(l => l.productId === id)) ||
-      posStockMovements.some(m => m.productId === id) ||
-      posStockEntries.some(e => (e.lines || []).some(l => l.productId === id)) ||
-      posInventories.some(i => (i.lines || []).some(l => l.productId === id)) ||
-      posReturns.some(r => (r.lines || []).some(l => l.productId === id) || (r.exchangeLines || []).some(l => l.productId === id));
-    if (usedLocally) return false;
-    try {
-      if (typeof navigator !== 'undefined' && navigator.onLine) {
-        const { supabase: sb } = await import('../lib/supabase');
-        const checks = [
-          sb.from('pos_transaction_lines').select('id').eq('product_id', id).limit(1),
-          sb.from('pos_stock_movements').select('id').eq('product_id', id).limit(1),
-          sb.from('pos_stock_entry_lines').select('id').eq('product_id', id).limit(1),
-          sb.from('pos_inventory_lines').select('id').eq('product_id', id).limit(1),
-          sb.from('pos_return_lines').select('id').eq('product_id', id).limit(1),
-        ];
-        const results = await Promise.all(checks.map(q => q.maybeSingle()));
-        if (results.some(r => (r as any)?.data)) return false;
-      }
-    } catch { /* hors-ligne : le contrôle local + la FK serveur tranchent */ }
-    setPosProducts(prev => {
-      const next = prev.filter(p => p.id !== id);
-      void db.posProducts.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_POS_PRODUCT', { id });
-    return true;
-  };
-
-  // === Catalogue central : mêmes produits que le POS ===
-  const normalizeCode = (s?: string | null) => (s || '').trim();
-  const findProductByBarcode = (barcode: string) => {
-    const needle = normalizeCode(barcode).toLowerCase();
-    if (!needle) return undefined;
-    return posProducts.find(p => !!p.barcode && normalizeCode(p.barcode).toLowerCase() === needle);
-  };
-
-  const findProductByReference = (reference: string) => {
-    const needle = normalizeCode(reference).toLowerCase();
-    if (!needle) return undefined;
-    return posProducts.find(p => normalizeCode(p.reference).toLowerCase() === needle);
-  };
-
-  const searchProducts = (query: string) => {
-    const q = (query || '').toLowerCase();
-    if (!q) return posProducts;
-    return posProducts.filter(p =>
-      (p.name || '').toLowerCase().includes(q) ||
-      (p.reference || '').toLowerCase().includes(q) ||
-      (p.barcode || '').includes(q) ||
-      (p.isbn || '').includes(q)
-    );
-  };
-
-  const getIncompleteProducts = () =>
-    posProducts.filter(p => !isProductComplete(p));
-
-  const updateProductBarcode = async (id: string, barcode: string | null) => {
-    await updatePosProduct(id, { barcode: barcode || undefined });
-  };
-
-  const updateProductImage = async (id: string, imageUrl: string | null) => {
-    await updatePosProduct(id, { imageUrl: imageUrl || undefined });
-  };
-
-  const importProducts = async (products: PosProduct[], duplicates: 'ignore' | 'update' | 'create' = 'update') => {
-    productService.setProducts(posProducts);
-    const persistence: ProductPersistence = {
-      create: async (product) => { await addPosProduct(product); },
-      update: async (id, data) => { await updatePosProduct(id, data); },
-      remove: async (id) => { await deletePosProduct(id); },
-    };
-    const entries = products.map(p => ({
-      name: p.name,
-      reference: p.reference,
-      barcode: p.barcode || undefined,
-      isbn: p.isbn || undefined,
-      family: p.family,
-      purchasePrice: p.purchasePrice,
-      sellingPrice: p.sellingPrice,
-      quantity: p.quantity,
-      categoryId: p.categoryId || undefined,
-      brandId: p.brandId || undefined,
-      supplierId: p.supplierId || undefined,
-      imageUrl: p.imageUrl || undefined,
-      minStock: p.minStock,
-    }));
-    const result = await productService.importProducts(entries, persistence, () => duplicates);
-    productService.setProducts(posProducts);
-    return result;
-  };
-
-  const addPosStockEntry = async (entry: PosStockEntry) => {
-    const newEntry = { ...entry, id: entry.id || uuidv4(), lines: entry.lines.map(l => ({ ...l, id: l.id || uuidv4() })) };
-    setPosStockEntries(prev => {
-      const next = [...prev, newEntry];
-      void db.posStockEntries.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_STOCK_ENTRY', newEntry);
-
-    if (newEntry.status === 'Validé') {
-      await adjustProductStock(newEntry.lines.map(l => ({ productId: l.productId, quantity: l.quantity })), true, { type: 'Approvisionnement', reference: newEntry.reference, createdBy: newEntry.createdBy });
-    }
-  };
-
-  const updatePosStockEntry = async (id: string, data: Partial<PosStockEntry>) => {
-    const oldEntry = posStockEntries.find(e => e.id === id);
-    setPosStockEntries(prev => {
-      const next = prev.map(e => e.id === id ? { ...e, ...data } : e);
-      void db.posStockEntries.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_POS_STOCK_ENTRY', { id, ...data });
-
-    if (oldEntry && oldEntry.status !== 'Validé' && data.status === 'Validé') {
-      const entryLines = data.lines || oldEntry.lines;
-      await adjustProductStock(entryLines.map(l => ({ productId: l.productId, quantity: l.quantity })), true, { type: 'Approvisionnement', reference: oldEntry.reference, createdBy: currentUser?.name });
-    } else if (oldEntry && oldEntry.status === 'Validé' && data.status === 'Annulé') {
-      const entryLines = data.lines || oldEntry.lines;
-      await adjustProductStock(entryLines.map(l => ({ productId: l.productId, quantity: -l.quantity })), true, { type: 'Approvisionnement', reference: oldEntry.reference, createdBy: currentUser?.name, notes: 'Annulation' });
-    }
-  };
-  const deletePosStockEntry = async (id: string) => {
-    const target = posStockEntries.find(e => e.id === id);
-    // Compensation (B6) : une entrée Validée avait gonflé le stock → contre-passer avant suppression
-    if (target && target.status === 'Validé') {
-      await adjustProductStock(target.lines.map(l => ({ productId: l.productId, quantity: -l.quantity })), true, { type: 'Approvisionnement', reference: target.reference, createdBy: currentUser?.name, notes: 'Suppression entrée' });
-    }
-    setPosStockEntries(prev => {
-      const next = prev.filter(e => e.id !== id);
-      void db.posStockEntries.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_POS_STOCK_ENTRY', { id });
-  };
-
-  const addPosInventory = async (inventory: PosInventory) => {
-    const newInv = { ...inventory, id: inventory.id || uuidv4(), lines: inventory.lines.map(l => ({ ...l, id: l.id || uuidv4() })) };
-    setPosInventories(prev => {
-      const next = [...prev, newInv];
-      void db.posInventories.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_INVENTORY', newInv);
-
-    if (newInv.status === 'Terminé') {
-      await adjustProductStock(newInv.lines.map(l => ({ productId: l.productId, quantity: l.difference })), true, { type: 'Inventaire', reference: newInv.reference, createdBy: newInv.createdBy });
-    }
-  };
-
-  const updatePosInventory = async (id: string, data: Partial<PosInventory>) => {
-    const oldInv = posInventories.find(i => i.id === id);
-    setPosInventories(prev => {
-      const next = prev.map(i => i.id === id ? { ...i, ...data } : i);
-      void db.posInventories.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_POS_INVENTORY', { id, ...data });
-
-    if (oldInv && oldInv.status !== 'Terminé' && data.status === 'Terminé') {
-      const invLines = data.lines || oldInv.lines;
-      await adjustProductStock(invLines.map(l => ({ productId: l.productId, quantity: l.difference })), true, { type: 'Inventaire', reference: oldInv.reference, createdBy: currentUser?.name });
-    }
-  };
-  const deletePosInventory = async (id: string) => {
-    const target = posInventories.find(i => i.id === id);
-    // Compensation (B6) : un inventaire Terminé avait ajusté le stock → contre-passer avant suppression
-    if (target && target.status === 'Terminé') {
-      await adjustProductStock(target.lines.map(l => ({ productId: l.productId, quantity: -l.difference })), true, { type: 'Inventaire', reference: target.reference, createdBy: currentUser?.name, notes: 'Suppression inventaire' });
-    }
-    setPosInventories(prev => {
-      const next = prev.filter(i => i.id !== id);
-      void db.posInventories.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_POS_INVENTORY', { id });
-  };
-
-  const addPosCashSession = async (session: PosCashSession) => {
-    // Unicité : une seule session ouverte par caissier et par jour (M1).
-    // Le test se fait sur l'état le plus frais (lecture locale synchrone) pour limiter les doubles ouvertures.
-    if (session.status === 'Ouverte') {
-      const day = toLocalDayKey(session.openedAt);
-      const clash = posCashSessions.some(s =>
-        s.status === 'Ouverte'
-        && toLocalDayKey(s.openedAt) === day
-        && (!s.cashierId || !session.cashierId || s.cashierId === session.cashierId)
-      );
-      if (clash) {
-        alert('Une session de caisse est déjà ouverte pour ce caissier aujourd\u2019hui. Fermez-la avant d\u2019en ouvrir une nouvelle.');
-        return;
-      }
-    }
-    const newSession = { ...session, id: session.id || uuidv4() };
-    const nextSessions = [...posCashSessions, newSession];
-    setPosCashSessions(nextSessions);
-    await safeSet(db.posCashSessions, nextSessions);
-    await queueSyncAction('INSERT_POS_CASH_SESSION', newSession);
-  };
-  const updatePosCashSession = async (id: string, data: Partial<PosCashSession>) => {
-    const current = posCashSessions.find(s => s.id === id);
-    if (!current) return;
-    // Immuabilité : une session clôturée ne peut pas être réécrite (anti-rejeu de clôture, M1)
-    if (current.status === 'Fermée') return;
-    const nextSessions = posCashSessions.map(s => s.id === id ? { ...s, ...data } : s);
-    setPosCashSessions(nextSessions);
-    await safeSet(db.posCashSessions, nextSessions);
-    await queueSyncAction('UPDATE_POS_CASH_SESSION', { id, ...data });
-  };
-
-  const addPosStockMovement = async (movement: Omit<PosStockMovement, 'id' | 'date'>) => {
-    const rawPid = movement.productId;
-    if (!rawPid || rawPid.startsWith('srv-') || rawPid === '00000000-0000-0000-0000-000000000000' || movement.reference?.startsWith('SRV-')) {
-      return; // Ne jamais créer de mouvement de stock pour les services retirés
-    }
-    const resolvedPid = resolveProductUuid(rawPid, movement.reference);
-    if (!isUuid(resolvedPid)) {
-      return;
-    }
-    const newMovement: PosStockMovement = {
-      ...movement,
-      productId: resolvedPid,
-      id: uuidv4(),
-      date: new Date().toISOString()
-    };
-    setPosStockMovements(prev => {
-      const next = [...prev, newMovement];
-      void db.posStockMovements.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_STOCK_MOVEMENT', newMovement);
-  };
-
-  // Applique des variations de stock (delta +/- par produit) sur l'état local et le cache.
-  // Cumule correctement les lignes d'un même produit (pas de relecture d'un état stale).
-  // Si pushSync est vrai, synchronise aussi le stock serveur via UPDATE_POS_PRODUCT.
-  // Si movementParams est fourni, génère un mouvement de stock pour chaque delta.
-  // C1 : les ajustements sont sérialisés (chaîne) et calculés sur l'état frais
-  // relu en IndexedDB — plus de quantité absolue poussée depuis une closure périmée
-  // en cas d'appels en rafale (vente + entrée simultanées).
-  const stockAdjustChainRef = useRef<Promise<void>>(Promise.resolve());
-  const adjustProductStock = (
-    deltas: { productId?: string; quantity: number }[],
-    pushSync: boolean,
-    movementParams?: { type: PosStockMovement['type']; reference?: string; createdBy?: string; notes?: string }
-  ) => {
-    const task = async () => {
-    const map = new Map<string, number>();
-    for (const d of deltas) {
-      if (!d.productId || d.productId.startsWith('srv-') || d.productId === '00000000-0000-0000-0000-000000000000') continue;
-      const product = posProducts.find(p => p.id === d.productId);
-      if (product && (product.family === 'Service' || (product.reference && product.reference.startsWith('SRV-')))) continue; // Les services (photocopies, scans...) ne sont pas stockés
-      const resolvedPid = resolveProductUuid(d.productId, product?.reference);
-      if (!isUuid(resolvedPid)) continue;
-      map.set(resolvedPid, (map.get(resolvedPid) || 0) + d.quantity);
-    }
-    if (map.size === 0) return;
-
-    if (movementParams) {
-      for (const [pid, delta] of map) {
-        await addPosStockMovement({
-          productId: pid,
-          type: movementParams.type,
-          quantity: delta,
-          reference: movementParams.reference,
-          createdBy: movementParams.createdBy,
-          notes: movementParams.notes
-        });
-      }
-    }
-
-    // Base fraîche : ce que la tâche précédente de la chaîne a persisté.
-    let base: PosProduct[] = posProducts;
-    try {
-      const stored = await db.posProducts.getItem<PosProduct[]>('data').catch(() => null);
-      if (stored && stored.length > 0) base = stored;
-    } catch {}
-    const next = base.map(p => {
-      const delta = map.get(p.id);
-      if (delta !== undefined) {
-        const raw = p.quantity + delta;
-        // F10 : le plancher 0 est conservé mais l'écrêtement est journalisé
-        // (écart réel visible au lieu d'être perdu silencieusement).
-        if (raw < 0) {
-          console.warn('[Stock] Écrêtement à 0 (stock insuffisant) :', p.reference || p.name, `stock=${p.quantity} delta=${delta}`);
-        }
-        return { ...p, quantity: Math.max(0, raw) };
-      }
-      return p;
-    });
-    const nextQty = new Map(next.filter(p => map.has(p.id)).map(p => [p.id, p.quantity] as [string, number]));
-    setPosProducts(next);
-    await safeSet(db.posProducts, next);
-
-    if (pushSync) {
-      for (const [pid] of map) {
-        const newQty = nextQty.get(pid);
-        if (newQty !== undefined) {
-          await queueSyncAction('UPDATE_POS_PRODUCT', { id: pid, quantity: newQty });
-        }
-      }
-    }
-    };
-    const run = stockAdjustChainRef.current.then(task, task);
-    stockAdjustChainRef.current = run.catch(() => {});
-    return run;
-  };
-
-  // Recalcule le statut d'une transaction selon ses retours actifs (non annulés).
-  // Retournée uniquement si toutes les quantités ont été retournées, sinon Validée.
-  const recomputeTransactionStatus = async (transactionId: string) => {
-    const tx = posTransactions.find(t => t.id === transactionId);
-    if (!tx || tx.status === 'Annulée') return;
-    const activeReturns = posReturns.filter(r => r.transactionId === transactionId && r.status !== 'Annulé');
-    if (activeReturns.length === 0) {
-      if (tx.status !== 'Validée') await updatePosTransaction(transactionId, { status: 'Validée' });
-      return;
-    }
-    const returnedQty = new Map<string, number>();
-    for (const r of activeReturns) {
-      for (const line of r.lines) {
-        if (line.productId) {
-          returnedQty.set(line.productId, (returnedQty.get(line.productId) || 0) + line.quantity);
-        }
-      }
-    }
-    const fullyReturned = tx.lines.every(l => {
-      if (!l.productId) return true;
-      return (returnedQty.get(l.productId) || 0) >= l.quantity;
-    });
-    const newStatus: PosTransaction['status'] = fullyReturned ? 'Retournée' : 'Validée';
-    if (tx.status !== newStatus) await updatePosTransaction(transactionId, { status: newStatus });
-  };
-
-  const addPosTransaction = async (tx: PosTransaction) => {
-    const newTx = { ...tx, id: tx.id || uuidv4(), lines: tx.lines.map(l => ({ ...l, id: l.id || uuidv4() })), payments: tx.payments.map(p => ({ ...p, id: p.id || uuidv4() })) };
-    const nextTxs = [newTx, ...posTransactions.filter(t => t.id !== newTx.id)];
-    setPosTransactions(nextTxs);
-    await safeSet(db.posTransactions, nextTxs);
-
-    // Alimenter le registre local des paiements (répartition Finance à jour immédiatement)
-    const newPayments = [...posPayments, ...newTx.payments.map(p => ({ ...p, transactionId: newTx.id }))];
-    setPosPayments(newPayments);
-    await safeSet(db.posPayments, newPayments);
-
-    await queueSyncAction('INSERT_POS_TRANSACTION', newTx);
-    // Update local product quantities (le serveur est décrémenté par INSERT_POS_TRANSACTION)
-    await adjustProductStock(newTx.lines.map(l => ({ productId: l.productId, quantity: -l.quantity })), false, { type: 'Vente', reference: newTx.transactionNumber, createdBy: currentUser?.name });
-  };
-  const updatePosTransaction = async (id: string, data: Partial<PosTransaction>) => {
-    const nextTxs = posTransactions.map(t => t.id === id ? { ...t, ...data } : t);
-    setPosTransactions(nextTxs);
-    await safeSet(db.posTransactions, nextTxs);
-    await queueSyncAction('UPDATE_POS_TRANSACTION', { id, ...data });
-  };
-
-  // Annulation d'une vente validée (void) : passe en 'Annulée', restaure le stock local + serveur.
-  // Ne restaure que la quantité non déjà retournée (évite la double restauration après un retour partiel).
-  // Session clôturée = refusé (écart figé, M6) — le retour affirme false.
-  const voidPosTransaction = async (id: string): Promise<boolean> => {
-    const tx = posTransactions.find(t => t.id === id);
-    if (!tx || tx.status !== 'Validée') return false;
-    if (tx.sessionId) {
-      const sess = posCashSessions.find(s => s.id === tx.sessionId);
-      if (sess && sess.status !== 'Ouverte') return false;
-    }
-    const returnedQty = new Map<string, number>();
-    for (const r of posReturns) {
-      if (r.transactionId === id && r.status !== 'Annulé') {
-        for (const line of r.lines) {
-          if (line.productId) returnedQty.set(line.productId, (returnedQty.get(line.productId) || 0) + line.quantity);
-        }
-      }
-    }
-    await updatePosTransaction(id, { status: 'Annulée' });
-    const deltas = tx.lines
-      .map(l => ({ productId: l.productId, quantity: Math.max(0, l.quantity - (l.productId ? (returnedQty.get(l.productId) || 0) : 0)) }))
-      .filter(d => d.productId && d.quantity > 0);
-    await adjustProductStock(deltas, true, { type: 'Retour', reference: tx.transactionNumber, createdBy: currentUser?.name, notes: 'Annulation' });
-    return true;
-  };
-
-  const clearPosSalesHistory = async () => {
-    setPosTransactions([]);
-    setPosPayments([]);
-    setPosReturns([]);
-    await db.posTransactions.clear();
-    await db.posPayments.clear();
-    await db.posReturns.clear();
-    await queueSyncAction('CLEAR_POS_SALES_HISTORY', { confirmed: true });
-  };
-
-  const deletePosMovementsByDateRange = async (startDate: string, endDate: string) => {
-    // 1. Identifier et filtrer les transactions & paiements dans la plage
-    const txsToDelete = posTransactions.filter(t => {
-      const day = toLocalDayKey(t.date);
-      return day >= startDate && day <= endDate;
-    });
-    const txIdsToDelete = new Set(txsToDelete.map(t => t.id));
-
-    const nextTxs = posTransactions.filter(t => !txIdsToDelete.has(t.id));
-    const nextPayments = posPayments.filter(p => !p.transactionId || !txIdsToDelete.has(p.transactionId));
-
-    // 2. Filtrer les retours
-    const nextReturns = posReturns.filter(r => {
-      const day = toLocalDayKey(r.date);
-      return !(day >= startDate && day <= endDate) && !txIdsToDelete.has(r.transactionId || '');
-    });
-
-    // 3. Filtrer les sessions de caisse
-    const nextSessions = posCashSessions.filter(s => {
-      const day = toLocalDayKey(s.openedAt);
-      return !(day >= startDate && day <= endDate);
-    });
-
-    setPosTransactions(nextTxs);
-    setPosPayments(nextPayments);
-    setPosReturns(nextReturns);
-    setPosCashSessions(nextSessions);
-
-    await db.posTransactions.setItem('data', nextTxs);
-    await db.posPayments.setItem('data', nextPayments);
-    await db.posReturns.setItem('data', nextReturns);
-    await db.posCashSessions.setItem('data', nextSessions);
-
-    await queueSyncAction('DELETE_POS_MOVEMENTS_BY_RANGE', { startDate, endDate, confirmed: true });
-  };
-
-  const addPosDiscount = async (discount: PosDiscount) => {
-    const newDiscount = { ...discount, id: discount.id || uuidv4() };
-    setPosDiscounts(prev => {
-      const next = [...prev, newDiscount];
-      void db.posDiscounts.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_POS_DISCOUNT', newDiscount);
-  };
-  const updatePosDiscount = async (id: string, data: Partial<PosDiscount>) => {
-    setPosDiscounts(prev => {
-      const next = prev.map(d => d.id === id ? { ...d, ...data } : d);
-      void db.posDiscounts.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_POS_DISCOUNT', { id, ...data });
-  };
-  const deletePosDiscount = async (id: string) => {
-    setPosDiscounts(prev => {
-      const next = prev.filter(d => d.id !== id);
-      void db.posDiscounts.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_POS_DISCOUNT', { id });
-  };
-
-  const updatePosSettings = async (newSettings: PosSettings) => {
-    setPosSettingsState(newSettings);
-    await db.posSettings.setItem('data', newSettings);
-    await queueSyncAction('UPDATE_POS_SETTINGS', newSettings);
-  };
-
-  const addPosReturn = async (ret: PosReturn) => {
-    const newReturn = { 
-      ...ret, 
-      id: ret.id || uuidv4(), 
-      lines: ret.lines.map(l => ({ ...l, id: l.id || uuidv4() })),
-      exchangeLines: ret.exchangeLines?.map(l => ({ ...l, id: l.id || uuidv4() }))
-    };
-    const nextReturns = [...posReturns, newReturn];
-    setPosReturns(nextReturns);
-    await safeSet(db.posReturns, nextReturns);
-    await queueSyncAction('INSERT_POS_RETURN', newReturn);
-    
-    // Restore product quantities for returned items (stock + qty) with movement tracking
-    await adjustProductStock(
-      newReturn.lines.map(l => ({ productId: l.productId, quantity: l.quantity })), 
-      true, 
-      { type: 'Retour', reference: newReturn.returnNumber, createdBy: currentUser?.name || newReturn.createdBy, notes: 'Retour marchandise' }
-    );
-    
-    // Deduct product quantities for exchanged items (stock - qty) with movement tracking
-    if (newReturn.exchangeLines && newReturn.exchangeLines.length > 0) {
-      await adjustProductStock(
-        newReturn.exchangeLines.map(l => ({ productId: l.productId, quantity: -l.quantity })), 
-        true, 
-        { type: 'Vente', reference: newReturn.returnNumber, createdBy: currentUser?.name || newReturn.createdBy, notes: 'Échange marchandise' }
-      );
-    }
-
-    // Marquer la transaction 'Retournée' ou 'Retour partiel'
-    if (newReturn.transactionId) {
-      await recomputeTransactionStatus(newReturn.transactionId);
-    }
-  };
-  const updatePosReturn = async (id: string, data: Partial<PosReturn>) => {
-    const nextReturns = posReturns.map(r => r.id === id ? { ...r, ...data } : r);
-    setPosReturns(nextReturns);
-    await safeSet(db.posReturns, nextReturns);
-    await queueSyncAction('UPDATE_POS_RETURN', { id, ...data });
-  };
-
-  // Annulation d'un retour : statut 'Annulé', ré-injecte le stock (local + serveur), recalcule la transaction
-  // R3 : si le void de la transaction complément échoue (session clôturée), on
-  // interrompt l'annulation AVANT toute ré-inversion de stock (divergence sinon).
-  const cancelPosReturn = async (id: string): Promise<boolean> => {
-    const ret = posReturns.find(r => r.id === id);
-    if (!ret || ret.status === 'Annulé') return false;
-
-    // Annuler aussi la transaction de complément éventuelle (encaissement lié)
-    if (ret.complementTransactionId) {
-      const complement = posTransactions.find(t => t.id === ret.complementTransactionId);
-      if (complement && complement.status === 'Validée') {
-        const ok = await voidPosTransaction(ret.complementTransactionId);
-        if (!ok) {
-          toast.error("Annulation impossible : la transaction complément est sur une session clôturée. Aucun stock n'a été modifié.");
-          return false;
-        }
-      }
-    }
-
-    await updatePosReturn(id, { status: 'Annulé' });
-    const tx = ret.transactionId ? posTransactions.find(t => t.id === ret.transactionId) : undefined;
-    
-    // Inverser les stocks si la transaction n'est pas complètement annulée par ailleurs
-    if (!tx || tx.status !== 'Annulée') {
-      // Les articles retournés repartent (stock -)
-      await adjustProductStock(
-        ret.lines.map(l => ({ productId: l.productId, quantity: -l.quantity })), 
-        true,
-        { type: 'Ajustement Manuel', reference: ret.returnNumber, createdBy: currentUser?.name, notes: 'Annulation retour (déduction)' }
-      );
-      
-      // Les articles échangés reviennent (stock +)
-      if (ret.exchangeLines && ret.exchangeLines.length > 0) {
-        await adjustProductStock(
-          ret.exchangeLines.map(l => ({ productId: l.productId, quantity: l.quantity })), 
-          true,
-          { type: 'Ajustement Manuel', reference: ret.returnNumber, createdBy: currentUser?.name, notes: 'Annulation retour (réintégration échange)' }
-        );
-      }
-    }
-
-    if (ret.transactionId) {
-      await recomputeTransactionStatus(ret.transactionId);
-    }
-    return true;
-  };
-
-  // Product Module CRUD
-  const addProductCompletion = async (completion: ProductCompletion) => {
-    const newCompletion = { ...completion, id: completion.id || uuidv4() };
-    setProductCompletions(prev => {
-      const next = [...prev, newCompletion];
-      void db.productCompletions.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_PRODUCT_COMPLETION', newCompletion);
-  };
-  const updateProductCompletion = async (id: string, data: Partial<ProductCompletion>) => {
-    setProductCompletions(prev => {
-      const next = prev.map(c => c.id === id ? { ...c, ...data } : c);
-      void db.productCompletions.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_PRODUCT_COMPLETION', { id, ...data });
-  };
-  const deleteProductCompletion = async (id: string) => {
-    setProductCompletions(prev => {
-      const next = prev.filter(c => c.id !== id);
-      void db.productCompletions.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_PRODUCT_COMPLETION', { id });
-  };
-
-  const addImportSession = async (session: ImportSession) => {
-    setImportSessions(prev => {
-      const next = [...prev, session];
-      void db.importSessions.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('INSERT_IMPORT_SESSION', session);
-  };
-  const updateImportSession = async (id: string, data: Partial<ImportSession>) => {
-    setImportSessions(prev => {
-      const next = prev.map(s => s.id === id ? { ...s, ...data } : s);
-      void db.importSessions.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('UPDATE_IMPORT_SESSION', { id, ...data });
-  };
-  const deleteImportSession = async (id: string) => {
-    setImportSessions(prev => {
-      const next = prev.filter(s => s.id !== id);
-      void db.importSessions.setItem('data', next);
-      return next;
-    });
-    await queueSyncAction('DELETE_IMPORT_SESSION', { id });
-  };
-
-  const addImportError = async (error: ImportError) => {
-    const existing = await db.importErrors.getItem<ImportError[]>('data');
-    const next = existing ? [...existing, error] : [error];
-    await db.importErrors.setItem('data', next);
-    await queueSyncAction('INSERT_IMPORT_ERROR', error);
-  };
-
-  const completeProduct = async (productId: string, updates: Partial<PosProduct>) => {
-    const updatedProducts = posProducts.map(p => p.id === productId ? { ...p, ...updates } : p);
-    setPosProducts(updatedProducts);
-    await db.posProducts.setItem('data', updatedProducts);
-    await queueSyncAction('UPDATE_POS_PRODUCT', { id: productId, ...updates });
-    // Remove related product completions (local + serveur)
-    const removedCompletions = productCompletions.filter(c => c.productId === productId);
-    const remainingCompletions = productCompletions.filter(c => c.productId !== productId);
-    setProductCompletions(remainingCompletions);
-    await db.productCompletions.setItem('data', remainingCompletions);
-    for (const c of removedCompletions) {
-      await queueSyncAction('DELETE_PRODUCT_COMPLETION', { id: c.id });
-    }
-  };
-
   // Création d'utilisateur via Edge Function (service_role) pour ne pas écraser la session du Directeur
   const addUser = async (user: User) => {
     if (!navigator.onLine) { alert("Vous devez être en ligne pour créer un utilisateur."); return; }
@@ -4283,11 +2957,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           name: user.name,
           role: user.role,
           serviceId: user.serviceId || null,
-          posReturnsEnabled: user.posReturnsEnabled,
-          posCatalogueEnabled: user.posCatalogueEnabled,
-          posSupplyEnabled: user.posSupplyEnabled,
-          posInventoryEnabled: user.posInventoryEnabled,
-          posStockEnabled: user.posStockEnabled,
           crmPrestationsEnabled: user.crmPrestationsEnabled ?? crmDefaultNew,
           crmCaisseEnabled: user.crmCaisseEnabled ?? crmDefaultNew,
           crmMaintenanceEnabled: user.crmMaintenanceEnabled ?? crmDefaultNew,
@@ -4320,11 +2989,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       pin: user.pin,
       lastLogin: 'Jamais',
       active: true,
-      posReturnsEnabled: user.posReturnsEnabled,
-      posCatalogueEnabled: user.posCatalogueEnabled,
-      posSupplyEnabled: user.posSupplyEnabled,
-      posInventoryEnabled: user.posInventoryEnabled,
-      posStockEnabled: user.posStockEnabled,
       crmPrestationsEnabled: user.crmPrestationsEnabled ?? crmDefaultNew,
       crmCaisseEnabled: user.crmCaisseEnabled ?? crmDefaultNew,
       crmMaintenanceEnabled: user.crmMaintenanceEnabled ?? crmDefaultNew,
@@ -4350,11 +3014,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (data.name !== undefined) payload.name = data.name;
     if (data.role !== undefined) payload.role = data.role;
     if (data.serviceId !== undefined) payload.service_id = data.serviceId || null;
-    if (data.posReturnsEnabled !== undefined) payload.pos_returns_enabled = data.posReturnsEnabled;
-    if (data.posCatalogueEnabled !== undefined) payload.pos_catalogue_enabled = data.posCatalogueEnabled;
-    if (data.posSupplyEnabled !== undefined) payload.pos_supply_enabled = data.posSupplyEnabled;
-    if (data.posInventoryEnabled !== undefined) payload.pos_inventory_enabled = data.posInventoryEnabled;
-    if (data.posStockEnabled !== undefined) payload.pos_stock_enabled = data.posStockEnabled;
     if (data.crmPrestationsEnabled !== undefined) payload.crm_prestations_enabled = data.crmPrestationsEnabled;
     if (data.crmCaisseEnabled !== undefined) payload.crm_caisse_enabled = data.crmCaisseEnabled;
     if (data.crmMaintenanceEnabled !== undefined) payload.crm_maintenance_enabled = data.crmMaintenanceEnabled;
@@ -4407,10 +3066,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     await queueSyncAction('DELETE_PROFILE', { id });
     if (typeof callback === 'function') callback();
   };
-
-  const addSuspendedCart = useCallback((cart: SuspendedCart) => {
-    setSuspendedCarts(prev => [...prev, cart]);
-  }, []);
 
   const addCrmDocument = async (
     file: File,
@@ -4623,10 +3278,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     await db.notifications.setItem('data', newNotifications);
     await queueSyncAction('MARK_ALL_NOTIFICATIONS_READ', { user_id: currentUser.id });
   };
-
-  const removeSuspendedCart = useCallback((id: string) => {
-    setSuspendedCarts(prev => prev.filter(c => c.id !== id));
-  }, []);
 
   // ==========================================
   // CRM MODULES RESPONSABLES CRUD
@@ -5629,7 +4280,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppContext.Provider value={{
-      users, clients, quotes, sales, facturePaiements, couts, commissions, installments, scoringRules, objectifs, classements, primes, primeAuditLogs, prospects, prospectActivities, prospectFollowUps, categories, settings, services, prestations, loading, activityReports, weeklyReports, v2DailyReports, v2WeeklyReports, notifications, crmDocuments, crmFolders, posCategories, posBrands, posSuppliers, posProducts, posStockEntries, posStockMovements, posInventories, posCashSessions, posTransactions, posPayments, posDiscounts, posSettings, posReturns, posWorkspace, setPosWorkspace, suspendedCarts, addSuspendedCart, removeSuspendedCart, addClient, updateClient, deleteClient, recordPayment, addCout, updateCout, deleteCout, addObjectif, updateObjectif, deleteObjectif, proposePrime, validatePrime, rejectPrime, payPrime, updateScoringRule, addQuote, updateQuote, updateQuoteStatus, deleteQuote, addSale, updateSaleStatus, updateSale, deleteSale, recordInstallmentPayment, saveInstallmentsForSale, addCommission, updateCommissionStatus, deleteCommission, addProspect, updateProspect, deleteProspect, convertProspect, addProspectActivity, deleteProspectActivity, addProspectFollowUp, updateProspectFollowUp, deleteProspectFollowUp, upsertActivityReport, deleteActivityReport, saveWeeklyReport, markWeeklyReportSent, markWeeklyReportRead, markNotificationAsRead, markAllNotificationsAsRead, saveV2DailyReport, saveV2WeeklyReport, submitV2WeeklyReport, sendWeeklyReportReminder, reviewV2WeeklyReport, deleteV2WeeklyReport, deleteV2DailyReport, updateMyProfile, addCrmDocument, updateCrmDocument, deleteCrmDocument, downloadCrmDocument, getCrmDocumentBlob, addCrmFolder, updateCrmFolder, deleteCrmFolder, addCategory, deleteCategory, updateSettings, addUser, updateUser, toggleUserStatus, deleteUser, addPrestation, updatePrestation, deletePrestation, addService, updateService, deleteService, addPosCategory, updatePosCategory, deletePosCategory, addPosBrand, updatePosBrand, deletePosBrand, addPosSupplier, updatePosSupplier, deletePosSupplier, addPosProduct, updatePosProduct, deletePosProduct, mergePosProducts, repairLocalCatalog, findProductByBarcode, findProductByReference, searchProducts, getIncompleteProducts, updateProductBarcode, updateProductImage, importProducts, addPosStockEntry, updatePosStockEntry, deletePosStockEntry, addPosStockMovement, addPosInventory, updatePosInventory, deletePosInventory, addPosCashSession, updatePosCashSession, addPosTransaction, updatePosTransaction, voidPosTransaction, clearPosSalesHistory, deletePosMovementsByDateRange, addPosDiscount, updatePosDiscount, deletePosDiscount, updatePosSettings, addPosReturn, updatePosReturn, cancelPosReturn, productCompletions, importSessions, addProductCompletion, updateProductCompletion, deleteProductCompletion, addImportSession, updateImportSession, deleteImportSession, addImportError, completeProduct, refreshData, reconcilePosData: (opts?: { force?: boolean }) => reconcileLocalPosDataWithCloud(opts),
+      users, clients, quotes, sales, facturePaiements, couts, commissions, installments, scoringRules, objectifs, classements, primes, primeAuditLogs, prospects, prospectActivities, prospectFollowUps, categories, settings, services, prestations, loading, activityReports, weeklyReports, v2DailyReports, v2WeeklyReports, notifications, crmDocuments, crmFolders, addClient, updateClient, deleteClient, recordPayment, addCout, updateCout, deleteCout, addObjectif, updateObjectif, deleteObjectif, proposePrime, validatePrime, rejectPrime, payPrime, updateScoringRule, addQuote, updateQuote, updateQuoteStatus, deleteQuote, addSale, updateSaleStatus, updateSale, deleteSale, recordInstallmentPayment, saveInstallmentsForSale, addCommission, updateCommissionStatus, deleteCommission, addProspect, updateProspect, deleteProspect, convertProspect, addProspectActivity, deleteProspectActivity, addProspectFollowUp, updateProspectFollowUp, deleteProspectFollowUp, upsertActivityReport, deleteActivityReport, saveWeeklyReport, markWeeklyReportSent, markWeeklyReportRead, markNotificationAsRead, markAllNotificationsAsRead, saveV2DailyReport, saveV2WeeklyReport, submitV2WeeklyReport, sendWeeklyReportReminder, reviewV2WeeklyReport, deleteV2WeeklyReport, deleteV2DailyReport, updateMyProfile, addCrmDocument, updateCrmDocument, deleteCrmDocument, downloadCrmDocument, getCrmDocumentBlob, addCrmFolder, updateCrmFolder, deleteCrmFolder, addCategory, deleteCategory, updateSettings, addUser, updateUser, toggleUserStatus, deleteUser, addPrestation, updatePrestation, deletePrestation, addService, updateService, deleteService, refreshData,
       // CRM Modules Responsables
       crmTiers, crmCommerciaux, crmPrestations, crmCaisse, crmCommissions, crmArticles, crmStockMouvements, crmMaintenance, crmTechniciens,
       addCrmTier, updateCrmTier, deleteCrmTier,

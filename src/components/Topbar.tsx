@@ -12,7 +12,7 @@ import './Topbar.css';
 export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   const location = useLocation();
   const { currentUser, logout, updatePin, updateCurrentUser } = useAuth();
-  const { posWorkspace, setPosWorkspace, updateMyProfile, notifications, markNotificationAsRead, markAllNotificationsAsRead, services } = useAppContext();
+  const { updateMyProfile, notifications, markNotificationAsRead, markAllNotificationsAsRead, services } = useAppContext();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);

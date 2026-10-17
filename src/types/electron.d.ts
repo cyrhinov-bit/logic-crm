@@ -46,23 +46,6 @@ export interface ElectronAPI {
   getSetting: (key: string) => Promise<any>;
   setSetting: (key: string, value: any) => Promise<void>;
 
-  // Printer
-  getPrinters: () => Promise<any[]>;
-  printTestPage: (printerName: string) => Promise<string>;
-  getPrinterQueue: () => Promise<any[]>;
-
-  // Hardware
-  getDevices: () => Promise<any[]>;
-  discoverHardware: () => Promise<any[]>;
-
-  // Scanner
-  startScanner: () => Promise<void>;
-  stopScanner: () => Promise<void>;
-  getScannerConfig: () => Promise<any>;
-  setScannerConfig: (c: any) => Promise<void>;
-  getScannerHistory: () => Promise<any[]>;
-  onScan: (callback: (record: any) => void) => void;
-
   // Backup
   createBackup: () => Promise<string>;
   restoreBackup: (path: string) => Promise<boolean>;
@@ -93,16 +76,6 @@ export interface ElectronAPI {
   getPerformanceMetrics: () => Promise<any>;
   clearPerformanceCache: () => Promise<boolean>;
   runPerformanceBenchmark: () => Promise<any>;
-
-  // POS
-  openSale: (userId: string) => Promise<any>;
-  closeSale: () => Promise<any>;
-  getPosSession: () => Promise<any>;
-  paySale: (amount: number, method: string) => Promise<any>;
-  openCashDrawer: () => Promise<boolean>;
-  printPosReceipt: (data: any) => Promise<string>;
-  displayCustomerMessage: (line1: string, line2: string) => Promise<boolean>;
-  onPosEvent: (callback: (payload: { event: string; data: any }) => void) => void;
 
   // Sync
   enqueueSync: (op: any) => Promise<void>;

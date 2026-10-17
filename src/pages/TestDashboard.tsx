@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useAppContext } from '../context/AppContext';
 
 const roles = [
-  { label: 'Directeur CRM', role: 'Directeur', posActive: false, path: '/' },
-  { label: 'Responsable CRM', role: 'Responsable', posActive: false, path: '/' },
-  { label: 'Commercial', role: 'Commercial', posActive: false, path: '/commercial' },
+  { label: 'Directeur CRM', role: 'Directeur', path: '/' },
+  { label: 'Responsable CRM', role: 'Responsable', path: '/' },
+  { label: 'Commercial', role: 'Commercial', path: '/commercial' },
 ];
 
 export default function TestDashboard() {
   const { currentUser, loading } = useAuth();
-  const { setPosWorkspace } = useAppContext();
   const [activeRole, setActiveRole] = useState<string | null>(null);
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center' }}>Chargement...</div>;
@@ -18,7 +16,6 @@ export default function TestDashboard() {
   const handleSwitch = (r: typeof roles[0]) => {
     // @ts-ignore - test mode, bypass role check
     localStorage.setItem('hinov_test_role', r.role);
-    setPosWorkspace({ active: r.posActive });
     setActiveRole(r.label);
     window.location.href = r.path;
   };
@@ -44,7 +41,7 @@ export default function TestDashboard() {
           >
             <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '4px' }}>{r.label}</div>
             <div style={{ fontSize: '13px', color: '#6B7280' }}>
-              {r.posActive ? 'POS' : 'CRM'} — {r.path}
+              CRM — {r.path}
             </div>
           </button>
         ))}

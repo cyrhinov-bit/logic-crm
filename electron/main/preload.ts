@@ -65,25 +65,6 @@ const electronAPI = {
   getSetting: (key: string) => ipcRenderer.invoke('settings:get', key),
   setSetting: (key: string, value: any) => ipcRenderer.invoke('settings:set', key, value),
 
-  // Printer
-  getPrinters: () => ipcRenderer.invoke('printer:getPrinters'),
-  printTestPage: (printerName: string) => ipcRenderer.invoke('printer:printTestPage', printerName),
-  getPrinterQueue: () => ipcRenderer.invoke('printer:getQueue'),
-  
-  // Hardware
-  getDevices: () => ipcRenderer.invoke('hardware:getDevices'),
-  discoverHardware: () => ipcRenderer.invoke('hardware:discover'),
-
-  // Scanner
-  startScanner: () => ipcRenderer.invoke('scanner:start'),
-  stopScanner: () => ipcRenderer.invoke('scanner:stop'),
-  getScannerConfig: () => ipcRenderer.invoke('scanner:getConfig'),
-  setScannerConfig: (c: any) => ipcRenderer.invoke('scanner:setConfig', c),
-  getScannerHistory: () => ipcRenderer.invoke('scanner:getHistory'),
-  onScan: (callback: (record: any) => void) => {
-    ipcRenderer.on('scanner:onScan', (_, record) => callback(record));
-  },
-
   // Backup
   createBackup: () => ipcRenderer.invoke('backup:create'),
   restoreBackup: (path: string) => ipcRenderer.invoke('backup:restore', path),

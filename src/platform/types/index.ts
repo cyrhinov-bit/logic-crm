@@ -131,55 +131,6 @@ export interface SettingsInterface {
   setSetting(key: string, value: any): Promise<void>;
 }
 
-export interface PrintJob {
-  id: string;
-  date: string;
-  type: 'html' | 'pdf' | 'escpos';
-  printerName?: string;
-  status: 'pending' | 'printing' | 'completed' | 'failed' | 'cancelled';
-  progress: number;
-  error?: string;
-}
-
-export interface Device {
-  id: string;
-  type: 'scanner' | 'cashdrawer' | 'display' | 'scale' | 'payment' | 'printer' | 'unknown';
-  manufacturer?: string;
-  model?: string;
-  status: 'connected' | 'disconnected' | 'error';
-  capabilities: string[];
-  driverLoaded: boolean;
-}
-
-export interface ScanRecord {
-  id: string;
-  timestamp: string;
-  data: string;
-  format: string;
-  valid: boolean;
-  deviceId?: string;
-}
-
-export interface ScannerInterface {
-  start(): Promise<void>;
-  stop(): Promise<void>;
-  getConfig(): Promise<any>;
-  setConfig(c: any): Promise<void>;
-  getHistory(): Promise<ScanRecord[]>;
-  onScan(callback: (record: ScanRecord) => void): void;
-}
-
-export interface HardwareInterface {
-  getDevices(): Promise<Device[]>;
-  discover(): Promise<Device[]>;
-}
-
-export interface PrinterInterface {
-  getPrinters(): Promise<any[]>;
-  printTestPage(printerName: string): Promise<string>;
-  getQueue(): Promise<PrintJob[]>;
-}
-
 export interface BackupMetadata {
   id: string;
   date: string;
@@ -251,17 +202,6 @@ export interface PerformanceInterface {
   runBenchmark(): Promise<any>;
 }
 
-export interface PosInterface {
-  openSale(userId: string): Promise<any>;
-  closeSale(): Promise<any>;
-  getSession(): Promise<any>;
-  pay(amount: number, method: string): Promise<any>;
-  openDrawer(): Promise<boolean>;
-  printReceipt(data: any): Promise<string>;
-  displayMessage(line1: string, line2: string): Promise<boolean>;
-  onEvent(callback: (payload: { event: string; data: any }) => void): void;
-}
-
 export interface SyncInterface {
   enqueue(op: any): Promise<void>;
   forceSync(): Promise<void>;
@@ -287,15 +227,11 @@ export interface PlatformBridge {
   network: NetworkInterface;
   logger: LoggerInterface;
   settings: SettingsInterface;
-  printer: PrinterInterface;
-  hardware: HardwareInterface;
-  scanner: ScannerInterface;
   backup: BackupInterface;
   updater: UpdaterInterface;
   diagnostics: DiagnosticInterface;
   maintenance: MaintenanceInterface;
   security: SecurityInterface;
   performance: PerformanceInterface;
-  pos: PosInterface;
   sync: SyncInterface;
 }

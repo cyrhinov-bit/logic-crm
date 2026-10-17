@@ -46,11 +46,6 @@ serve(async (req: Request) => {
       name: string;
       role: string;
       serviceId?: string;
-      posReturnsEnabled?: boolean;
-      posCatalogueEnabled?: boolean;
-      posSupplyEnabled?: boolean;
-      posInventoryEnabled?: boolean;
-      posStockEnabled?: boolean;
       crmPrestationsEnabled?: boolean;
       crmCaisseEnabled?: boolean;
       crmMaintenanceEnabled?: boolean;
@@ -64,7 +59,7 @@ serve(async (req: Request) => {
       crmTeamReportsEnabled?: boolean;
     }
 
-    const { email, pin, name, role, serviceId, posReturnsEnabled, posCatalogueEnabled, posSupplyEnabled, posInventoryEnabled, posStockEnabled, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled } = await req.json() as CreateUserPayload
+    const { email, pin, name, role, serviceId, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled } = await req.json() as CreateUserPayload
 
     // Autorisations
     const ALLOWED_ROLES = ['Directeur', 'Directeur adjoint', 'Responsable', 'Commercial']
@@ -100,11 +95,6 @@ serve(async (req: Request) => {
         pin,
         service_id: serviceId || null,
         active: true,
-        pos_returns_enabled: posReturnsEnabled === true,
-        pos_catalogue_enabled: posCatalogueEnabled === true,
-        pos_supply_enabled: posSupplyEnabled === true,
-        pos_inventory_enabled: posInventoryEnabled === true,
-        pos_stock_enabled: posStockEnabled === true,
         crm_prestations_enabled: crmPrestationsEnabled === true,
         crm_caisse_enabled: crmCaisseEnabled === true,
         crm_maintenance_enabled: crmMaintenanceEnabled === true,
@@ -125,7 +115,7 @@ serve(async (req: Request) => {
     }
 
     return new Response(
-      JSON.stringify({ id: newUserId, name, email, role, serviceId, posReturnsEnabled, posCatalogueEnabled, posSupplyEnabled, posInventoryEnabled, posStockEnabled, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled }),
+      JSON.stringify({ id: newUserId, name, email, role, serviceId, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error: any) {

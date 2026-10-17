@@ -136,26 +136,6 @@ export interface SharedAppSettings {
   commissionRate?: number;
 }
 
-export interface SharedPosProduct {
-  id: string;
-  reference: string;
-  barcode?: string;
-  isbn?: string;
-  name: string;
-  family?: 'Livre' | 'Fourniture' | 'Service';
-  categoryId?: string;
-  brandId?: string;
-  supplierId?: string;
-  purchasePrice: number;
-  sellingPrice: number;
-  quantity: number;
-  minStock: number;
-  imageUrl?: string;
-  description?: string;
-  status?: 'Active' | 'Inactive';
-  createdAt?: string;
-}
-
 export type SharedSupabaseClient = SupabaseClient;
 
 export interface SharedSupabaseEnv {

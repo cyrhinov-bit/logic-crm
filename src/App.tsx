@@ -18,7 +18,6 @@ import { Documents } from './pages/Documents';
 import { Utilisateurs } from './pages/Utilisateurs';
 import { Parametres } from './pages/Parametres';
 import { Login } from './pages/Login';
-import { PublicCatalog } from './pages/public/PublicCatalog';
 import TestDashboard from './pages/TestDashboard';
 
 // CRM Modules Responsables
@@ -32,7 +31,7 @@ import { CrmCommissions } from './pages/crm/CrmCommissions';
 import CrmModulesManager from './pages/crm/CrmModulesManager';
 import { CrmWeeklyReports } from './pages/crm/CrmWeeklyReports';
 
-// POS Pages (lazy loaded)
+// Pages (lazy loaded)
 import { lazy, Suspense } from 'react';
 import type { ReactNode } from 'react';
 const DataExport = lazy(() => import('./pages/DataExport'));
@@ -40,8 +39,6 @@ const SupFactures = lazy(() => import('./pages/SupFactures'));
 
 // Diagnostic pages (lazy loaded)
 const DiagnosticPage = lazy(() => import('./components/DiagnosticPage'));
-const PrinterDiagnosticPage = lazy(() => import('./components/PrinterDiagnosticPage'));
-const ScannerDiagnosticPage = lazy(() => import('./components/ScannerDiagnosticPage'));
 const PerformanceDiagnosticPage = lazy(() => import('./components/PerformanceDiagnosticPage'));
 const BackupDiagnosticPage = lazy(() => import('./components/BackupDiagnosticPage'));
 const FileDiagnosticPage = lazy(() => import('./components/FileDiagnosticPage'));
@@ -49,12 +46,10 @@ const SyncDiagnosticPage = lazy(() => import('./components/SyncDiagnosticPage'))
 const SupportDiagnosticPage = lazy(() => import('./components/SupportDiagnosticPage'));
 const SecurityDiagnosticPage = lazy(() => import('./components/SecurityDiagnosticPage'));
 const UpdaterDiagnosticPage = lazy(() => import('./components/UpdaterDiagnosticPage'));
-const HardwareDiagnosticPage = lazy(() => import('./components/HardwareDiagnosticPage'));
 
 import { AppProvider } from './context/AppContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ConfirmProvider } from './components/ConfirmModal';
-import { ProductImagesProvider } from './features/products/images/ProductImagesContext';
 
 const queryClient = new QueryClient();
 const webAppConfig = buildAppConfig('web');
@@ -124,16 +119,12 @@ function App() {
   return (
     <AuthProvider>
       <AppProvider>
-        <ProductImagesProvider>
         <ConfirmProvider>
           <QueryClientProvider client={queryClient}>
             <HashRouter>
               <Toaster position="top-center" />
               <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/catalogue" element={<PublicCatalog />} />
-                <Route path="/catalog" element={<Navigate to="/catalogue" replace />} />
-                <Route path="/boutique" element={<Navigate to="/catalogue" replace />} />
 
                 <Route element={<ProtectedRoute />}>
                   <Route path="/" element={<Layout />}>
@@ -142,8 +133,6 @@ function App() {
                     {/* Diagnostics : authentification + Direction requises (ex-publiques) */}
                     <Route path="/test" element={<RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><TestDashboard /></RequireRole>} />
                     <Route path="/diagnostics" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><DiagnosticPage /></RequireRole></Suspense>} />
-                    <Route path="/diagnostics/printer" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><PrinterDiagnosticPage /></RequireRole></Suspense>} />
-                    <Route path="/diagnostics/scanner" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><ScannerDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/performance" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><PerformanceDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/backup" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><BackupDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/files" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><FileDiagnosticPage /></RequireRole></Suspense>} />
@@ -151,7 +140,6 @@ function App() {
                     <Route path="/diagnostics/support" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><SupportDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/security" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><SecurityDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/updater" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><UpdaterDiagnosticPage /></RequireRole></Suspense>} />
-                    <Route path="/diagnostics/hardware" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><HardwareDiagnosticPage /></RequireRole></Suspense>} />
 
                     <Route path="clients" element={<RequireRole roles={['Directeur', 'Responsable', 'Commercial', 'Directeur adjoint', 'SuperAdmin']}><Clients /></RequireRole>} />
                     <Route path="services" element={<RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><Services /></RequireRole>} />
@@ -194,7 +182,6 @@ function App() {
             </HashRouter>
           </QueryClientProvider>
         </ConfirmProvider>
-        </ProductImagesProvider>
       </AppProvider>
     </AuthProvider>
   );
