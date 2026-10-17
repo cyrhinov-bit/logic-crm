@@ -1,6 +1,7 @@
 import { FileText, Users, CheckCircle, Clock, Plus, ShoppingBag, Award, Receipt } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
+import { isCrmModuleEnabled } from '../lib/crmModules';
 import { useNavigate } from 'react-router-dom';
 import './DashboardDirecteur.css';
 
@@ -95,7 +96,7 @@ export function DashboardCommercial() {
         </div>
 
         {/* Commandes / Prestations (si activé pour le commercial) */}
-        {currentUser?.crmPrestationsEnabled && (
+        {isCrmModuleEnabled(currentUser, 'crmPrestationsEnabled') && (
           <div className="widget-card" style={{ cursor: 'pointer', borderLeft: '4px solid #10B981' }} onClick={() => navigate('/crm/prestations')}>
             <div className="widget-icon" style={{ background: '#10B981', color: 'white' }}>
               <ShoppingBag size={28} />
@@ -111,7 +112,7 @@ export function DashboardCommercial() {
         )}
 
         {/* Commissions (si activé pour le commercial) */}
-        {currentUser?.crmCommissionsEnabled && (
+        {isCrmModuleEnabled(currentUser, 'crmCommissionsEnabled') && (
           <div className="widget-card" style={{ cursor: 'pointer', borderLeft: '4px solid #D97706' }} onClick={() => navigate('/crm/commissions')}>
             <div className="widget-icon" style={{ background: '#D97706', color: 'white' }}>
               <Award size={28} />
@@ -127,7 +128,7 @@ export function DashboardCommercial() {
         )}
 
         {/* Facturation (si activé pour le commercial) */}
-        {currentUser?.crmFacturationEnabled && (
+        {isCrmModuleEnabled(currentUser, 'crmFacturationEnabled') && (
           <div className="widget-card" style={{ cursor: 'pointer', borderLeft: '4px solid #0284C7' }} onClick={() => navigate('/factures')}>
             <div className="widget-icon" style={{ background: '#0284C7', color: 'white' }}>
               <Receipt size={28} />

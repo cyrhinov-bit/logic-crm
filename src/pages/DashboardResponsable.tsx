@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
+import { isCrmModuleEnabled, type CrmModuleKey } from '../lib/crmModules';
 import { useNavigate } from 'react-router-dom';
 import { 
   DonutChart, 
@@ -65,6 +66,13 @@ export function DashboardResponsable() {
 
   const currentService = services.find(s => s.id === currentUser?.serviceId);
   const serviceName = currentService?.name || 'Mon Pôle d\'Activité';
+
+  // Référence de périmètre des modules : le collaborateur filtré, sinon l'utilisateur connecté.
+  const referenceUser = selectedCommercialFilter !== 'ALL'
+    ? (users.find(u => u.id === selectedCommercialFilter) ?? null)
+    : currentUser;
+  /** Une carte KPI ne s'affiche que si le module correspondant est activé pour l'utilisateur de référence. */
+  const showModule = (key: CrmModuleKey) => isCrmModuleEnabled(referenceUser, key);
 
   const isDateInPeriod = (dateStr?: string, period: PeriodFilter = selectedPeriod): boolean => {
     if (period === 'ALL') return true;
@@ -180,12 +188,12 @@ export function DashboardResponsable() {
 
   // Donut Status
   const donutData: DonutDataPoint[] = [
-    ...(currentUser?.crmPrestationsEnabled ? [
+    ...(isCrmModuleEnabled(currentUser, 'crmPrestationsEnabled') ? [
       { label: 'Commandes Payées', value: filteredServicePrestations.filter(p => p.statut === 'PAYEE').length, color: '#10B981' },
       { label: 'Commandes En cours', value: filteredServicePrestations.filter(p => p.statut !== 'PAYEE' && p.statut !== 'BROUILLON' && p.statut !== 'ANNULEE' && p.statut !== 'CLOTUREE').length, color: '#3B82F6' }
     ] : []),
     { label: 'Devis Acceptés', value: acceptedQuotes.length, color: '#059669' },
-    ...(currentUser?.crmMaintenanceEnabled ? [
+    ...(isCrmModuleEnabled(currentUser, 'crmMaintenanceEnabled') ? [
       { label: 'Tickets Maintenance', value: filteredServiceMaintenance.length, color: '#F59E0B' }
     ] : [])
   ].filter(d => d.value > 0);
@@ -292,7 +300,7 @@ export function DashboardResponsable() {
           {currentService?.description || 'Pilotage de vos commandes, devis et interventions.'}
         </p>
         <div className="hero-meta-tags">
-          {currentUser?.crmPrestationsEnabled && (
+          {isCrmModuleEnabled(currentUser, 'crmPrestationsEnabled') && (
             <span className="hero-tag">
               <ShoppingBag size={14} color="#10B981" />
               <strong>{filteredServicePrestations.length}</strong> Commande(s)
@@ -302,7 +310,7 @@ export function DashboardResponsable() {
             <FileText size={14} color="#3B82F6" />
             <strong>{filteredServiceQuotes.length}</strong> Devis émis
           </span>
-          {currentUser?.crmMaintenanceEnabled && (
+          {isCrmModuleEnabled(currentUser, 'crmMaintenanceEnabled') && (
             <span className="hero-tag">
               <Wrench size={14} color="#F59E0B" />
               <strong>{filteredServiceMaintenance.length}</strong> Intervention(s)
@@ -370,7 +378,7 @@ export function DashboardResponsable() {
       {/* ─── KPIS DU SERVICE (CONDITIONNÉS PAR LES MODULES ACTIFS) ─────────────────── */}
       <div className="widgets-grid" style={{ marginBottom: '20px' }}>
         {/* Module Commandes / Prestations */}
-        {(selectedCommercialFilter === 'ALL' ? !!currentUser?.crmPrestationsEnabled : !!users.find(u => u.id === selectedCommercialFilter)?.crmPrestationsEnabled) && (
+        {showModule('crmPrestationsEnabled') && (
           <div className="widget-card" style={{ borderLeft: '4px solid #10B981', cursor: 'pointer' }} onClick={() => setActiveTab('OPERATIONS')}>
             <div className="widget-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#059669' }}>
               <ShoppingBag size={24} />
@@ -400,7 +408,7 @@ export function DashboardResponsable() {
         </div>
 
         {/* Module Facturation */}
-        {(selectedCommercialFilter === 'ALL' ? !!currentUser?.crmFacturationEnabled : !!users.find(u => u.id === selectedCommercialFilter)?.crmFacturationEnabled) && (
+        {showModule('crmFacturationEnabled') && (
           <div className="widget-card" style={{ borderLeft: '4px solid #0284C7', cursor: 'pointer' }} onClick={() => navigate('/factures')}>
             <div className="widget-icon" style={{ background: 'rgba(2, 132, 199, 0.1)', color: '#0284C7' }}>
               <Receipt size={24} />
@@ -416,7 +424,7 @@ export function DashboardResponsable() {
         )}
 
         {/* Module Bénéfice / Rentabilité (Prestations) */}
-        {(selectedCommercialFilter === 'ALL' ? !!currentUser?.crmPrestationsEnabled : !!users.find(u => u.id === selectedCommercialFilter)?.crmPrestationsEnabled) && (
+        {showModule('crmPrestationsEnabled') && (
           <div className="widget-card" style={{ borderLeft: '4px solid #059669' }}>
             <div className="widget-icon" style={{ background: 'rgba(5, 150, 105, 0.1)', color: '#059669' }}>
               <Award size={24} />
@@ -432,7 +440,7 @@ export function DashboardResponsable() {
         )}
 
         {/* Module Maintenance */}
-        {(selectedCommercialFilter === 'ALL' ? !!currentUser?.crmMaintenanceEnabled : !!users.find(u => u.id === selectedCommercialFilter)?.crmMaintenanceEnabled) && (
+        {showModule('crmMaintenanceEnabled') && (
           <div className="widget-card" style={{ borderLeft: '4px solid #F59E0B', cursor: 'pointer' }} onClick={() => navigate('/crm/maintenance')}>
             <div className="widget-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#D97706' }}>
               <Wrench size={24} />
@@ -448,7 +456,7 @@ export function DashboardResponsable() {
         )}
 
         {/* Module Caisse (si activé pour le responsable ou collaborateur) */}
-        {(selectedCommercialFilter === 'ALL' ? !!currentUser?.crmCaisseEnabled : !!users.find(u => u.id === selectedCommercialFilter)?.crmCaisseEnabled) && (
+        {showModule('crmCaisseEnabled') && (
           <div className="widget-card" style={{ borderLeft: '4px solid #EF4444', cursor: 'pointer' }} onClick={() => navigate('/crm/caisse')}>
             <div className="widget-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#DC2626' }}>
               <Wallet size={24} />
@@ -486,7 +494,7 @@ export function DashboardResponsable() {
           <span>Mon activité ({serviceMemberSummaries.length})</span>
         </button>
 
-        {currentUser?.crmPrestationsEnabled && (
+        {isCrmModuleEnabled(currentUser, 'crmPrestationsEnabled') && (
           <button
             className={`btn ${activeTab === 'OPERATIONS' ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setActiveTab('OPERATIONS')}
@@ -519,25 +527,25 @@ export function DashboardResponsable() {
               <p style={{ margin: '2px 0 16px', fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>Accès direct aux modules CRM du responsable</p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {currentUser?.crmPrestationsEnabled && (
+                {isCrmModuleEnabled(currentUser, 'crmPrestationsEnabled') && (
                   <button className="btn btn-outline" style={{ justifyContent: 'space-between', padding: '10px 14px' }} onClick={() => navigate('/crm/prestations')}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><ShoppingBag size={16} color="#10B981" /> Commandes (Grille 11 col.)</span>
                     <ArrowUpRight size={14} />
                   </button>
                 )}
-                {currentUser?.crmMaintenanceEnabled && (
+                {isCrmModuleEnabled(currentUser, 'crmMaintenanceEnabled') && (
                   <button className="btn btn-outline" style={{ justifyContent: 'space-between', padding: '10px 14px' }} onClick={() => navigate('/crm/maintenance')}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Wrench size={16} color="#F59E0B" /> Tickets d'intervention</span>
                     <ArrowUpRight size={14} />
                   </button>
                 )}
-                {currentUser?.crmCaisseEnabled && (
+                {isCrmModuleEnabled(currentUser, 'crmCaisseEnabled') && (
                   <button className="btn btn-outline" style={{ justifyContent: 'space-between', padding: '10px 14px' }} onClick={() => navigate('/crm/caisse')}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Wallet size={16} color="#EF4444" /> Journal de caisse</span>
                     <ArrowUpRight size={14} />
                   </button>
                 )}
-                {currentUser?.crmFacturationEnabled && (
+                {isCrmModuleEnabled(currentUser, 'crmFacturationEnabled') && (
                   <button className="btn btn-outline" style={{ justifyContent: 'space-between', padding: '10px 14px' }} onClick={() => navigate('/factures')}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Receipt size={16} color="#0284C7" /> Suivi des factures</span>
                     <ArrowUpRight size={14} />

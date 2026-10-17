@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { 
   FileText, 
   CheckCircle, 
@@ -27,6 +27,8 @@ import {
   Receipt
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
+import { isCrmModuleEnabled, type CrmModuleKey } from '../lib/crmModules';
 import { useNavigate } from 'react-router-dom';
 import { 
   DonutChart, 
@@ -43,6 +45,17 @@ import './DashboardDirecteur.css';
 type PeriodFilter = 'ALL' | 'TODAY' | '7_DAYS' | 'THIS_MONTH' | 'THIS_QUARTER' | 'THIS_YEAR';
 type ModuleScope = 'ALL' | 'PRESTATIONS' | 'DEVIS' | 'FACTURES' | 'CAISSE' | 'MAINTENANCE' | 'STOCKS' | 'TIERS' | 'COMMISSIONS';
 
+/** Périmètre d'analyse → module CRM dont il dépend ('ALL' et 'DEVIS' sont des socles toujours visibles). */
+const SCOPE_MODULE_KEY: Partial<Record<ModuleScope, CrmModuleKey>> = {
+  PRESTATIONS: 'crmPrestationsEnabled',
+  FACTURES: 'crmFacturationEnabled',
+  CAISSE: 'crmCaisseEnabled',
+  MAINTENANCE: 'crmMaintenanceEnabled',
+  STOCKS: 'crmStocksEnabled',
+  TIERS: 'crmTiersEnabled',
+  COMMISSIONS: 'crmCommissionsEnabled',
+};
+
 export function DashboardDirecteur() {
   const { 
     quotes, 
@@ -58,7 +71,11 @@ export function DashboardDirecteur() {
     crmCommerciaux, 
     crmCommissions 
   } = useAppContext();
-  
+
+  // Utilisateur connecté : sert de référence quand aucun collaborateur n'est filtré.
+  const { currentUser: authUser } = useAuth();
+  const currentUser = users.find(u => u.id === authUser?.id) || authUser;
+
   const navigate = useNavigate();
 
   // Filtres
@@ -69,6 +86,25 @@ export function DashboardDirecteur() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'USERS_ANALYTICS' | 'DETAILED_TABLES'>('OVERVIEW');
   const [inspectedUserId, setInspectedUserId] = useState<string | null>(null);
+
+  // Référence de périmètre des modules : le collaborateur filtré, sinon l'utilisateur connecté.
+  const referenceUser = selectedUserFilter !== 'ALL'
+    ? (users.find(u => u.id === selectedUserFilter) ?? null)
+    : currentUser;
+  /** Une carte KPI ne s'affiche que si le module correspondant est activé pour l'utilisateur de référence. */
+  const showModule = (key: CrmModuleKey) => isCrmModuleEnabled(referenceUser, key);
+
+  // Un périmètre d'analyse n'est autorisé que si son module est activé (les socles ALL/DEVIS le sont toujours).
+  const isScopeAllowed = (scope: ModuleScope) => {
+    const key = SCOPE_MODULE_KEY[scope];
+    return !key || showModule(key);
+  };
+
+  // Si le filtre change et rend le périmètre courant interdit, on retombe sur la synthèse 360°.
+  useEffect(() => {
+    if (!isScopeAllowed(selectedModuleScope)) setSelectedModuleScope('ALL');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedUserFilter, selectedModuleScope, currentUser?.id]);
 
   // Helper date filtering
   const isDateInPeriod = (dateStr?: string, period: PeriodFilter = selectedPeriod): boolean => {
@@ -657,14 +693,14 @@ export function DashboardDirecteur() {
               onChange={e => setSelectedModuleScope(e.target.value as ModuleScope)}
             >
               <option value="ALL">🌟 Synthèse 360° (Tous modules)</option>
-              <option value="PRESTATIONS">💼 Commandes (11 colonnes)</option>
+              {showModule('crmPrestationsEnabled') && <option value="PRESTATIONS">💼 Commandes (11 colonnes)</option>}
               <option value="DEVIS">📄 Devis Clients</option>
-              <option value="FACTURES">🧾 Factures & Recouvrement</option>
-              <option value="CAISSE">💰 Caisse & Dépenses</option>
-              <option value="MAINTENANCE">🛠️ Maintenance & Tickets</option>
-              <option value="STOCKS">📦 Stocks & Consommables</option>
-              <option value="TIERS">👥 Tiers & Partenaires</option>
-              <option value="COMMISSIONS">🏆 Commissions & Apporteurs</option>
+              {showModule('crmFacturationEnabled') && <option value="FACTURES">🧾 Factures & Recouvrement</option>}
+              {showModule('crmCaisseEnabled') && <option value="CAISSE">💰 Caisse & Dépenses</option>}
+              {showModule('crmMaintenanceEnabled') && <option value="MAINTENANCE">🛠️ Maintenance & Tickets</option>}
+              {showModule('crmStocksEnabled') && <option value="STOCKS">📦 Stocks & Consommables</option>}
+              {showModule('crmTiersEnabled') && <option value="TIERS">👥 Tiers & Partenaires</option>}
+              {showModule('crmCommissionsEnabled') && <option value="COMMISSIONS">🏆 Commissions & Apporteurs</option>}
             </select>
           </div>
         </div>
@@ -672,11 +708,10 @@ export function DashboardDirecteur() {
 
       {/* ─── KPIS CONSOLIDÉS MULTI-MODULES (FILTRÉS SELON ACCÈS MODULES) ──────────────────── */}
       {(() => {
-        const targetUserObj = selectedUserFilter !== 'ALL' ? users.find(u => u.id === selectedUserFilter) : null;
         return (
           <div className="widgets-grid" style={{ marginBottom: '20px' }}>
             {/* KPI 1 : Commandes Prestations */}
-            {(selectedUserFilter === 'ALL' || !!targetUserObj?.crmPrestationsEnabled) && (
+            {showModule('crmPrestationsEnabled') && (
               <div className="widget-card" style={{ borderLeft: '4px solid #10B981', cursor: 'pointer' }} onClick={() => setSelectedModuleScope('PRESTATIONS')}>
                 <div className="widget-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#059669' }}>
                   <ShoppingBag size={24} />
@@ -706,7 +741,7 @@ export function DashboardDirecteur() {
             </div>
 
             {/* KPI 3 : Facturation & Encaissements */}
-            {(selectedUserFilter === 'ALL' || !!targetUserObj?.crmFacturationEnabled) && (
+            {showModule('crmFacturationEnabled') && (
               <div className="widget-card" style={{ borderLeft: '4px solid #0284C7', cursor: 'pointer' }} onClick={() => navigate('/factures')}>
                 <div className="widget-icon" style={{ background: 'rgba(2, 132, 199, 0.1)', color: '#0284C7' }}>
                   <Receipt size={24} />
@@ -722,7 +757,7 @@ export function DashboardDirecteur() {
             )}
 
             {/* KPI 4 : Caisse Trésorerie */}
-            {(selectedUserFilter === 'ALL' || !!targetUserObj?.crmCaisseEnabled) && (
+            {showModule('crmCaisseEnabled') && (
               <div className="widget-card" style={{ borderLeft: '4px solid #EF4444', cursor: 'pointer' }} onClick={() => setSelectedModuleScope('CAISSE')}>
                 <div className="widget-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#DC2626' }}>
                   <Wallet size={24} />
@@ -740,7 +775,7 @@ export function DashboardDirecteur() {
             )}
 
             {/* KPI 5 : Maintenance */}
-            {(selectedUserFilter === 'ALL' || !!targetUserObj?.crmMaintenanceEnabled) && (
+            {showModule('crmMaintenanceEnabled') && (
               <div className="widget-card" style={{ borderLeft: '4px solid #F59E0B', cursor: 'pointer' }} onClick={() => setSelectedModuleScope('MAINTENANCE')}>
                 <div className="widget-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#D97706' }}>
                   <Wrench size={24} />
@@ -756,7 +791,7 @@ export function DashboardDirecteur() {
             )}
 
             {/* KPI 6 : Commissions */}
-            {(selectedUserFilter === 'ALL' || !!targetUserObj?.crmCommissionsEnabled) && (
+            {showModule('crmCommissionsEnabled') && (
               <div className="widget-card" style={{ borderLeft: '4px solid #8B5CF6', cursor: 'pointer' }} onClick={() => setSelectedModuleScope('COMMISSIONS')}>
                 <div className="widget-icon" style={{ background: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6' }}>
                   <Award size={24} />
@@ -860,7 +895,8 @@ export function DashboardDirecteur() {
 
           {/* Synthèse additionnelle : Stocks & Commissions */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-            {/* Carte Stocks & Consommables */}
+            {/* Carte Stocks & Consommables (module Stocks Métier) */}
+            {showModule('crmStocksEnabled') && (
             <div className="card" style={{ padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -892,8 +928,10 @@ export function DashboardDirecteur() {
                 </div>
               </div>
             </div>
+            )}
 
-            {/* Carte Commissions & Apporteurs */}
+            {/* Carte Commissions & Apporteurs (module Commissions) */}
+            {showModule('crmCommissionsEnabled') && (
             <div className="card" style={{ padding: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -925,6 +963,7 @@ export function DashboardDirecteur() {
                 </div>
               </div>
             </div>
+            )}
           </div>
         </div>
       )}
