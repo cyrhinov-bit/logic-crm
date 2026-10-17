@@ -136,38 +136,6 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; s
     { label: 'Paramètres', icon: Settings, path: '/parametres', color: '#64748B', bg: '#F1F5F9', roles: ['Directeur'] },
   ];
 
-  // POS nav items avec couleurs distinctives
-  const posNavItems: NavItemConfig[] = [
-    { label: 'Dashboard', icon: Home, path: '/pos', color: '#2563EB', bg: '#EFF6FF', roles: ['Directeur', 'Gerant'] },
-    { label: 'Copilot Direction IA', icon: Bot, path: '/pos/copilot-ia', color: '#8B5CF6', bg: '#F5F3FF', roles: ['Directeur', 'Gerant'] },
-    { label: 'Audit & Anti-Fraude IA', icon: ShieldAlert, path: '/pos/audit-ia', color: '#EF4444', bg: '#FEF2F2', roles: ['Directeur', 'Gerant'] },
-    { label: 'Finance', icon: DollarSign, path: '/pos/finance', color: '#10B981', bg: '#ECFDF5', roles: ['Directeur', 'Gerant'] },
-    { label: 'Caisse', icon: ShoppingCart, path: '/pos/terminal', color: '#0D9488', bg: '#F0FDFA', roles: ['Caissier'] },
-    { label: 'Catalogue', icon: Package, path: '/pos/products', color: '#8B5CF6', bg: '#F5F3FF', roles: ['Directeur', 'Gerant', 'Caissier'] },
-    { label: 'Mouvements Stock', icon: Package, path: '/pos/stock-movements', color: '#6366F1', bg: '#EEF2FF', roles: ['Directeur', 'Gerant', 'Caissier'] },
-    { label: 'Retours', icon: RotateCcw, path: '/pos/returns', color: '#F43F5E', bg: '#FFF1F2', roles: ['Directeur', 'Gerant', 'Caissier'] },
-    { label: 'Gestion de caisse', icon: Wallet, path: '/pos/cash', color: '#059669', bg: '#ECFDF5', roles: ['Caissier'] },
-    { label: 'Mes Versements', icon: Receipt, path: '/pos/versements/caissier', color: '#0891B2', bg: '#ECFEFF', roles: ['Caissier'] },
-    { label: 'Historique', icon: Receipt, path: '/pos/transactions', color: '#0284C7', bg: '#F0F9FF', roles: ['Directeur', 'Caissier'] },
-    { label: 'Paramètres IA Gemini', icon: Bot, path: '/pos/parametres-ia', color: '#D946EF', bg: '#FDF4FF', roles: ['Directeur', 'Gerant', 'Caissier'] },
-    { label: 'Versements', icon: Receipt, path: '/pos/versements', color: '#0891B2', bg: '#ECFEFF', roles: ['Encaisseur'] },
-    // Administration Directeur
-    { label: 'Paramètres', icon: Settings, path: '/pos/settings', color: '#64748B', bg: '#F1F5F9', roles: ['Directeur'] },
-    { label: 'Utilisateurs', icon: Shield, path: '/pos/users', color: '#475569', bg: '#F8FAFC', roles: ['Directeur', 'Gerant'] },
-    { label: 'Modules Caissier', icon: ToggleRight, path: '/pos/cashier-modules', color: '#3B82F6', bg: '#EFF6FF', roles: ['Directeur', 'Gerant'] },
-    { label: 'Versements', icon: Receipt, path: '/pos/versements/admin', color: '#0891B2', bg: '#ECFEFF', roles: ['Directeur', 'SuperAdmin'] },
-    { label: 'Erreurs Sync', icon: Shield, path: '/pos/sync-errors', color: '#DC2626', bg: '#FEF2F2', roles: ['Directeur', 'Gerant', 'Caissier'] },
-    { label: 'Remises', icon: Tag, path: '/pos/discounts', color: '#D97706', bg: '#FFFBEB', roles: ['Directeur'] },
-    { label: 'Rapports', icon: BarChart3, path: '/pos/reports', color: '#06B6D4', bg: '#ECFEFF', roles: ['Directeur'] },
-    { label: 'Exports Excel', icon: FileSpreadsheet, path: '/export', color: '#059669', bg: '#ECFDF5', roles: ['Directeur', 'Gerant'] },
-    // Gestion catalogue Gérant
-    { label: 'Produits à compléter', icon: FileSpreadsheet, path: '/pos/products?tab=complete', color: '#F59E0B', bg: '#FFFBEB', roles: ['Gerant'] },
-    { label: 'Fournisseurs', icon: Truck, path: '/pos/suppliers', color: '#7C3AED', bg: '#F5F3FF', roles: ['Directeur', 'Gerant'] },
-    { label: 'Stock', icon: Warehouse, path: '/pos/stock', color: '#4F46E5', bg: '#EEF2FF', roles: ['Directeur', 'Gerant', 'Caissier'] },
-    { label: 'Approvisionnement', icon: Truck, path: '/pos/supply', color: '#EA580C', bg: '#FFF7ED', roles: ['Directeur', 'Gerant', 'Caissier'] },
-    { label: 'Inventaire', icon: ClipboardList, path: '/pos/inventory', color: '#0D9488', bg: '#F0FDFA', roles: ['Directeur', 'Gerant', 'Caissier'] },
-  ];
-
   const normalizeRole = (role?: string | null): string => {
     if (!role) return '';
     const r = role.toLowerCase().trim();
@@ -199,11 +167,9 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; s
                      location.pathname.startsWith('/utilisateurs') ||
                      location.pathname.startsWith('/parametres');
 
-  // Le mode POS ne s'active que pour les rôles autorisés et jamais pour un commercial pur ou sur route CRM
-  const canAccessPos = isDirection || userRole === 'Caissier' || userRole === 'Gerant' || userRole === 'Encaisseur' || !!userPosRole;
-  const isPos = canAccessPos && !isCommercial && !isCrmRoute && (location.pathname.startsWith('/pos') || posWorkspace.active);
-  const navItems = isPos ? posNavItems : crmNavItems;
-  const effectiveRole = (isPos && userPosRole) ? userPosRole : userRole;
+  // POS retiré de l'interface : navigation CRM uniquement
+  const navItems = crmNavItems;
+  const effectiveRole = userRole;
 
   // Filtrer les éléments selon le rôle de l'utilisateur connecté et ses permissions
   const visibleNavItems = navItems.filter(item => {
@@ -228,20 +194,11 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; s
     if (!hasRole) return false;
 
     // Permissions CRM granulaires pour tous les collaborateurs
-    if (!isPos && item.permissionKey) {
+    if (item.permissionKey) {
       if (currentUser[item.permissionKey] === false) return false;
       if (item.permissionKey === 'crmTeamReportsEnabled' && !currentUser.crmTeamReportsEnabled && !isDirection) return false;
     }
 
-    if (isPos && effectiveRole === 'Caissier') {
-      // Miroir exact des gardes RequirePosModule (App.tsx) : seul `false` explicite bloque.
-      // `undefined`/`null` = opt-out actif, comme partout ailleurs (CRM, guards in-page).
-      if (item.label === 'Catalogue' && currentUser.posCatalogueEnabled === false) return false;
-      if (item.label === 'Retours' && currentUser.posReturnsEnabled === false) return false;
-      if (item.label === 'Approvisionnement' && currentUser.posSupplyEnabled === false) return false;
-      if (item.label === 'Inventaire' && currentUser.posInventoryEnabled === false) return false;
-      if ((item.label === 'Stock' || item.label === 'Mouvements Stock') && currentUser.posStockEnabled === false) return false;
-    }
     return true;
   });
 

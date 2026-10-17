@@ -6,9 +6,6 @@ const roles = [
   { label: 'Directeur CRM', role: 'Directeur', posActive: false, path: '/' },
   { label: 'Responsable CRM', role: 'Responsable', posActive: false, path: '/' },
   { label: 'Commercial', role: 'Commercial', posActive: false, path: '/commercial' },
-  { label: 'Directeur POS', role: 'Directeur', posActive: true, path: '/pos' },
-  { label: 'Gérant POS', role: 'Gerant', posActive: true, path: '/pos' },
-  { label: 'Caissier POS', role: 'Caissier', posActive: true, path: '/pos/terminal' },
 ];
 
 export default function TestDashboard() {

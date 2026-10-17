@@ -19,39 +19,6 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [currentPin, setCurrentPin] = useState('');
-  const [syncErrorsCount, setSyncErrorsCount] = useState<number>(0);
-
-  useEffect(() => {
-    const checkErrors = async () => {
-      try {
-        const stored = (await db.syncErrors.getItem<any[]>('errors')) || [];
-        setSyncErrorsCount(stored.length);
-      } catch {
-        setSyncErrorsCount(0);
-      }
-    };
-
-    checkErrors();
-
-    const handleErrorsUpdated = (e: Event) => {
-      const detail = (e as CustomEvent)?.detail;
-      if (detail && typeof detail.count === 'number') {
-        setSyncErrorsCount(detail.count);
-      } else {
-        checkErrors();
-      }
-    };
-
-    window.addEventListener('sync-errors-updated', handleErrorsUpdated);
-    window.addEventListener('sync-critical-error', checkErrors);
-    const interval = setInterval(checkErrors, 10000);
-
-    return () => {
-      window.removeEventListener('sync-errors-updated', handleErrorsUpdated);
-      window.removeEventListener('sync-critical-error', checkErrors);
-      clearInterval(interval);
-    };
-  }, []);
 
   const currentService = services.find(s => s.id === currentUser?.serviceId);
   const serviceName = currentService?.name || null;
@@ -160,24 +127,7 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
           <button className="icon-button menu-toggle" onClick={onToggleMenu} title="Menu de navigation">
             <Menu />
           </button>
-          <span className="brand-name">{posWorkspace.active ? 'HINOV POS' : 'HINOV BUSINESS SUITE'}</span>
-          {(currentUser?.role === 'Directeur' || currentUser?.posRole != null) && (
-            <button
-              className="topbar-switch-btn"
-              onClick={() => {
-                const newActive = !posWorkspace.active;
-                setPosWorkspace({ active: newActive });
-                navigate(newActive ? '/pos' : '/');
-              }}
-              style={{
-                backgroundColor: posWorkspace.active ? 'var(--color-success)' : 'var(--color-primary)',
-              }}
-            >
-              <ArrowLeftRight size={14} />
-              <span className="topbar-btn-text">{posWorkspace.active ? 'Retour CRM' : 'Ouvrir POS'}</span>
-              <span className="topbar-btn-text-mobile">{posWorkspace.active ? 'CRM' : 'POS'}</span>
-            </button>
-          )}
+          <span className="brand-name">HINOV BUSINESS SUITE</span>
 
           {currentUser?.role === 'SuperAdmin' && (
             <button
@@ -207,37 +157,12 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
         </div>
 
         <div className="topbar-right">
-          {/* Alerte Erreurs de Synchronisation si présentes */}
-          {syncErrorsCount > 0 && (
-            <button 
-              className="icon-button" 
-              onClick={() => navigate('/pos/sync-errors')} 
-              title={`${syncErrorsCount} erreur(s) de synchronisation - Cliquez pour réconcilier`}
-              style={{
-                backgroundColor: '#FEF2F2',
-                color: '#DC2626',
-                border: '1px solid #FCA5A5',
-                position: 'relative',
-                marginRight: '8px',
-                borderRadius: '8px',
-                padding: '6px 10px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                cursor: 'pointer'
-              }}
-            >
-              <ShieldAlert size={18} />
-              <span style={{ fontSize: '0.75rem', fontWeight: 700 }}>{syncErrorsCount}</span>
-            </button>
-          )}
-
           <div className="profile-wrapper" ref={notifRef} style={{ marginRight: '12px' }}>
             <button className="icon-button notification-btn" onClick={() => setShowNotifications(p => !p)} title="Notifications">
               <Bell />
-              {(unreadCount > 0 || syncErrorsCount > 0) && (
-                <span className="badge" style={{ backgroundColor: syncErrorsCount > 0 ? '#DC2626' : undefined }}>
-                  {unreadCount + (syncErrorsCount > 0 ? syncErrorsCount : 0)}
+              {unreadCount > 0 && (
+                <span className="badge">
+                  {unreadCount}
                 </span>
               )}
             </button>
@@ -247,41 +172,12 @@ export function Topbar({ onToggleMenu }: { onToggleMenu?: () => void }) {
                 <div style={{ padding: '16px', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontWeight: 'bold' }}>Notifications</span>
                   <span className="badge-status bg-primary" style={{ padding: '2px 8px', fontSize: '0.7rem' }}>
-                    {unreadCount + (syncErrorsCount > 0 ? 1 : 0)} {(unreadCount + (syncErrorsCount > 0 ? 1 : 0)) > 1 ? 'nouvelles' : 'nouvelle'}
+                    {unreadCount} {unreadCount > 1 ? 'nouvelles' : 'nouvelle'}
                   </span>
                 </div>
 
-                {/* Bannière d'alerte Erreurs Sync dans le menu de notifications */}
-                {syncErrorsCount > 0 && (
-                  <div 
-                    style={{ 
-                      padding: '12px 16px', 
-                      backgroundColor: '#FEF2F2', 
-                      borderBottom: '1px solid #FECACA', 
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      transition: 'background-color 0.15s'
-                    }}
-                    onClick={() => { navigate('/pos/sync-errors'); setShowNotifications(false); }}
-                    onMouseOver={e => e.currentTarget.style.backgroundColor = '#FEE2E2'}
-                    onMouseOut={e => e.currentTarget.style.backgroundColor = '#FEF2F2'}
-                  >
-                    <ShieldAlert size={22} color="#DC2626" style={{ flexShrink: 0 }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#991B1B' }}>
-                        {syncErrorsCount} Erreur(s) de synchronisation
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: '#B91C1C', marginTop: '2px' }}>
-                        Cliquez pour voir les détails et réconcilier vos données.
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
-                  {userNotifications.length === 0 && syncErrorsCount === 0 ? (
+                  {userNotifications.length === 0 ? (
                     <div style={{ padding: '16px', textAlign: 'center', color: 'var(--color-text-muted)' }}>Aucune notification.</div>
                   ) : (
                     userNotifications.map(n => (

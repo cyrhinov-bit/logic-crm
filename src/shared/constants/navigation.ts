@@ -6,5 +6,4 @@ export const sharedNavigation: SharedNavigationItem[] = [
   { path: '/ventes', label: 'Ventes' },
   { path: '/clients', label: 'Clients' },
   { path: '/prospects', label: 'Prospects' },
-  { path: '/pos', label: 'POS' },
 ];

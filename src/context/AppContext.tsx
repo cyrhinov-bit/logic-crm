@@ -2194,7 +2194,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 toast.dismiss(t.id);
                 // App en HashRouter : naviguer par le hash uniquement. Un href sur
                 // le pathname recharge une route inexistante (page blanche).
-                window.location.hash = '#/pos/sync-errors';
+                window.location.hash = '#/';
               }}
               style={{
                 background: '#DC2626',

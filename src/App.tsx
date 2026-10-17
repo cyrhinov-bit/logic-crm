@@ -36,31 +36,6 @@ import { CrmWeeklyReports } from './pages/crm/CrmWeeklyReports';
 // POS Pages (lazy loaded)
 import { lazy, Suspense } from 'react';
 import type { ReactNode } from 'react';
-const DirectorCopilotPage = lazy(() => import('./features/director/presentation/DirectorCopilotPage'));
-const DirectorAuditPage = lazy(() => import('./features/director/presentation/DirectorAuditPage'));
-const DashboardPos = lazy(() => import('./pages/pos/DashboardPos'));
-const PosSettings = lazy(() => import('./pages/pos/PosSettings'));
-const PosUsers = lazy(() => import('./pages/pos/PosUsers'));
-const PosDiscounts = lazy(() => import('./pages/pos/PosDiscounts'));
-const PosReports = lazy(() => import('./pages/pos/PosReports'));
-const PosFinance = lazy(() => import('./pages/pos/PosFinance'));
-const PosReturns = lazy(() => import('./pages/pos/PosReturns'));
-const PosProducts = lazy(() => import('./pages/pos/PosProducts'));
-const PosStockMovements = lazy(() => import('./pages/pos/PosStockMovements'));
-const CashierModulesManager = lazy(() => import('./pages/pos/CashierModulesManager'));
-const PosSyncErrors = lazy(() => import('./pages/pos/PosSyncErrors'));
-const PosCategories = lazy(() => import('./pages/pos/PosCategories'));
-const PosBrands = lazy(() => import('./pages/pos/PosBrands'));
-const PosSuppliers = lazy(() => import('./pages/pos/PosSuppliers'));
-const PosStock = lazy(() => import('./pages/pos/PosStock'));
-const PosSupply = lazy(() => import('./pages/pos/PosSupply'));
-const PosInventory = lazy(() => import('./pages/pos/PosInventory'));
-const PosTerminal = lazy(() => import('./pages/pos/PosTerminal'));
-const PosTransactions = lazy(() => import('./pages/pos/PosTransactions'));
-const PosCash = lazy(() => import('./pages/pos/PosCash'));
-const VersementsEncaisseur = lazy(() => import('./pages/pos/VersementsEncaisseur'));
-const VersementsCaissier = lazy(() => import('./pages/pos/VersementsCaissier'));
-const VersementsAdmin = lazy(() => import('./pages/pos/VersementsAdmin'));
 const DataExport = lazy(() => import('./pages/DataExport'));
 const SupFactures = lazy(() => import('./pages/SupFactures'));
 
@@ -68,7 +43,6 @@ const SupFactures = lazy(() => import('./pages/SupFactures'));
 const DiagnosticPage = lazy(() => import('./components/DiagnosticPage'));
 const PrinterDiagnosticPage = lazy(() => import('./components/PrinterDiagnosticPage'));
 const ScannerDiagnosticPage = lazy(() => import('./components/ScannerDiagnosticPage'));
-const PosDiagnosticPage = lazy(() => import('./components/PosDiagnosticPage'));
 const PerformanceDiagnosticPage = lazy(() => import('./components/PerformanceDiagnosticPage'));
 const BackupDiagnosticPage = lazy(() => import('./components/BackupDiagnosticPage'));
 const FileDiagnosticPage = lazy(() => import('./components/FileDiagnosticPage'));
@@ -117,10 +91,15 @@ function RoleBasedDashboard() {
   if (currentUser.role === 'Directeur') return <DashboardDirecteur />;
   if (currentUser.role === 'Responsable') return <DashboardResponsable />;
   if (currentUser.role === 'Commercial') return <Navigate to="/commercial" replace />;
-  if (currentUser.role === 'Gerant') return <Navigate to="/pos" replace />;
-  if (currentUser.role === 'Caissier') return <Navigate to="/pos/terminal" replace />;
-  if (currentUser.role === 'Encaisseur') return <Navigate to="/pos/versements" replace />;
-  
+  if (currentUser.role === 'Gerant' || currentUser.role === 'Caissier' || currentUser.role === 'Encaisseur') {
+    return (
+      <div style={{ padding: 40, textAlign: 'center' }}>
+        <h2>Module POS indisponible</h2>
+        <p>Le point de vente (POS) n'est plus proposé sur cette application. Contactez un administrateur.</p>
+      </div>
+    );
+  }
+
   return <DashboardDirecteur />;
 }
 
@@ -134,27 +113,10 @@ function RequireRole({ roles, children }: { roles: Role[]; children: ReactNode }
   const hasRole = roles.includes(currentUser.role as Role);
   const hasPosRole = currentUser.posRole ? roles.includes(currentUser.posRole as Role) : false;
   
-  if (!hasRole && !hasPosRole) return <Navigate to="/pos" replace />;
+  if (!hasRole && !hasPosRole) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 
-// Garde de module POS : rôles Sidebar + SuperAdmin, et pour les caissiers le flag du module
-// (miroir du filtrage Sidebar : seul `false` explicite bloque un caissier)
-type PosModuleKey = 'posCatalogueEnabled' | 'posReturnsEnabled' | 'posSupplyEnabled' | 'posInventoryEnabled' | 'posStockEnabled' | null;
-function RequirePosModule({ roles, moduleKey = null, children }: { roles: Role[]; moduleKey?: PosModuleKey; children: ReactNode }) {
-  const { currentUser, loading } = useAuth();
-  if (loading) return null;
-  if (!currentUser) return <Navigate to="/login" replace />;
-  const allowedByRole = roles.includes(currentUser.role as Role)
-    || (currentUser.posRole ? roles.includes(currentUser.posRole as Role) : false)
-    || currentUser.role === 'SuperAdmin';
-  if (!allowedByRole) return <Navigate to="/pos" replace />;
-  const effRole = currentUser.posRole || currentUser.role;
-  if (effRole === 'Caissier' && moduleKey && (currentUser as unknown as Record<string, unknown>)[moduleKey] === false) {
-    return <Navigate to="/pos" replace />;
-  }
-  return <>{children}</>;
-}
 // Garde de module CRM : Caissier/Gerant jamais admis, autres rôles selon le flag
 // (miroir des gardes in-page ; défaut cohérent Sidebar opt-out : seul `false` explicite bloque)
 type CrmModuleKey = 'crmPrestationsEnabled' | 'crmCaisseEnabled' | 'crmMaintenanceEnabled' | 'crmStocksEnabled' | 'crmTiersEnabled' | 'crmCommerciauxEnabled' | 'crmCommissionsEnabled' | 'crmFacturationEnabled' | 'crmSupFacturesEnabled' | 'crmReportsEnabled' | 'crmTeamReportsEnabled';
@@ -192,7 +154,6 @@ function App() {
                     <Route path="/diagnostics" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><DiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/printer" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><PrinterDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/scanner" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><ScannerDiagnosticPage /></RequireRole></Suspense>} />
-                    <Route path="/diagnostics/pos" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><PosDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/performance" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><PerformanceDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/backup" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><BackupDiagnosticPage /></RequireRole></Suspense>} />
                     <Route path="/diagnostics/files" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'SuperAdmin']}><FileDiagnosticPage /></RequireRole></Suspense>} />
@@ -236,34 +197,6 @@ function App() {
                     {/* Dashboard Responsable : Responsable + bascule SuperAdmin */}
                     <Route path="responsable" element={<RequireRole roles={['Responsable', 'SuperAdmin']}><DashboardResponsable /></RequireRole>} />
 
-                    {/* POS routes */}
-                    <Route path="pos" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Gerant']}><DashboardPos /></RequireRole></Suspense>} />
-                    <Route path="pos/copilot-ia" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Gerant']}><DirectorCopilotPage /></RequireRole></Suspense>} />
-                    <Route path="pos/audit-ia" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Gerant']}><DirectorAuditPage /></RequireRole></Suspense>} />
-                    <Route path="pos/settings" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur']}><PosSettings /></RequirePosModule></Suspense>} />
-                    <Route path="pos/users" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant']}><PosUsers /></RequirePosModule></Suspense>} />
-                    <Route path="pos/cashier-modules" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Gerant']}><CashierModulesManager /></RequireRole></Suspense>} />
-          <Route path="pos/sync-errors" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Gerant', 'Caissier']}><PosSyncErrors /></RequireRole></Suspense>} />
-                    <Route path="pos/discounts" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur']}><PosDiscounts /></RequirePosModule></Suspense>} />
-                    <Route path="pos/reports" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur']}><PosReports /></RequirePosModule></Suspense>} />
-                    <Route path="pos/finance" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant']}><PosFinance /></RequirePosModule></Suspense>} />
-                    <Route path="pos/returns" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']} moduleKey="posReturnsEnabled"><PosReturns /></RequirePosModule></Suspense>} />
-                    <Route path="pos/products" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']} moduleKey="posCatalogueEnabled"><PosProducts /></RequirePosModule></Suspense>} />
-                    <Route path="pos/stock-movements" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']} moduleKey="posStockEnabled"><PosStockMovements /></RequirePosModule></Suspense>} />
-                    <Route path="pos/categories" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant']}><PosCategories /></RequirePosModule></Suspense>} />
-                    <Route path="pos/brands" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant']}><PosBrands /></RequirePosModule></Suspense>} />
-                    <Route path="pos/suppliers" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant']}><PosSuppliers /></RequirePosModule></Suspense>} />
-                    <Route path="pos/stock" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']} moduleKey="posStockEnabled"><PosStock /></RequirePosModule></Suspense>} />
-                    <Route path="pos/supply" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']} moduleKey="posSupplyEnabled"><PosSupply /></RequirePosModule></Suspense>} />
-                    <Route path="pos/inventory" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']} moduleKey="posInventoryEnabled"><PosInventory /></RequirePosModule></Suspense>} />
-                    <Route path="pos/terminal" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']}><PosTerminal /></RequirePosModule></Suspense>} />
-                    <Route path="pos/transactions" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']}><PosTransactions /></RequirePosModule></Suspense>} />
-                    <Route path="pos/cash" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']}><PosCash /></RequirePosModule></Suspense>} />
-                    <Route path="pos/versements" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Encaisseur']}><VersementsEncaisseur /></RequireRole></Suspense>} />
-                    <Route path="pos/versements/caissier" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequirePosModule roles={['Directeur', 'Gerant', 'Caissier']}><VersementsCaissier /></RequirePosModule></Suspense>} />
-                    <Route path="pos/versements/admin" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'SuperAdmin']}><VersementsAdmin /></RequireRole></Suspense>} />
-                    <Route path="pos/parametres-ia" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Gerant', 'Caissier']}><GeminiSettings /></RequireRole></Suspense>} />
-                    
                     <Route path="*" element={<div style={{ padding: '20px' }}><h1>Page introuvable</h1></div>} />
                   </Route>
                 </Route>
