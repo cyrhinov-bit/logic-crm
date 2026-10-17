@@ -157,10 +157,9 @@ export default function CrmModulesManager() {
     );
   }
 
-  // Filtrer les utilisateurs (les Caissiers/Gérants purs relèvent du POS, pas du CRM)
+  // Filtrer les utilisateurs (tous les comptes actifs sont des rôles CRM)
   const eligibleUsers = users.filter(u => {
     if (u.active === false) return false;
-    if (u.role === 'Caissier' || u.role === 'Gerant') return false;
     const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
     const matchRole = roleFilter === 'ALL' || u.role === roleFilter;
     const matchService = serviceFilter === 'ALL' || u.serviceId === serviceFilter;

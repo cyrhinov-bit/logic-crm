@@ -90,40 +90,28 @@ function RoleBasedDashboard() {
   if (currentUser.role === 'Directeur') return <DashboardDirecteur />;
   if (currentUser.role === 'Responsable') return <DashboardResponsable />;
   if (currentUser.role === 'Commercial') return <Navigate to="/commercial" replace />;
-  if (currentUser.role === 'Gerant' || currentUser.role === 'Caissier' || currentUser.role === 'Encaisseur') {
-    return (
-      <div style={{ padding: 40, textAlign: 'center' }}>
-        <h2>Module POS indisponible</h2>
-        <p>Le point de vente (POS) n'est plus proposé sur cette application. Contactez un administrateur.</p>
-      </div>
-    );
-  }
 
   return <DashboardDirecteur />;
 }
 
 // Garde de route par rôle
-type Role = 'SuperAdmin' | 'Directeur' | 'Directeur adjoint' | 'Responsable' | 'Commercial' | 'Gerant' | 'Caissier' | 'Encaisseur';
+type Role = 'SuperAdmin' | 'Directeur' | 'Directeur adjoint' | 'Responsable' | 'Commercial';
 function RequireRole({ roles, children }: { roles: Role[]; children: ReactNode }) {
   const { currentUser, loading } = useAuth();
   if (loading) return null;
   if (!currentUser) return <Navigate to="/login" replace />;
-  
-  const hasRole = roles.includes(currentUser.role as Role);
-  const hasPosRole = currentUser.posRole ? roles.includes(currentUser.posRole as Role) : false;
-  
-  if (!hasRole && !hasPosRole) return <Navigate to="/" replace />;
+
+  if (!roles.includes(currentUser.role as Role)) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 
-// Garde de module CRM : Caissier/Gerant jamais admis, autres rôles selon le flag
-// (miroir des gardes in-page ; défaut cohérent Sidebar opt-out : seul `false` explicite bloque)
+// Garde de module CRM : tous les rôles selon le flag
+// (défaut cohérent Sidebar opt-out : seul `false` explicite bloque)
 type CrmModuleKey = 'crmPrestationsEnabled' | 'crmCaisseEnabled' | 'crmMaintenanceEnabled' | 'crmStocksEnabled' | 'crmTiersEnabled' | 'crmCommerciauxEnabled' | 'crmCommissionsEnabled' | 'crmFacturationEnabled' | 'crmSupFacturesEnabled' | 'crmReportsEnabled' | 'crmTeamReportsEnabled';
 function RequireCrmModule({ moduleKey, children }: { moduleKey: CrmModuleKey; children: ReactNode }) {
   const { currentUser, loading } = useAuth();
   if (loading) return null;
   if (!currentUser) return <Navigate to="/login" replace />;
-  if (currentUser.role === 'Caissier' || currentUser.role === 'Gerant') return <Navigate to="/" replace />;
   // SuperAdmin : accès total permanent (l'activation des modules ne s'y applique pas).
   if (currentUser.role === 'SuperAdmin') return <>{children}</>;
   // Directeur / Directeur adjoint : l'activation s'applique réellement (menu latéral ET accès direct).
@@ -173,7 +161,7 @@ function App() {
                     <Route path="factures" element={<RequireCrmModule moduleKey="crmFacturationEnabled"><Factures /></RequireCrmModule>} />
                     <Route path="fournisseurs-factures" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireCrmModule moduleKey="crmSupFacturesEnabled"><SupFactures /></RequireCrmModule></Suspense>} />
                     <Route path="documents" element={<RequireRole roles={['Directeur', 'Responsable', 'Commercial', 'Directeur adjoint', 'SuperAdmin']}><Documents /></RequireRole>} />
-                    <Route path="export" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'Responsable', 'Gerant', 'SuperAdmin']}><DataExport /></RequireRole></Suspense>} />
+                    <Route path="export" element={<Suspense fallback={<div style={{ padding: 20 }}>Chargement...</div>}><RequireRole roles={['Directeur', 'Directeur adjoint', 'Responsable', 'SuperAdmin']}><DataExport /></RequireRole></Suspense>} />
                     <Route path="utilisateurs" element={<RequireRole roles={['Directeur', 'SuperAdmin']}><Utilisateurs /></RequireRole>} />
                     <Route path="parametres" element={<RequireRole roles={['Directeur']}><Parametres /></RequireRole>} />
 

@@ -45,7 +45,6 @@ serve(async (req: Request) => {
       pin: string;
       name: string;
       role: string;
-      posRole?: string;
       serviceId?: string;
       posReturnsEnabled?: boolean;
       posCatalogueEnabled?: boolean;
@@ -65,20 +64,17 @@ serve(async (req: Request) => {
       crmTeamReportsEnabled?: boolean;
     }
 
-    const { email, pin, name, role, posRole, serviceId, posReturnsEnabled, posCatalogueEnabled, posSupplyEnabled, posInventoryEnabled, posStockEnabled, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled } = await req.json() as CreateUserPayload
+    const { email, pin, name, role, serviceId, posReturnsEnabled, posCatalogueEnabled, posSupplyEnabled, posInventoryEnabled, posStockEnabled, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled } = await req.json() as CreateUserPayload
 
     // Autorisations
-    if (role === 'SuperAdmin') throw new Error('Impossible de créer un SuperAdmin')
+    const ALLOWED_ROLES = ['Directeur', 'Directeur adjoint', 'Responsable', 'Commercial']
+    if (!ALLOWED_ROLES.includes(role)) {
+      throw new Error('Rôle invalide')
+    }
     if (role === 'Directeur' && callerRole !== 'SuperAdmin') {
       throw new Error('Seul un SuperAdmin peut créer un Directeur')
     }
-    if (role === 'Encaisseur' && callerRole !== 'SuperAdmin' && callerRole !== 'Directeur') {
-      throw new Error('Seul le Directeur ou le SuperAdmin peut créer un Encaisseur')
-    }
-    if (callerRole === 'Gerant' && role !== 'Caissier') {
-      throw new Error('Un Gérant ne peut créer que des Caissiers')
-    }
-    if (callerRole !== 'SuperAdmin' && callerRole !== 'Directeur' && callerRole !== 'Gerant') {
+    if (callerRole !== 'SuperAdmin' && callerRole !== 'Directeur') {
       throw new Error('Vous n\'avez pas les droits pour créer un utilisateur')
     }
 
@@ -102,7 +98,6 @@ serve(async (req: Request) => {
         name,
         role,
         pin,
-        pos_role: posRole || null,
         service_id: serviceId || null,
         active: true,
         pos_returns_enabled: posReturnsEnabled === true,
@@ -130,7 +125,7 @@ serve(async (req: Request) => {
     }
 
     return new Response(
-      JSON.stringify({ id: newUserId, name, email, role, posRole, serviceId, posReturnsEnabled, posCatalogueEnabled, posSupplyEnabled, posInventoryEnabled, posStockEnabled, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled }),
+      JSON.stringify({ id: newUserId, name, email, role, serviceId, posReturnsEnabled, posCatalogueEnabled, posSupplyEnabled, posInventoryEnabled, posStockEnabled, crmPrestationsEnabled, crmCaisseEnabled, crmMaintenanceEnabled, crmStocksEnabled, crmTiersEnabled, crmCommerciauxEnabled, crmCommissionsEnabled, crmFacturationEnabled, crmSupFacturesEnabled, crmReportsEnabled, crmTeamReportsEnabled }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error: any) {

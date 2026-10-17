@@ -152,8 +152,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch {}
 
         const isDir = ['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(data.role);
-        // Défaut modules CRM : jamais pour Caissier/Gerant/Encaisseur (rôles POS), sinon activé sauf désactivation explicite
-        const crmDefault = !['Caissier', 'Gerant', 'Encaisseur'].includes(data.role);
+        // Défaut modules CRM : activé sauf désactivation explicite (tous les rôles sont des rôles CRM)
+        const crmDefault = true;
         const resolveBool = (dbVal: any, localVal: any, defaultVal: boolean) => {
           if (dbVal === true) return true;
           if (dbVal === false) return false;
@@ -177,7 +177,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           posSupplyEnabled: resolveBool(data.pos_supply_enabled, cachedUser?.posSupplyEnabled, false),
           posInventoryEnabled: resolveBool(data.pos_inventory_enabled, cachedUser?.posInventoryEnabled, false),
           posStockEnabled: resolveBool(data.pos_stock_enabled, cachedUser?.posStockEnabled, false),
-          posRole: data.pos_role || cachedUser?.posRole || null,
           crmPrestationsEnabled: resolveBool(data.crm_prestations_enabled, cachedUser?.crmPrestationsEnabled, crmDefault),
           crmCaisseEnabled: resolveBool(data.crm_caisse_enabled, cachedUser?.crmCaisseEnabled, crmDefault),
           crmMaintenanceEnabled: resolveBool(data.crm_maintenance_enabled, cachedUser?.crmMaintenanceEnabled, crmDefault),
@@ -339,7 +338,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch {}
 
         const isDir = ['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(profile.role);
-        const crmDefault = !['Caissier', 'Gerant'].includes(profile.role);
+        const crmDefault = true; // tous les rôles sont des rôles CRM
         const resolveBool = (dbVal: any, localVal: any, defaultVal: boolean) => {
           if (dbVal === true) return true;
           if (dbVal === false) return false;
@@ -363,7 +362,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           posSupplyEnabled: resolveBool(profile.pos_supply_enabled, cachedUser?.posSupplyEnabled, false),
           posInventoryEnabled: resolveBool(profile.pos_inventory_enabled, cachedUser?.posInventoryEnabled, false),
           posStockEnabled: resolveBool(profile.pos_stock_enabled, cachedUser?.posStockEnabled, false),
-          posRole: profile.pos_role || cachedUser?.posRole || null,
           crmPrestationsEnabled: resolveBool(profile.crm_prestations_enabled, cachedUser?.crmPrestationsEnabled, crmDefault),
           crmCaisseEnabled: resolveBool(profile.crm_caisse_enabled, cachedUser?.crmCaisseEnabled, crmDefault),
           crmMaintenanceEnabled: resolveBool(profile.crm_maintenance_enabled, cachedUser?.crmMaintenanceEnabled, crmDefault),
@@ -408,11 +406,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginAsTestUser = (role: User['role']) => {
     const isDir = ['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(role);
-    const isCashierRole = role === 'Caissier' || role === 'Gerant';
-    const crmDefault = !isCashierRole;
+    const crmDefault = true; // tous les rôles sont des rôles CRM
     const testUser: User = {
       id: 'test-' + role.toLowerCase(),
-      name: role === 'Caissier' ? 'Caissier Test' : role === 'Gerant' ? 'Gérant Test' : role + ' Test',
+      name: role + ' Test',
       email: 'test@hinov.com',
       role,
       pin: '000000',

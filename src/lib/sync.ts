@@ -3755,8 +3755,6 @@ export const processSyncQueue = async () => {
           if (data.active !== undefined) mapped.active = data.active;
           if (data.serviceId !== undefined) mapped.service_id = data.serviceId || null;
           if (data.service_id !== undefined) mapped.service_id = data.service_id || null;
-          if (data.posRole !== undefined) mapped.pos_role = data.posRole || null;
-          if (data.pos_role !== undefined) mapped.pos_role = data.pos_role || null;
           if (data.posReturnsEnabled !== undefined) mapped.pos_returns_enabled = data.posReturnsEnabled;
           if (data.pos_returns_enabled !== undefined) mapped.pos_returns_enabled = data.pos_returns_enabled;
           if (data.posCatalogueEnabled !== undefined) mapped.pos_catalogue_enabled = data.posCatalogueEnabled;

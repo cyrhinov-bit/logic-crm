@@ -20,7 +20,7 @@ interface NavItemConfig {
   path: string;
   color: string;
   bg: string;
-  roles: Array<'Directeur' | 'Responsable' | 'Commercial' | 'Directeur adjoint' | 'SuperAdmin' | 'Gerant' | 'Caissier' | 'Encaisseur'>;
+  roles: Array<'Directeur' | 'Responsable' | 'Commercial' | 'Directeur adjoint' | 'SuperAdmin'>;
   permissionKey?: keyof User;
 }
 
@@ -144,14 +144,10 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; s
     if (r.includes('directeur')) return 'Directeur';
     if (r.includes('responsable')) return 'Responsable';
     if (r.includes('superadmin') || r.includes('admin')) return 'SuperAdmin';
-    if (r.includes('caissier')) return 'Caissier';
-    if (r.includes('gerant') || r.includes('gérant')) return 'Gerant';
-    if (r.includes('encaisseur')) return 'Encaisseur';
     return role;
   };
 
   const userRole = normalizeRole(currentUser?.role);
-  const userPosRole = normalizeRole(currentUser?.posRole);
   const isCommercial = userRole === 'Commercial';
 
   const isCrmRoute = location.pathname.startsWith('/commercial') ||

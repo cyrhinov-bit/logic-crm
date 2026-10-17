@@ -30,7 +30,6 @@ export function Utilisateurs() {
     name: '',
     email: '',
     role: 'Responsable' as User['role'],
-    posRole: '',
     serviceId: '',
     pin: '',
   });
@@ -38,7 +37,6 @@ export function Utilisateurs() {
   const [editForm, setEditForm] = useState({
     name: '',
     role: 'Responsable' as User['role'],
-    posRole: '' as User['posRole'] | '',
     serviceId: '',
   });
 
@@ -53,32 +51,22 @@ export function Utilisateurs() {
       name: newUser.name,
       email: newUser.email,
       role: newUser.role as User['role'],
-      posRole: newUser.posRole ? (newUser.posRole as User['posRole']) : null,
       serviceId: newUser.serviceId,
       pin: newUser.pin,
       lastLogin: 'Jamais',
       active: true,
-      // Défaut par rôle (Caissier/Gerant/Encaisseur : pas de CRM) — addUser applique la même règle en repli
-      ...((newUser.role === 'Caissier' || newUser.role === 'Gerant' || newUser.role === 'Encaisseur')
-        ? {
-            crmPrestationsEnabled: false, crmCaisseEnabled: false, crmMaintenanceEnabled: false,
-            crmStocksEnabled: false, crmTiersEnabled: false, crmCommerciauxEnabled: false,
-            crmCommissionsEnabled: false, crmFacturationEnabled: false, crmSupFacturesEnabled: false
-          }
-        : {
-            crmPrestationsEnabled: true, crmCaisseEnabled: true, crmMaintenanceEnabled: true,
-            crmStocksEnabled: true, crmTiersEnabled: true, crmCommerciauxEnabled: true,
-            crmCommissionsEnabled: true, crmFacturationEnabled: true,
-            // Factures Fournisseurs : actif par défaut pour la Direction uniquement
-            crmSupFacturesEnabled: ['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(newUser.role)
-          })
+      // Modules CRM activés par défaut pour tous les rôles (désactivation explicite ensuite)
+      crmPrestationsEnabled: true, crmCaisseEnabled: true, crmMaintenanceEnabled: true,
+      crmStocksEnabled: true, crmTiersEnabled: true, crmCommerciauxEnabled: true,
+      crmCommissionsEnabled: true, crmFacturationEnabled: true,
+      // Factures Fournisseurs : actif par défaut pour la Direction uniquement
+      crmSupFacturesEnabled: ['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(newUser.role)
     });
     setShowForm(false);
     setNewUser({
       name: '',
       email: '',
       role: 'Responsable',
-      posRole: '',
       serviceId: '',
       pin: '',
     });
@@ -89,7 +77,6 @@ export function Utilisateurs() {
     setEditForm({
       name: u.name,
       role: u.role,
-      posRole: u.posRole || '',
       serviceId: u.serviceId || '',
     });
   };
@@ -100,7 +87,6 @@ export function Utilisateurs() {
     updateUser(editingUser.id, {
       name: editForm.name,
       role: editForm.role,
-      posRole: editForm.posRole ? (editForm.posRole as User['posRole']) : null,
       serviceId: editForm.serviceId,
     });
     setEditingUser(null);
@@ -166,26 +152,11 @@ export function Utilisateurs() {
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Rôle *</label>
               <select className="table-input" required value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value as User['role'] })}>
-                <option value="Caissier">Caissier</option>
-                <option value="Gerant">Gérant</option>
-                <option value="Encaisseur">Encaisseur</option>
                 <option value="Commercial">Commercial</option>
                 <option value="Responsable">Responsable</option>
                 {['Directeur', 'SuperAdmin'].includes(currentUser?.role || '') && (
                   <option value="Directeur adjoint">Directeur adjoint</option>
                 )}
-                {currentUser?.role === 'SuperAdmin' && (
-                  <option value="Directeur">Directeur</option>
-                )}
-              </select>
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Rôle POS secondaire (Optionnel)</label>
-              <select className="table-input" value={newUser.posRole} onChange={e => setNewUser({ ...newUser, posRole: e.target.value })}>
-                <option value="">Aucun</option>
-                <option value="Caissier">Caissier</option>
-                <option value="Gerant">Gérant</option>
                 {currentUser?.role === 'SuperAdmin' && (
                   <option value="Directeur">Directeur</option>
                 )}
@@ -220,26 +191,11 @@ export function Utilisateurs() {
             <div>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Rôle *</label>
               <select className="table-input" required value={editForm.role} onChange={e => setEditForm({ ...editForm, role: e.target.value as User['role'] })}>
-                <option value="Caissier">Caissier</option>
-                <option value="Gerant">Gérant</option>
-                <option value="Encaisseur">Encaisseur</option>
                 <option value="Commercial">Commercial</option>
                 <option value="Responsable">Responsable</option>
                 {['Directeur', 'SuperAdmin'].includes(currentUser?.role || '') && (
                   <option value="Directeur adjoint">Directeur adjoint</option>
                 )}
-                {currentUser?.role === 'SuperAdmin' && (
-                  <option value="Directeur">Directeur</option>
-                )}
-              </select>
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>Rôle POS secondaire (Optionnel)</label>
-              <select className="table-input" value={editForm.posRole || ''} onChange={e => setEditForm({ ...editForm, posRole: e.target.value as any })}>
-                <option value="">Aucun</option>
-                <option value="Caissier">Caissier</option>
-                <option value="Gerant">Gérant</option>
                 {currentUser?.role === 'SuperAdmin' && (
                   <option value="Directeur">Directeur</option>
                 )}

@@ -150,8 +150,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'Directeur' | 'Directeur adjoint' | 'Responsable' | 'Commercial' | 'Caissier' | 'Gerant' | 'Encaisseur' | 'SuperAdmin';
-  posRole?: 'Directeur' | 'Gerant' | 'Caissier' | null;
+  role: 'Directeur' | 'Directeur adjoint' | 'Responsable' | 'Commercial' | 'SuperAdmin';
   serviceId?: string;
   pin: string;
   lastLogin?: string;
@@ -1130,7 +1129,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           const parsedUsers = profilesData.map((p: any) => {
             const cachedUser = cachedUsers?.find((u: any) => u.id === p.id);
             const isDir = ['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(p.role);
-            const crmDefault = !['Caissier', 'Gerant'].includes(p.role);
+            const crmDefault = true; // tous les rôles sont des rôles CRM
             
             const resolveBool = (dbVal: any, localVal: any, defaultVal: boolean) => {
               if (dbVal === true) return true;
@@ -1155,7 +1154,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
               posSupplyEnabled: resolveBool(p.pos_supply_enabled, cachedUser?.posSupplyEnabled, false),
               posInventoryEnabled: resolveBool(p.pos_inventory_enabled, cachedUser?.posInventoryEnabled, false),
               posStockEnabled: resolveBool(p.pos_stock_enabled, cachedUser?.posStockEnabled, false),
-              posRole: p.pos_role || cachedUser?.posRole || null,
               crmPrestationsEnabled: resolveBool(p.crm_prestations_enabled, cachedUser?.crmPrestationsEnabled, crmDefault),
               crmCaisseEnabled: resolveBool(p.crm_caisse_enabled, cachedUser?.crmCaisseEnabled, crmDefault),
               crmMaintenanceEnabled: resolveBool(p.crm_maintenance_enabled, cachedUser?.crmMaintenanceEnabled, crmDefault),
@@ -4269,7 +4267,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!session) { alert('Session expirée. Veuillez vous reconnecter.'); return; }
 
     const isDirRole = ['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(user.role);
-    const crmDefaultNew = !['Caissier', 'Gerant'].includes(user.role);
+    const crmDefaultNew = true; // tous les rôles sont des rôles CRM
 
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`,
@@ -4284,7 +4282,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           pin: user.pin,
           name: user.name,
           role: user.role,
-          posRole: user.posRole || null,
           serviceId: user.serviceId || null,
           posReturnsEnabled: user.posReturnsEnabled,
           posCatalogueEnabled: user.posCatalogueEnabled,
@@ -4328,7 +4325,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       posSupplyEnabled: user.posSupplyEnabled,
       posInventoryEnabled: user.posInventoryEnabled,
       posStockEnabled: user.posStockEnabled,
-      posRole: user.posRole || null,
       crmPrestationsEnabled: user.crmPrestationsEnabled ?? crmDefaultNew,
       crmCaisseEnabled: user.crmCaisseEnabled ?? crmDefaultNew,
       crmMaintenanceEnabled: user.crmMaintenanceEnabled ?? crmDefaultNew,
@@ -4353,7 +4349,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const payload: any = { id };
     if (data.name !== undefined) payload.name = data.name;
     if (data.role !== undefined) payload.role = data.role;
-    if (data.posRole !== undefined) payload.pos_role = data.posRole || null;
     if (data.serviceId !== undefined) payload.service_id = data.serviceId || null;
     if (data.posReturnsEnabled !== undefined) payload.pos_returns_enabled = data.posReturnsEnabled;
     if (data.posCatalogueEnabled !== undefined) payload.pos_catalogue_enabled = data.posCatalogueEnabled;

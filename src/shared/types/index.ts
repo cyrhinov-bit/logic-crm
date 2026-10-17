@@ -12,7 +12,7 @@ export interface SharedUser {
   id: string;
   name: string;
   email: string;
-  role: 'Directeur' | 'Responsable' | 'Commercial' | 'Gerant' | 'Caissier';
+  role: 'Directeur' | 'Responsable' | 'Commercial';
   serviceId?: string;
   pin: string;
   lastLogin: string;
@@ -165,7 +165,7 @@ export interface SharedSupabaseEnv {
   EXPO_PUBLIC_SUPABASE_ANON_KEY?: string;
 }
 
-export type SharedRole = 'Directeur' | 'Responsable' | 'Commercial' | 'Gerant' | 'Caissier';
+export type SharedRole = 'Directeur' | 'Responsable' | 'Commercial';
 
 export interface SharedNavigationItem {
   path: string;

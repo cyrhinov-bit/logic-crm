@@ -57,10 +57,6 @@ export function getDefaultRouteForRole(role: SharedRole): string {
       return '/';
     case 'Commercial':
       return '/commercial';
-    case 'Gerant':
-      return '/';
-    case 'Caissier':
-      return '/';
     default:
       return '/';
   }
