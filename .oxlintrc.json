@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": [
+    "node_modules",
+    "dist/**",
+    "dist-electron/**",
+    "dev-dist/**",
+    "release/**",
+    "build/**"
+  ],
+  "plugins": ["react", "typescript", "oxc"],
+  "overrides": [
+    {
+      "files": [
+        "src/context/*.tsx",
+        "src/components/ConfirmModal.tsx",
+        "src/features/products/images/ProductImagesContext.tsx"
+      ],
+      "rules": {
+        "react/only-export-components": "off"
+      }
+    }
+  ],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}

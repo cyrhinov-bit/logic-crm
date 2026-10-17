@@ -1,0 +1,293 @@
+.sidebar {
+  width: 260px;
+  background-color: var(--color-surface, #ffffff);
+  border-right: 1px solid var(--color-border, #e2e8f0);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  user-select: none;
+}
+
+.user-profile {
+  padding: 18px 16px;
+  background: linear-gradient(135deg, var(--color-primary, #0D9488) 0%, #0f766e 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+}
+
+.avatar {
+  color: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.user-role {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.sidebar-service-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  backdrop-filter: blur(4px);
+}
+
+.role-switcher {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.role-switcher label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #64748b);
+  margin-bottom: 4px;
+}
+
+.role-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--color-border, #cbd5e1);
+  border-radius: 6px;
+  background-color: var(--color-surface, #ffffff);
+  color: var(--color-text, #0f172a);
+  font-size: 0.85rem;
+}
+
+.nav-menu {
+  flex: 1;
+  padding: 12px 8px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  color: var(--color-text, #334155);
+  font-size: 0.88rem;
+  font-weight: 500;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link:hover {
+  background-color: rgba(15, 23, 42, 0.04);
+  color: #0f172a;
+  transform: translateX(4px);
+  text-decoration: none;
+}
+
+/* Stylisation des Badges d'Icônes */
+.nav-icon-badge {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.nav-link:hover .nav-icon-badge {
+  transform: scale(1.12);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Onglet Actif */
+.nav-item.active .nav-link {
+  background-color: rgba(13, 148, 136, 0.09);
+  color: var(--color-primary, #0D9488);
+  font-weight: 700;
+}
+
+.nav-item.active .nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 3.5px;
+  background-color: var(--color-primary, #0D9488);
+  border-radius: 0 4px 4px 0;
+}
+
+.nav-item.active .nav-icon-badge {
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation au Clic (Pop & Elastic Bounce) */
+.nav-link.clicked .nav-icon-badge,
+.nav-link:active .nav-icon-badge {
+  animation: navIconClickAnim 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes navIconClickAnim {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(0.8) rotate(-10deg);
+  }
+  65% {
+    transform: scale(1.22) rotate(6deg);
+  }
+  85% {
+    transform: scale(0.96) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1.06) rotate(0deg);
+  }
+}
+
+/* Effet d'Onde Ripple */
+.nav-link.clicked::after {
+  content: '';
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.25;
+  animation: navRippleEffect 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes navRippleEffect {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.35;
+  }
+  100% {
+    width: 180px;
+    height: 180px;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -320px;
+    width: 280px;
+    max-width: 84vw;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    height: 100vh;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.25);
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebar.mobile-open {
+    left: 0;
+  }
+}
+
+.sidebar-sync-badge {
+  background-color: #DC2626;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+  animation: pulse-sync-badge 2s infinite ease-in-out;
+  margin-left: auto;
+}
+
+@keyframes pulse-sync-badge {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 3px 10px rgba(220, 38, 38, 0.7);
+  }
+}
+
+.sidebar-report-badge {
+  background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
+  animation: pulse-report-badge 2.5s infinite ease-in-out;
+  margin-left: auto;
+}
+
+@keyframes pulse-report-badge {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 3px 10px rgba(124, 58, 237, 0.7);
+  }
+}
+
+

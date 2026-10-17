@@ -1,0 +1,666 @@
+/* CrmWeeklyReports.css - Styles professionnels avec animations et palettes par jour */
+
+.crm-days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.crm-day-card {
+  position: relative;
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px;
+  overflow: hidden;
+  text-align: left;
+  border: 1.5px solid transparent;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.crm-day-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 14px 14px 0 0;
+  opacity: 0.8;
+  transition: height 0.25s ease;
+}
+
+/* Survol animé (Hover) */
+.crm-day-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.12);
+}
+
+.crm-day-card:hover::before {
+  height: 6px;
+}
+
+/* Carte active / sélectionnée */
+.crm-day-card.selected {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 28px -4px rgba(0, 0, 0, 0.16);
+  border-width: 2px;
+}
+
+/* --- THEMES COULEURS SPECIFIQUES PAR JOUR --- */
+
+/* LUNDI : Bleu Royal */
+.crm-day-card.day-lundi {
+  background: linear-gradient(145deg, #F0F7FF 0%, #DBEAFE 100%);
+  border-color: #BFDBFE;
+}
+.crm-day-card.day-lundi::before {
+  background: #2563EB;
+}
+.crm-day-card.day-lundi.selected {
+  border-color: #2563EB;
+  box-shadow: 0 10px 25px -4px rgba(37, 99, 235, 0.28);
+}
+.crm-day-card.day-lundi .day-name {
+  color: #1D4ED8;
+}
+.crm-day-card.day-lundi .day-badge {
+  background: #2563EB;
+  color: #FFFFFF;
+}
+
+/* MARDI : Violet Améthyste */
+.crm-day-card.day-mardi {
+  background: linear-gradient(145deg, #FAF5FF 0%, #EDE9FE 100%);
+  border-color: #DDD6FE;
+}
+.crm-day-card.day-mardi::before {
+  background: #7C3AED;
+}
+.crm-day-card.day-mardi.selected {
+  border-color: #7C3AED;
+  box-shadow: 0 10px 25px -4px rgba(124, 58, 237, 0.28);
+}
+.crm-day-card.day-mardi .day-name {
+  color: #6D28D9;
+}
+.crm-day-card.day-mardi .day-badge {
+  background: #7C3AED;
+  color: #FFFFFF;
+}
+
+/* MERCREDI : Vert Émeraude / Vitalité */
+.crm-day-card.day-mercredi {
+  background: linear-gradient(145deg, #F0FDF4 0%, #DCFCE7 100%);
+  border-color: #BBF7D0;
+}
+.crm-day-card.day-mercredi::before {
+  background: #059669;
+}
+.crm-day-card.day-mercredi.selected {
+  border-color: #059669;
+  box-shadow: 0 10px 25px -4px rgba(5, 150, 105, 0.28);
+}
+.crm-day-card.day-mercredi .day-name {
+  color: #047857;
+}
+.crm-day-card.day-mercredi .day-badge {
+  background: #059669;
+  color: #FFFFFF;
+}
+
+/* JEUDI : Ambre & Or / Dynamisme */
+.crm-day-card.day-jeudi {
+  background: linear-gradient(145deg, #FFFBEB 0%, #FEF3C7 100%);
+  border-color: #FDE68A;
+}
+.crm-day-card.day-jeudi::before {
+  background: #D97706;
+}
+.crm-day-card.day-jeudi.selected {
+  border-color: #D97706;
+  box-shadow: 0 10px 25px -4px rgba(217, 119, 6, 0.28);
+}
+.crm-day-card.day-jeudi .day-name {
+  color: #B45309;
+}
+.crm-day-card.day-jeudi .day-badge {
+  background: #D97706;
+  color: #FFFFFF;
+}
+
+/* VENDREDI : Rose Corail / Clôture */
+.crm-day-card.day-vendredi {
+  background: linear-gradient(145deg, #FFF1F2 0%, #FFE4E6 100%);
+  border-color: #FECDD3;
+}
+.crm-day-card.day-vendredi::before {
+  background: #E11D48;
+}
+.crm-day-card.day-vendredi.selected {
+  border-color: #E11D48;
+  box-shadow: 0 10px 25px -4px rgba(225, 29, 72, 0.28);
+}
+.crm-day-card.day-vendredi .day-name {
+  color: #BE123C;
+}
+.crm-day-card.day-vendredi .day-badge {
+  background: #E11D48;
+  color: #FFFFFF;
+}
+
+/* SAMEDI : Ardoise & Cyan */
+.crm-day-card.day-samedi {
+  background: linear-gradient(145deg, #F8FAFC 0%, #E2E8F0 100%);
+  border-color: #CBD5E1;
+}
+.crm-day-card.day-samedi::before {
+  background: #475569;
+}
+.crm-day-card.day-samedi.selected {
+  border-color: #475569;
+  box-shadow: 0 10px 25px -4px rgba(71, 85, 105, 0.28);
+}
+.crm-day-card.day-samedi .day-name {
+  color: #334155;
+}
+.crm-day-card.day-samedi .day-badge {
+  background: #475569;
+  color: #FFFFFF;
+}
+
+/* DIMANCHE : Rose Carmin */
+.crm-day-card.day-dimanche {
+  background: linear-gradient(145deg, #FFF1F2 0%, #FFE4E6 100%);
+  border-color: #FECDD3;
+}
+.crm-day-card.day-dimanche::before {
+  background: #BE123C;
+}
+.crm-day-card.day-dimanche.selected {
+  border-color: #BE123C;
+  box-shadow: 0 10px 25px -4px rgba(190, 18, 60, 0.28);
+}
+.crm-day-card.day-dimanche .day-name {
+  color: #881337;
+}
+.crm-day-card.day-dimanche .day-badge {
+  background: #BE123C;
+  color: #FFFFFF;
+}
+
+/* Typographie & éléments internes aux cartes */
+.crm-day-card .day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.crm-day-card .day-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.crm-day-card .day-date {
+  font-size: 0.8rem;
+  color: #64748B;
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.crm-day-card .day-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.crm-day-card .day-footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.crm-day-card .day-count-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.crm-day-card .day-status-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(4px);
+  color: #334155;
+}
+
+/* Barre de progression mini par jour */
+.crm-day-card .day-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.crm-day-card .day-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Studio d'édition du jour sélectionné */
+.crm-active-day-studio {
+  background: var(--color-card);
+  border-radius: 14px;
+  padding: 24px;
+  border: 1.5px solid var(--color-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.crm-day-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: #FFFFFF;
+}
+
+.crm-day-banner-header.day-lundi { background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%); }
+.crm-day-banner-header.day-mardi { background: linear-gradient(135deg, #6D28D9 0%, #7C3AED 100%); }
+.crm-day-banner-header.day-mercredi { background: linear-gradient(135deg, #047857 0%, #059669 100%); }
+.crm-day-banner-header.day-jeudi { background: linear-gradient(135deg, #B45309 0%, #D97706 100%); }
+.crm-day-banner-header.day-vendredi { background: linear-gradient(135deg, #BE123C 0%, #E11D48 100%); }
+.crm-day-banner-header.day-samedi { background: linear-gradient(135deg, #334155 0%, #475569 100%); }
+.crm-day-banner-header.day-dimanche { background: linear-gradient(135deg, #881337 0%, #BE123C 100%); }
+
+/* ================= NOUVEAU FORMULAIRE D'ACTIVITÉ ENRICHI ================= */
+
+@keyframes formFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tagPop {
+  0% { transform: scale(0.95); opacity: 0; }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes softGlow {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08); }
+  50% { box-shadow: 0 8px 30px rgba(37, 99, 235, 0.16); }
+}
+
+.crm-task-form-card {
+  position: relative;
+  background: var(--color-background);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1.5px solid var(--color-border);
+  margin-bottom: 28px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  animation: formFadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.crm-task-form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #2563EB, #7C3AED, #059669);
+  transition: all 0.3s ease;
+}
+
+/* Tonalités thématiques par jour */
+.crm-task-form-card.form-lundi {
+  border-color: rgba(37, 99, 235, 0.25);
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.6) 0%, var(--color-background) 100%);
+}
+.crm-task-form-card.form-lundi::before { background: linear-gradient(90deg, #1D4ED8, #3B82F6); }
+
+.crm-task-form-card.form-mardi {
+  border-color: rgba(124, 58, 237, 0.25);
+  background: linear-gradient(180deg, rgba(250, 245, 255, 0.6) 0%, var(--color-background) 100%);
+}
+.crm-task-form-card.form-mardi::before { background: linear-gradient(90deg, #6D28D9, #8B5CF6); }
+
+.crm-task-form-card.form-mercredi {
+  border-color: rgba(5, 150, 105, 0.25);
+  background: linear-gradient(180deg, rgba(240, 253, 244, 0.6) 0%, var(--color-background) 100%);
+}
+.crm-task-form-card.form-mercredi::before { background: linear-gradient(90deg, #047857, #10B981); }
+
+.crm-task-form-card.form-jeudi {
+  border-color: rgba(217, 119, 6, 0.25);
+  background: linear-gradient(180deg, rgba(254, 243, 199, 0.45) 0%, var(--color-background) 100%);
+}
+.crm-task-form-card.form-jeudi::before { background: linear-gradient(90deg, #B45309, #F59E0B); }
+
+.crm-task-form-card.form-vendredi {
+  border-color: rgba(225, 29, 72, 0.25);
+  background: linear-gradient(180deg, rgba(255, 241, 242, 0.5) 0%, var(--color-background) 100%);
+}
+.crm-task-form-card.form-vendredi::before { background: linear-gradient(90deg, #BE123C, #F43F5E); }
+
+.crm-task-form-card.form-samedi {
+  border-color: rgba(71, 85, 105, 0.25);
+  background: linear-gradient(180deg, rgba(241, 245, 249, 0.6) 0%, var(--color-background) 100%);
+}
+.crm-task-form-card.form-samedi::before { background: linear-gradient(90deg, #334155, #64748B); }
+
+.crm-task-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.crm-form-badge-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crm-form-icon-pill {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563EB;
+  transition: transform 0.25s ease;
+}
+
+.crm-task-form-card:hover .crm-form-icon-pill {
+  transform: rotate(5deg) scale(1.08);
+}
+
+.crm-form-title-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.crm-form-subtitle-text {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 2px 0 0;
+}
+
+/* Suggestions rapides / chips */
+.crm-quick-tags-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 10px;
+  border: 1px dashed var(--color-border);
+}
+
+.crm-quick-tags-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 4px;
+}
+
+.crm-quick-tag-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+
+.crm-quick-tag-chip:hover {
+  transform: translateY(-2px) scale(1.04);
+  border-color: #2563EB;
+  color: #2563EB;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+}
+
+.crm-quick-tag-chip:active {
+  transform: scale(0.96);
+}
+
+/* Grille et champs de saisie */
+.crm-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.crm-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.crm-form-field.col-full {
+  grid-column: 1 / -1;
+}
+
+.crm-form-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color 0.2s ease;
+}
+
+.crm-form-label span.required {
+  color: #EF4444;
+  margin-left: 3px;
+}
+
+.crm-form-label span.optional-badge {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: var(--color-surface-alt);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* Input Wrapper avec icône */
+.crm-input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.crm-input-prefix-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.crm-input-styled {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+.crm-input-styled:hover {
+  border-color: #94A3B8;
+}
+
+.crm-input-styled:focus {
+  border-color: #2563EB;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.crm-input-with-icon:focus-within .crm-input-prefix-icon {
+  color: #2563EB;
+}
+
+/* Textarea stylisée */
+.crm-textarea-styled {
+  width: 100%;
+  padding: 12px 14px 12px 38px;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-size: 0.88rem;
+  transition: all 0.25s ease;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 70px;
+}
+
+.crm-textarea-styled:hover {
+  border-color: #94A3B8;
+}
+
+.crm-textarea-styled:focus {
+  border-color: #2563EB;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.crm-textarea-wrapper .crm-input-prefix-icon {
+  top: 14px;
+}
+
+/* Select stylisé */
+.crm-select-styled {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.crm-select-styled:hover {
+  border-color: #94A3B8;
+}
+
+.crm-select-styled:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+/* Barre d'action footer */
+.crm-form-actions-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.crm-btn-reset-form {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.crm-btn-reset-form:hover {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.crm-btn-submit-activity {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.crm-btn-submit-activity:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.38);
+  background: linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%);
+}
+
+.crm-btn-submit-activity:active {
+  transform: scale(0.97);
+}
+

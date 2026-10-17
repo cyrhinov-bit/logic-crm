@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: hinov-business-suite
+    env: static
+    buildCommand: npm install --legacy-peer-deps && npm install @rolldown/binding-linux-x64-gnu@1.1.5 --no-save --legacy-peer-deps && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0

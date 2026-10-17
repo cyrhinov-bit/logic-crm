@@ -1,0 +1,705 @@
+/* ==========================================================================
+   DESIGN APPLICATION NATIVE DU CATALOGUE PUBLIC HINOV GROUP
+   ========================================================================== */
+
+:root {
+  --catalog-primary: #0F766E;
+  --catalog-primary-dark: #115E59;
+  --catalog-primary-light: #CCFBF1;
+  --catalog-accent: #25D366; /* WhatsApp Green */
+  --catalog-bg: #F8FAFC;
+  --catalog-card-bg: #FFFFFF;
+  --catalog-text-main: #0F172A;
+  --catalog-text-muted: #64748B;
+  --catalog-border: #E2E8F0;
+  --catalog-radius-sm: 8px;
+  --catalog-radius-md: 14px;
+  --catalog-radius-lg: 20px;
+}
+
+/* CONTENEUR PRINCIPAL NATIVE APP */
+.native-catalog-app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--catalog-bg);
+  color: var(--catalog-text-main);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: 75px; /* Espace réservé pour la Bottom Navigation mobile */
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (min-width: 769px) {
+  .native-catalog-app {
+    padding-bottom: 0;
+  }
+}
+
+/* ==========================================================================
+   1. APPBAR SUPÉRIEURE NATIVE (STICKY)
+   ========================================================================== */
+.native-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--catalog-border);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.native-appbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 56px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.native-appbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.native-appbar-logo {
+  height: 36px;
+  width: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.native-appbar-titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.native-appbar-brand {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--catalog-primary);
+  margin: 0;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.native-appbar-sub {
+  font-size: 11px;
+  color: var(--catalog-text-muted);
+  margin: 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.native-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--catalog-accent);
+  display: inline-block;
+}
+
+.native-appbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.native-topbar-install-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--catalog-primary);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(15, 118, 110, 0.25);
+  transition: transform 0.15s;
+}
+
+.native-topbar-install-btn:active {
+  transform: scale(0.96);
+}
+
+.install-label-desktop {
+  display: inline;
+}
+
+@media (max-width: 480px) {
+  .install-label-desktop {
+    display: none;
+  }
+  .native-topbar-install-btn {
+    padding: 6px 8px;
+    border-radius: 50%;
+  }
+}
+
+.native-topbar-cart-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--catalog-primary-light);
+  color: var(--catalog-primary);
+  border: none;
+  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.native-topbar-cart-btn:active {
+  transform: scale(0.93);
+}
+
+.native-badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: #EF4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid white;
+}
+
+/* ==========================================================================
+   2. BANNIÈRE PROMO COMPACTE
+   ========================================================================== */
+.native-promo-strip {
+  background: linear-gradient(90deg, #0F766E 0%, #115E59 100%);
+  color: white;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.native-promo-strip span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   3. BARRE DE RECHERCHE ET CHIPS CATÉGORIES (APP FEEL)
+   ========================================================================== */
+.native-controls-section {
+  background: white;
+  padding: 12px 14px 8px 14px;
+  border-bottom: 1px solid var(--catalog-border);
+  position: sticky;
+  top: 56px;
+  z-index: 70;
+}
+
+.native-search-bar {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.native-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 36px 0 38px;
+  border-radius: 12px;
+  border: 1px solid var(--catalog-border);
+  background-color: #F1F5F9;
+  font-size: 14px;
+  color: var(--catalog-text-main);
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.native-search-input:focus {
+  background-color: white;
+  border-color: var(--catalog-primary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+.native-search-icon-left {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94A3B8;
+  pointer-events: none;
+}
+
+.native-search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #CBD5E1;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  cursor: pointer;
+}
+
+/* CHIPS CATÉGORIES HORIZONTAUX (CAROUSEL TACTILE SANS SCROLLBAR) */
+.native-chips-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.native-chips-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.native-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--catalog-border);
+  background: white;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.native-chip:active {
+  transform: scale(0.95);
+}
+
+.native-chip.active {
+  background: var(--catalog-primary);
+  color: white;
+  border-color: var(--catalog-primary);
+  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3);
+}
+
+/* TOOLBAR SECONDAIRE (STOCK & TRI) */
+.native-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 4px 14px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.native-stock-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+
+.native-sort-select {
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--catalog-border);
+  background: white;
+  font-size: 12px;
+  color: #475569;
+  outline: none;
+}
+
+/* ==========================================================================
+   4. GRILLE PRODUITS 2 COLONNES (MOBILE NATIVE PROPORTIONS)
+   ========================================================================== */
+.native-catalog-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 12px;
+  width: 100%;
+  flex: 1;
+}
+
+.native-product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .native-product-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .native-product-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+}
+
+/* CARTE PRODUIT NATIVE */
+.native-product-card {
+  background: var(--catalog-card-bg);
+  border-radius: var(--catalog-radius-md);
+  border: 1px solid var(--catalog-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  transition: transform 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.native-product-card:active {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) {
+  .native-product-card:hover {
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    border-color: #CBD5E1;
+  }
+}
+
+/* IMAGE PRODUIT CARRÉE 1:1 */
+.native-card-image-box {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #F8FAFC;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.native-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
+  transition: transform 0.2s;
+}
+
+.native-product-card:hover .native-card-image {
+  transform: scale(1.05);
+}
+
+.native-stock-tag {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tag-in-stock {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.tag-low-stock {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.tag-out-of-stock {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* INFOS CARTE */
+.native-card-content {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.native-card-category {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--catalog-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  margin-bottom: 2px;
+}
+
+.native-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--catalog-text-main);
+  margin: 0 0 4px 0;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.native-card-ref {
+  font-size: 10px;
+  color: #94A3B8;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* FOOTER CARTE : PRIX & BOUTON RAPIDE + */
+.native-card-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.native-card-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--catalog-primary);
+}
+
+@media (min-width: 640px) {
+  .native-card-price {
+    font-size: 16px;
+  }
+}
+
+.native-quick-add-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--catalog-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);
+  transition: transform 0.15s, background-color 0.15s;
+}
+
+.native-quick-add-btn:active {
+  transform: scale(0.88);
+}
+
+.native-quick-add-btn.in-cart {
+  background-color: var(--catalog-accent);
+}
+
+/* ==========================================================================
+   5. BOTTOM NAVIGATION BAR MOBILE (NATIVE APP FEEL)
+   ========================================================================== */
+.native-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--catalog-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 90;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (min-width: 769px) {
+  .native-bottom-nav {
+    display: none;
+  }
+}
+
+.native-bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: #64748B;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  position: relative;
+  transition: color 0.15s;
+}
+
+.native-bottom-nav-item.active {
+  color: var(--catalog-primary);
+}
+
+.native-bottom-nav-item.install-cta {
+  color: #0F766E;
+  font-weight: 700;
+}
+
+.nav-icon-badge-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.install-pulse-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #25D366;
+  animation: pulseDot 1.5s infinite;
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+/* ==========================================================================
+   6. MODAL FICHE PRODUIT MOBILE (BOTTOM SHEET)
+   ========================================================================== */
+.native-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+
+@media (min-width: 640px) {
+  .native-sheet-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.native-sheet-modal {
+  background: white;
+  width: 100%;
+  max-width: 540px;
+  border-radius: 20px 20px 0 0;
+  max-height: 85vh;
+  max-height: 85dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.2);
+  animation: slideUp 0.25s ease-out;
+}
+
+@media (min-width: 640px) {
+  .native-sheet-modal {
+    border-radius: 20px;
+    max-height: 80vh;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.native-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: #CBD5E1;
+  border-radius: 2px;
+  margin: 10px auto 4px auto;
+}
+
+.native-sheet-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.native-sheet-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--catalog-border);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+.native-sheet-add-btn {
+  flex: 1;
+  background: var(--catalog-primary);
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

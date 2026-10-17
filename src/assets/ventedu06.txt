@@ -1,0 +1,31 @@
+hnv1791314785103	06/10/2026 19:26:25	26 article(s)	Mobile Money	Validée	21 900 FCFA	
+Ticket
+hnv1791314783204	06/10/2026 19:26:23	26 article(s)	Mobile Money	Validée	21 900 FCFA	
+Ticket
+hnv1791313655736	06/10/2026 19:07:35	2 article(s)	Mobile Money	Validée	5 000 FCFA	
+Ticket
+hnv1791309254769	06/10/2026 17:54:14	1 article(s)	Espèces	Validée	3 500 FCFA	
+Ticket
+hnv1791305299771	06/10/2026 16:48:19	3 article(s)	Espèces	Validée	500 FCFA	
+Ticket
+hnv1791305221192	06/10/2026 16:47:01	1 article(s)	Espèces	Validée	500 FCFA	
+Ticket
+hnv1791300627324	06/10/2026 15:30:27	2 article(s)	Espèces	Validée	500 FCFA	
+Ticket
+hnv1791290897541	06/10/2026 12:48:17	2 article(s)	Espèces	Validée	6 000 FCFA	
+Ticket
+hnv1791290608167	06/10/2026 12:43:28	6 article(s)	Mobile Money	Validée	8 740 FCFA	
+Ticket
+hnv1791284760834	06/10/2026 11:06:00	4 article(s)	Espèces	Validée	2 400 FCFA	
+Ticket
+hnv1791283168643	06/10/2026 10:39:28	1 article(s)	Espèces	Validée	300 FCFA	
+Ticket
+hnv1791278239196	06/10/2026 09:17:19	1 article(s)	Espèces	Validée	11 500 FCFA	
+Ticket
+hnv1791277843193	06/10/2026 09:10:43	1 article(s)	Mobile Money	Validée	2 000 FCFA	
+Ticket
+hnv1791277658850	06/10/2026 09:07:38	2 article(s)	Espèces	Validée	5 100 FCFA	
+Ticket
+hnv1791277560294	06/10/2026 09:06:00	1 article(s)	Mobile Money	Validée	3 000 FCFA	
+Ticket
+hnv1791274992256	06/10/2026 08:23:12	1 article(s)	Espèces	Validée	3 000 FCFA	

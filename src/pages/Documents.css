@@ -1,0 +1,143 @@
+.doc-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.doc-manager-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.doc-tab-btn {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.doc-tab-btn:hover {
+  color: #0f172a;
+}
+
+.doc-tab-btn.active {
+  color: #0d9488;
+  border-bottom-color: #0d9488;
+}
+
+.doc-color-palette {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.doc-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.doc-color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.doc-color-swatch.selected {
+  border-color: #0f172a;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px #ffffff inset;
+}
+
+.doc-search-bar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.doc-folder-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* ─── Mobile Optimizations for Documents ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .doc-manager-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .doc-manager-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+  .doc-tab-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  .doc-search-bar {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .doc-search-bar input,
+  .doc-search-bar select {
+    width: 100%;
+  }
+}
+
+/* ─── Bouton Nouveau Dossier ──────────────────────────────────────────────── */
+.btn-new-folder {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FCD34D;
+  border-radius: var(--radius-md, 8px);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(217, 119, 6, 0.08);
+}
+
+.btn-new-folder:hover {
+  background-color: #FDE68A;
+  color: #92400E;
+  border-color: #F59E0B;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(217, 119, 6, 0.15);
+}
+
+.btn-new-folder:active {
+  transform: translateY(0);
+}
+
