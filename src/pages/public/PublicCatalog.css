@@ -130,7 +130,7 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(15, 118, 110, 0.25);
+  box-shadow: 0 2px 5px rgba(24, 121, 200, 0.25);
   transition: transform 0.15s;
 }
 
@@ -245,7 +245,7 @@
 .native-search-input:focus {
   background-color: white;
   border-color: var(--catalog-primary);
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  box-shadow: 0 0 0 3px rgba(24, 121, 200, 0.15);
 }
 
 .native-search-icon-left {
@@ -311,7 +311,7 @@
   background: var(--catalog-primary);
   color: white;
   border-color: var(--catalog-primary);
-  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3);
+  box-shadow: 0 2px 6px rgba(24, 121, 200, 0.3);
 }
 
 /* TOOLBAR SECONDAIRE (STOCK & TRI) */
@@ -524,7 +524,7 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);
+  box-shadow: 0 2px 6px rgba(24, 121, 200, 0.25);
   transition: transform 0.15s, background-color 0.15s;
 }
 
