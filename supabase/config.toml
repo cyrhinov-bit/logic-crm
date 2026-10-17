@@ -422,18 +422,3 @@ entrypoint = "./functions/create-user/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/create-user/*.html" ]
-
-[functions.encaissement]
-enabled = true
-verify_jwt = true
-entrypoint = "./functions/encaissement/index.ts"
-
-[functions.encaissement-calcul]
-enabled = true
-verify_jwt = true
-entrypoint = "./functions/encaissement-calcul/index.ts"
-
-[functions.encaissement-planification]
-enabled = true
-verify_jwt = true
-entrypoint = "./functions/encaissement-planification/index.ts"
