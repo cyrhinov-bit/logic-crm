@@ -123,18 +123,6 @@ const electronAPI = {
   clearPerformanceCache: () => ipcRenderer.invoke('performance:clearCache'),
   runPerformanceBenchmark: () => ipcRenderer.invoke('performance:runBenchmark'),
 
-  // POS
-  openSale: (userId: string) => ipcRenderer.invoke('pos:openSale', userId),
-  closeSale: () => ipcRenderer.invoke('pos:closeSale'),
-  getPosSession: () => ipcRenderer.invoke('pos:getSession'),
-  paySale: (amount: number, method: string) => ipcRenderer.invoke('pos:pay', amount, method),
-  openCashDrawer: () => ipcRenderer.invoke('pos:openDrawer'),
-  printPosReceipt: (data: any) => ipcRenderer.invoke('pos:printReceipt', data),
-  displayCustomerMessage: (line1: string, line2: string) => ipcRenderer.invoke('pos:displayMessage', line1, line2),
-  onPosEvent: (callback: (payload: { event: string; data: any }) => void) => {
-    ipcRenderer.on('pos:onEvent', (_, payload) => callback(payload));
-  },
-
   // Sync (moteur main-process, base Supabase configurée)
   enqueueSync: (op: any) => ipcRenderer.invoke('sync:enqueue', op),
   forceSync: () => ipcRenderer.invoke('sync:forceSync'),

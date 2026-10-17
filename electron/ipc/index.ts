@@ -16,7 +16,6 @@ import { registerDiagnosticsHandlers } from './diagnostics/diagnostics.handlers.
 import { registerMaintenanceHandlers } from './maintenance/maintenance.handlers.js';
 import { registerSecurityHandlers } from './security/security.handlers.js';
 import { registerPerformanceHandlers } from './performance/performance.handlers.js';
-import { registerPosHandlers } from './pos/pos.handlers.js';
 import { registerSyncHandlers } from './sync/sync.handlers.js';
 import { registerMailHandlers } from './mail/mail.handlers.js';
 
@@ -39,7 +38,6 @@ export function registerIpcHandlers(): void {
   registerMaintenanceHandlers();
   registerSecurityHandlers();
   registerPerformanceHandlers();
-  registerPosHandlers();
   registerSyncHandlers();
   registerMailHandlers();
 }
