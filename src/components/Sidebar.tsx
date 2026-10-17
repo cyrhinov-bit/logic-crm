@@ -196,7 +196,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; s
     // Permissions CRM granulaires pour tous les collaborateurs
     if (item.permissionKey) {
       if (currentUser[item.permissionKey] === false) return false;
-      if (item.permissionKey === 'crmTeamReportsEnabled' && !currentUser.crmTeamReportsEnabled && !isDirection) return false;
+      if (item.permissionKey === 'crmTeamReportsEnabled' && !currentUser.crmTeamReportsEnabled) return false;
     }
 
     return true;

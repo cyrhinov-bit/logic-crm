@@ -124,7 +124,10 @@ function RequireCrmModule({ moduleKey, children }: { moduleKey: CrmModuleKey; ch
   if (loading) return null;
   if (!currentUser) return <Navigate to="/login" replace />;
   if (currentUser.role === 'Caissier' || currentUser.role === 'Gerant') return <Navigate to="/" replace />;
-  if (['Directeur', 'Directeur adjoint', 'SuperAdmin'].includes(currentUser.role)) return <>{children}</>;
+  // SuperAdmin : accès total permanent (l'activation des modules ne s'y applique pas).
+  if (currentUser.role === 'SuperAdmin') return <>{children}</>;
+  // Directeur / Directeur adjoint : l'activation s'applique réellement (menu latéral ET accès direct).
+  // Cohérent avec le Sidebar : seuls les `false` explicites bloquent (défaut = activé).
   if ((currentUser as unknown as Record<string, unknown>)[moduleKey] === false) return <Navigate to="/" replace />;
   return <>{children}</>;
 }

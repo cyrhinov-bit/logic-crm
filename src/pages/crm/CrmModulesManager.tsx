@@ -284,7 +284,7 @@ export default function CrmModulesManager() {
       }}>
         <Sparkles size={20} style={{ flexShrink: 0, color: '#2563EB' }} />
         <span>
-          <strong>Personnalisation & Supervision Direction :</strong> Vous pouvez activer ou désactiver les modules pour les <strong>Directeurs</strong> afin de configurer leurs accès opérationnels directs (menu latéral). <strong>Le Directeur conserve en permanence la supervision totale (Dashboard 360°, KPIs, analytiques et consultation) sur l'ensemble des modules et des collaborateurs.</strong>
+          <strong>Activation réelle &amp; Supervision :</strong> L'activation ou la désactivation d'un module s'applique désormais <strong>réellement</strong> au <strong>Directeur</strong> et au <strong>Directeur adjoint</strong> (menu latéral <em>et</em> accès direct à la page). Le <strong>SuperAdmin</strong> conserve un accès total permanent. La Direction garde la supervision globale via son <strong>Dashboard 360°</strong> (KPIs et analytiques).
         </span>
       </div>
 
@@ -338,7 +338,7 @@ export default function CrmModulesManager() {
                       </span>
                       {isUserAdmin && (
                         <span style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '4px', background: 'rgba(59, 130, 246, 0.12)', color: '#2563EB', fontWeight: 600 }}>
-                          Supervision 360° permanente
+                          Rôle Direction
                         </span>
                       )}
                     </div>
