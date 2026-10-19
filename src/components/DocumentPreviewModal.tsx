@@ -39,6 +39,7 @@ import { useAppContext, type CrmDocument } from '../context/AppContext';
 import { DocumentEditorModal } from './DocumentEditorModal';
 import mammoth from 'mammoth';
 import * as XLSX from 'xlsx';
+import DOMPurify from 'dompurify';
 import './DocumentPreviewModal.css';
 
 interface DocumentPreviewModalProps {
@@ -752,7 +753,7 @@ ${currentHtml}
                           setDocxHtml(wordEditorRef.current.innerHTML);
                         }
                       }}
-                      dangerouslySetInnerHTML={{ __html: docxHtml }}
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(docxHtml) }}
                     />
                   </div>
                 </div>
@@ -919,7 +920,7 @@ ${currentHtml}
               {isMarkdown && activeMode === 'VIEW' && (
                 <div
                   className="doc-markdown-container"
-                  dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(textContent) }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderSimpleMarkdown(textContent)) }}
                 />
               )}
 
@@ -1001,3 +1002,5 @@ ${currentHtml}
     </div>
   );
 }
+
+
