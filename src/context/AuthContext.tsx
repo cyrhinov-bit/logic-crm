@@ -258,7 +258,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
 
           if (matchedUser.pin && matchedUser.pin === cleanPin) {
-            console.log('[AuthContext] Connexion hors-ligne réussie pour :', matchedUser.name);
             logoutRequestedRef.current = false;
             setCurrentUser(matchedUser);
             localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(matchedUser));
@@ -367,6 +366,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logoutRequestedRef.current = false;
         setCurrentUser(userObj);
         localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userObj));
+        // Mise en cache pour le mode hors-ligne
+        try {
+          const { db } = await import('../lib/db');
+          const cached = (await db.profiles.getItem<User[]>('data')) || [];
+          const updated = [userObj, ...cached.filter(u => u.id !== userObj.id)];
+          await db.profiles.setItem('data', updated);
+        } catch {}
       }
 
       setLoading(false);
