@@ -7,7 +7,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import type { QuoteLine } from '../context/AppContext';
-import { canReadAllClients } from '../lib/scope';
 import { generateQuotePdf, downloadBlob, ensureDevisPdfAssets } from '../lib/pdfUtils';
 import { sendQuoteByMail } from '../lib/mailUtils';
 import { ReportPdfPreview, type ReportPdfPreviewData } from '../components/ReportPdfPreview';
@@ -56,11 +55,7 @@ export function QuoteCreation() {
     sourceQuote ? { id: sourceQuote.id, quoteNumber: sourceQuote.quoteNumber } : null
   );
 
-  const allowedClients = useMemo(() => {
-    if (canReadAllClients(currentUser?.role)) return clients;
-    return clients.filter(c => c.commercialId === currentUser?.id || c.id === (sourceQuote?.clientId || clientIdParam));
-  }, [clients, isDirector, currentUser, sourceQuote, clientIdParam]);
-
+  // Tous les clients créés sont sélectionnables (référentiel partagé en lecture).
   // Numérotation séquentielle anti-collision locale.
   // Le serveur impose UNIQUE(quote_number) ; en cas de conflit multi-poste,
   // sync.ts régénère un numéro (-bisXXXX) et le répercute en local.
@@ -460,7 +455,7 @@ export function QuoteCreation() {
                 setClientId(e.target.value);
               }}>
                 <option value="">Sélectionner un client...</option>
-                {allowedClients.map(c => <option key={c.id} value={c.id}>{c.name || c.contact}</option>)}
+                {clients.map(c => <option key={c.id} value={c.id}>{c.name || c.contact}</option>)}
               </select>
             </div>
 

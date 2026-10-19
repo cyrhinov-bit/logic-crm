@@ -673,10 +673,9 @@ function fitText(doc: jsPDF, text: string, maxW: number, baseSize: number, minSi
 // barre d'infos à pastilles, tableau 6 colonnes aux filets couleur, cartes de
 // totaux, signature en pointillés, 3 blocs bas à icônes, pied de page navy.
 // Style unique pour tous les devis.
-import devisBannerUrl from '../assets/devis_banner.jpg';
-import devisCachetUrl from '../assets/devis_cachet.jpg';
+import devisBannerUrl from '../assets/logic.png';
 
-const devisPdfAssets: { banner?: string; cachet?: string } = {};
+const devisPdfAssets: { banner?: string } = {};
 let devisPdfAssetsPromise: Promise<void> | null = null;
 
 function blobToDataUrl(blob: Blob): Promise<string> {
@@ -692,18 +691,14 @@ function blobToDataUrl(blob: Blob): Promise<string> {
   });
 }
 
-/** Précharge (une fois) bannière + cachet. À appeler avant generateQuotePdf. */
+/** Précharge (une fois) le logo/bannière. À appeler avant generateQuotePdf. */
 export function ensureDevisPdfAssets(): Promise<void> {
   if (!devisPdfAssetsPromise) {
     devisPdfAssetsPromise = (async () => {
       try {
         const res = await fetch(devisBannerUrl);
         if (res.ok) devisPdfAssets.banner = await blobToDataUrl(await res.blob());
-      } catch { /* bannière ignorée si inaccessible */ }
-      try {
-        const res = await fetch(devisCachetUrl);
-        if (res.ok) devisPdfAssets.cachet = await blobToDataUrl(await res.blob());
-      } catch { /* cachet ignoré si inaccessible */ }
+      } catch { /* logo ignoré si inaccessible */ }
     })();
   }
   return devisPdfAssetsPromise;
@@ -952,11 +947,21 @@ export function generateQuotePdf(
   };
 
   // ============================ PAGE 1 ============================
-  // Bannière photo pleine largeur (devi_banner.jpg)
+  // Logo (logic.png) en bannière, taille limitée (ne prend pas toute la largeur)
   if (devisPdfAssets.banner) {
     try {
-      doc.addImage(devisPdfAssets.banner, 'JPEG', 0, 0, 210, 52.9);
-    } catch { /* sans bannière si illisible */ }
+      const imgW = 48;
+      const imgH = 48;
+      const imgX = (210 - imgW) / 2;
+      doc.addImage(devisPdfAssets.banner, 'PNG', imgX, 8, imgW, imgH);
+    } catch {
+      try {
+        const imgW = 48;
+        const imgH = 48;
+        const imgX = (210 - imgW) / 2;
+        doc.addImage(devisPdfAssets.banner, 'JPEG', imgX, 8, imgW, imgH);
+      } catch { /* sans logo si illisible */ }
+    }
   } else {
     doc.setFillColor(...DV_NAVY);
     doc.rect(0, 0, 210, 30, 'F');
@@ -1136,7 +1141,7 @@ export function generateQuotePdf(
   doc.roundedRect(50, y + 9, 110, 30, 3, 3, 'S');
   doc.setLineDashPattern([], 0);
   // Cachet centré dans le rectangle, taille augmentée (paramètre entreprise sinon modèle)
-  const stampSrc = settings.companyStampBase64 || devisPdfAssets.cachet;
+  const stampSrc = settings.companyStampBase64;
   if (stampSrc) {
     try {
       const fmt = stampSrc.includes('image/png') ? 'PNG' : 'JPEG';
